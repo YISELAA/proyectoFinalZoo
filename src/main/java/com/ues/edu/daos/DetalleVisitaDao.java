@@ -76,16 +76,7 @@ public class DetalleVisitaDao {
     // =========================
     // ELIMINAR
     // =========================
-    public void eliminar(int id) {
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        DetalleVisita d = em.find(DetalleVisita.class, id);
-        if (d != null) {
-            em.remove(d);
-        }
-        em.getTransaction().commit();
-        em.close();
-    }
+    
 
     // =========================
     // BUSCAR POR ID

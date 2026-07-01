@@ -262,57 +262,6 @@ function mostrarTabla(lista) {
 }
 
 
-function eliminar(nombre, telefono, fecha) {
-
-    Swal.fire({
-        title: "¿Eliminar registro?",
-        text: "Esta acción no se puede deshacer",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#b05d4d",
-        cancelButtonColor: "#3f5b4b",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
-    }).then(result => {
-
-        if (!result.isConfirmed)
-            return;
-
-        fetch("DetalleVisitaServlet")
-                .then(r => r.json())
-                .then(lista => {
-
-                    let registros = lista.filter(d => {
-                        let fechaD = Array.isArray(d.fechaVisita)
-                                ? `${d.fechaVisita[0]}-${String(d.fechaVisita[1]).padStart(2, "0")}-${String(d.fechaVisita[2]).padStart(2, "0")}`
-                                : d.fechaVisita;
-
-                        return d.nombreVisitante === nombre &&
-                                d.telefono === telefono &&
-                                fechaD === fecha;
-                    });
-
-                    let promesas = registros.map(d =>
-                        fetch("DetalleVisitaServlet?id=" + d.id, {method: "DELETE"})
-                                .then(r => r.json())
-                    );
-
-                    return Promise.all(promesas);
-                })
-                .then(() => {
-                    cargarTabla();
-                    Swal.fire({
-                        icon: "success",
-                        title: "Eliminado",
-                        text: "Registro eliminado correctamente",
-                        confirmButtonColor: "#3f5b4b",
-                        timer: 2000,
-                        timerProgressBar: true
-                    });
-                })
-                .catch(error => console.error(error));
-    });
-}
 
 
 function editarVisita(nombre, telefono, fecha) {
@@ -398,10 +347,6 @@ function renderTablaPaginada() {
                         <button class="btnEditar"
                                 onclick="editarVisita('${g.nombre}', '${g.telefono}', '${g.fecha}')">
                             <i class="ti ti-edit"></i>
-                        </button>
-                        <button class="btnEliminar"
-                                onclick="eliminar('${g.nombre}', '${g.telefono}', '${g.fecha}')">
-                            <i class="ti ti-trash"></i>
                         </button>
                     </div>
                 </td>

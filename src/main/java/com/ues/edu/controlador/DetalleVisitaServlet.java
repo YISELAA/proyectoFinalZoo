@@ -200,20 +200,6 @@ public class DetalleVisitaServlet extends HttpServlet {
     }
 
     // =========================
-    // DELETE
-    // =========================
-    @Override
-    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        response.setContentType("application/json");
-
-        int id = Integer.parseInt(request.getParameter("id"));
-        service.EliminarDetalleVisita(id);
-        response.getWriter().write("{\"mensaje\":\"Eliminado\"}");
-    }
-
-    // =========================
     // VALIDAR
     // =========================
     private String validarDetalleVisita(DetalleVisita d) {

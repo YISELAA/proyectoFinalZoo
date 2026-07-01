@@ -44,6 +44,7 @@ public class AlimentacionServlet extends HttpServlet {
                     return f.getName().equals("alimentaciones")
                             || f.getName().equals("historiales")
                             || f.getName().equals("cuidadores")
+                            || f.getName().equals("habitatsAsignados")
                             || f.getName().equals("listaAnimales");
                 }
 
@@ -165,39 +166,64 @@ public class AlimentacionServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+   @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
 
-        try {
-            // 1. Leemos el JSON que viene desde el JavaScript
-            Alimentacion alimentacion = gson.fromJson(request.getReader(), Alimentacion.class);
+    try {
+        // 1. Leemos el JSON que viene desde el JavaScript
+        Alimentacion alimentacion = gson.fromJson(request.getReader(), Alimentacion.class);
 
-            // 2. Validamos que los campos obligatorios vengan llenos
-            String error = validarAlimentacion(alimentacion);
-            if (error != null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\":\"" + error + "\"}");
-                return;
-            }
-
-            // 3. Guardamos directamente en la Base de Datos (El DAO asociará al animal y cuidador)
-            alimentacionService.crearAlimentacion(alimentacion);
-
-            // 4. Respondemos éxito al JavaScript
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("{\"mensaje\":\"Alimentación registrada bajo tu usuario correctamente.\"}");
-
-        } catch (Throwable e) {
-            System.out.println("=== ERROR REAL AL GUARDAR ALIMENTACION ===");
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\":\"Error en el servidor: " + e.getMessage() + "\"}");
+        // 2. Validamos que los campos obligatorios vengan llenos (excepto cuidador por ahora)
+        String error = validarAlimentacion(alimentacion);
+        if (error != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"" + error + "\"}");
+            return;
         }
+
+        // 🌟 NUEVO: RECUPERAR EL EMPLEADO DESDE LA SESIÓN ACTIVA 🌟
+        jakarta.servlet.http.HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("usuarioSesion") == null) {
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.getWriter().write("{\"error\":\"Sesión expirada. Por favor inicie sesión nuevamente.\"}");
+            return;
+        }
+
+        // Obtener el objeto usuario que guardó el LoginServlet
+        com.ues.edu.entidades.Usuario usuarioLogueado = (com.ues.edu.entidades.Usuario) session.getAttribute("usuarioSesion");
+        
+        // Asignar el cuidador. Nota: Si tu objeto Usuario ya contiene la entidad Empleado adentro, 
+        // puedes usar algo como: Empleado empReal = usuarioLogueado.getEmpleado();
+        // Si tu base de datos mapea el ID de Usuario igual al del Empleado, puedes buscarlo directamente:
+        int idEmpleado = usuarioLogueado.getId(); // Cambia esto si el ID se obtiene de otra propiedad
+        Empleado empReal = empleadosService.buscarEmpleado(idEmpleado);
+
+        if (empReal != null) {
+            alimentacion.setCuidador(empReal); // Se inyecta el cuidador autenticado
+        } else {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"No se encontró un empleado asociado a este usuario.\"}");
+            return;
+        }
+
+        // 3. Guardamos en la Base de Datos con el Cuidador ya asignado
+        alimentacionService.crearAlimentacion(alimentacion);
+
+        // 4. Respondemos éxito al JavaScript
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("{\"mensaje\":\"Alimentación registrada bajo tu usuario correctamente.\"}");
+
+    } catch (Throwable e) {
+        System.out.println("=== ERROR REAL AL GUARDAR ALIMENTACION ===");
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"error\":\"Error en el servidor: " + e.getMessage() + "\"}");
     }
+}
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -221,7 +247,7 @@ public class AlimentacionServlet extends HttpServlet {
 
                 // Instanciamos el servicio con su ruta completa aquí también
                 com.ues.edu.service.EmpleadosService servicioTemp = new com.ues.edu.service.EmpleadosService();
-                Empleado empReal = servicioTemp.buscarEmpleado((long) idEmpleado);
+                Empleado empReal = servicioTemp.buscarEmpleado((int) idEmpleado);
 
                 alimentacion.setCuidador(empReal);
             }

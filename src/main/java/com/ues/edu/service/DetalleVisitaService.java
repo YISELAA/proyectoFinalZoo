@@ -17,10 +17,7 @@ public class DetalleVisitaService {
         return dao.buscarPorId(id);
     }
 
-    public void EliminarDetalleVisita(int id) {
-        dao.eliminar(id);
-    }
-
+  
     public void guardarDetalleVisita(DetalleVisita detalle) {
         // @PrePersist en la entidad ya asigna la fecha automáticamente
         dao.guardar(detalle);
