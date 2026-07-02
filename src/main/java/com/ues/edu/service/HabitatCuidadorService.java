@@ -40,5 +40,7 @@ public class HabitatCuidadorService {
     public Habitat buscarAsignacion(int idHabitat) {
         return dao.buscarPorId(idHabitat);
     }
+    
+    
 }
 

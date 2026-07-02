@@ -143,4 +143,20 @@ public class EmpleadoDao {
         }
     }
 
+    public List<Empleado> obtenerSoloCuidadores() {
+
+    EntityManager em = emf.createEntityManager();
+
+    try {
+        return em.createQuery(
+            "SELECT e FROM Empleado e " +
+            "JOIN Usuario u ON u.empleado = e " +
+            "JOIN u.rol r " +
+            "WHERE UPPER(r.nombreRol) = 'CUIDADOR'",
+            Empleado.class
+        ).getResultList();
+    } finally {
+        em.close();
+    }
+}
 }

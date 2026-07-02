@@ -37,7 +37,7 @@ public class UssuarioServlet extends HttpServlet {
                     || f.getName().equals("cuidadores")
                     || f.getName().equals("animalesAsignados")
                     || f.getName().equals("listaAnimales")
-                    || f.getName().equals("habitatAsignada");
+                    || f.getName().equals("habitatsAsignados");
             }
             @Override
             public boolean shouldSkipClass(Class<?> clazz) { return false; }

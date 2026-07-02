@@ -31,14 +31,11 @@ public class Usuario {
     @Column(name = "contrasena", nullable = false, length = 70)
     private String contrasena;
 
-    @ManyToOne // o @OneToOne según tu modelo físico
-    @JoinColumn(name = "id_empleado")
-    @Expose // 🌟 CLAVE: Permite mapear el objeto empleado asignado
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "id_empleado", unique = true, nullable = false)
     private Empleado empleado;
-    
-    // NUEVO: Asociación con el Rol del usuario
-    @Expose
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idrol", nullable = false)
     private Rol rol;
-}
+} 

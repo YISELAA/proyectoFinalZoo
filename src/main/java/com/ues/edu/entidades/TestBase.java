@@ -17,21 +17,9 @@ public class TestBase {
 
             em.getTransaction().begin();
 
-            // Crear empleados
-            Empleado e1 = new Empleado();
-            e1.setNombre("Juan");
-            e1.setApellido("Pérez");
-            e1.setDui("12345678-9");
-            e1.setRol("Cuidador");
+           
 
-            Empleado e2 = new Empleado();
-            e2.setNombre("María");
-            e2.setApellido("López");
-            e2.setDui("98765432-1");
-            e2.setRol("Cuidador");
-
-            em.persist(e1);
-            em.persist(e2);
+           
 
             // Crear hábitat
             Habitat habitat = new Habitat();
@@ -39,8 +27,7 @@ public class TestBase {
             habitat.setCapacidad(20);
 
             List<Empleado> cuidadores = new ArrayList<>();
-            cuidadores.add(e1);
-            cuidadores.add(e2);
+          
 
             habitat.setCuidadores(cuidadores);
 

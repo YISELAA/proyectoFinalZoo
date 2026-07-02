@@ -389,3 +389,48 @@ tr.inactivo td {
     opacity: 0.5;
     font-style: italic;
 }
+
+/* =========================
+   SELECT2 INTEGRADO A TU TEMA
+   ========================= */
+
+/* Caja principal */
+.select2-container--default .select2-selection--multiple {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    min-height: 38px;
+    padding: 4px;
+}
+
+/* Cuando está activo (QUITAR azul feo) */
+.select2-container--default.select2-container--focus .select2-selection--multiple {
+    border-color: #3f5b4b; /* tu verde WILD ZOO */
+    box-shadow: none;
+}
+
+/* Chips seleccionados */
+.select2-container--default .select2-selection--multiple .select2-selection__choice {
+    background-color: #3f5b4b;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    padding: 2px 8px;
+}
+
+/* Botón X de los chips */
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+    color: white;
+    margin-right: 5px;
+}
+
+/* Hover del dropdown */
+.select2-results__option--highlighted {
+    background-color: #3f5b4b !important;
+    color: white;
+}
+
+/* Quitar outline azul del input interno */
+.select2-container--default .select2-search--inline .select2-search__field {
+    outline: none;
+}

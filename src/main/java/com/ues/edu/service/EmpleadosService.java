@@ -46,4 +46,8 @@ public class EmpleadosService {
     public List<Empleado> obtenerSoloVeterinarios() {
         return dao.obtenerSoloVeterinarios(); 
     }
+    
+    public List<Empleado> obtenerSoloCuidadores() {
+    return dao.obtenerSoloCuidadores();
+}
 }

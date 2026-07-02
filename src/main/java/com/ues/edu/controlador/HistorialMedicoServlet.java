@@ -41,7 +41,7 @@ public class HistorialMedicoServlet extends HttpServlet {
             @Override
             public boolean shouldSkipClass(Class<?> clazz) { return false; }
         })
-        .setDateFormat("yyyy-MM-dd") 
+        .setDateFormat("dd-MM-yyyy") 
         .create();
 
     /**

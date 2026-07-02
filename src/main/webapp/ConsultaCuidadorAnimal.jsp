@@ -27,7 +27,7 @@
                         <th>ID</th>
                         <th>Nombre Animal</th>
                         <th>Especie</th>
-                        <th>Nombre Empleado</th>
+                        <th>Nombre de Cuidador</th>
                         <th>Apellido</th>
                         <th>DUI</th>
                         </tr>

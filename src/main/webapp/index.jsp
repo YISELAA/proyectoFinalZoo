@@ -48,10 +48,11 @@
 
                         <c:choose>
                             <c:when test="${usuarioSesion.rol.id == 1}">
-                                <a href="ConsultaAnimalCategoria.jsp" class="btn-action-main btn-consultas"><i class="ti ti-category"></i> Ver aimales</a>
+                                <a href="ConsultaAnimalCategoria.jsp" class="btn-action-main btn-consultas"><i class="ti ti-category"></i> Ver animales</a>
                                 <a href="ConsultaCuidadorAnimal.jsp" class="btn-ghost gh-consultas"><i class="ti ti-user"></i> Ver cuidador</a>
                                 <a href="ConsultaMostrarAlimentos.jsp" class="btn-ghost gh-consultas"><i class="ti ti-salad"></i> Ver alimentos</a>
                                 <a href="ConsultaHistorialMedico.jsp" class="btn-ghost gh-consultas"><i class="ti ti-file-text"></i> Ver Historial médico</a>
+                                <a href="ConsultaMostrarEmpleados.jsp" class="btn-ghost gh-consultas"><i class="ti ti-file-text"></i> Ver Empleados</a>
                             </c:when>
                             <c:otherwise>
                                 <c:forEach var="opcion" items="${usuarioSesion.rol.opcionesMenu}" varStatus="status">

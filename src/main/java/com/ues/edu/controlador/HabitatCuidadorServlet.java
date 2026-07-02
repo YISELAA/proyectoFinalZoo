@@ -45,7 +45,7 @@ public class HabitatCuidadorServlet extends HttpServlet {
                 empMap.put("id", emp.getId());
                 empMap.put("nombre", emp.getNombre()); 
                 empMap.put("apellido", emp.getApellido());
-                empMap.put("rol", emp.getRol());
+//                empMap.put("rol", emp.getRol());
                 cuidadoresJSON.add(empMap);
             }
         }

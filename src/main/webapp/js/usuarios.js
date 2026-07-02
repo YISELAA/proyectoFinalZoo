@@ -128,6 +128,7 @@ function editar(id) {
             if (usuario.empleado) {
                 document.getElementById("idEmpleado").value = usuario.empleado.id;
             }
+            
             if (usuario.rol) {
                 document.getElementById("idRol").value = usuario.rol.id;
             }
@@ -216,4 +217,4 @@ function limpiarFormulario() {
     document.getElementById("btnGuardar").textContent = "Guardar Usuario";
     document.getElementById("contrasena").placeholder = "Ingrese contraseña";
     document.getElementById("idRol").value = "";
-}
+}   

@@ -42,10 +42,6 @@ public class Empleado {
     @Column(name = "numero_dui", nullable = false, unique = true, length = 10)
     private String dui;
 
-    @NotBlank
-    @Column(name = "rol", nullable = false, length = 70)
-    private String rol;
-
    @OneToOne(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
 private transient Usuario usuario; // 🌟 Evita el bucle de regreso a Usuario
 

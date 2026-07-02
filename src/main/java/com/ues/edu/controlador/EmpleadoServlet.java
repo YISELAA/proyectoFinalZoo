@@ -87,6 +87,9 @@ public class EmpleadoServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String idParam = request.getParameter("id");
+        String tipo = request.getParameter("tipo");
+
+        response.setContentType("application/json");
 
         if (idParam != null && !idParam.isEmpty()) {
 
@@ -99,18 +102,28 @@ public class EmpleadoServlet extends HttpServlet {
                 return;
             }
 
-            response.setContentType("application/json");
             response.getWriter().write(gson.toJson(empleado));
             return;
         }
 
-        List<Empleado> empleados = empleadoService.obtenerEmpleados();
+        List<Empleado> empleados;
 
-        response.setContentType("application/json");
+        if ("cuidadores".equalsIgnoreCase(tipo)) {
+            empleados = empleadoService.obtenerSoloCuidadores();
+
+        } else if ("veterinarios".equalsIgnoreCase(tipo)) {
+            empleados = empleadoService.obtenerSoloVeterinarios();
+
+        } else {
+            empleados = empleadoService.obtenerEmpleados();
+        }
+
         response.getWriter().write(gson.toJson(empleados));
     }
-
+    
+    
     @Override
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
@@ -120,7 +133,7 @@ public class EmpleadoServlet extends HttpServlet {
 
             Empleado empleado
                     = gson.fromJson(request.getReader(), Empleado.class);
-
+            System.out.println("DUI RECIBIDO: " + empleado.getDui());
             String error = validarEmpleado(empleado);
 
             if (error != null) {
@@ -138,6 +151,8 @@ public class EmpleadoServlet extends HttpServlet {
             );
 
         } catch (RuntimeException e) {
+
+            e.printStackTrace();
 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
@@ -217,7 +232,7 @@ public class EmpleadoServlet extends HttpServlet {
         if (e.getNombre() == null || e.getNombre().trim().length() < 3) {
             return "Nombre mínimo 3 caracteres";
         }
-        
+
         if (!e.getNombre().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
             return "El nombre no debe contener números ni caracteres especiales";
         }
@@ -225,7 +240,7 @@ public class EmpleadoServlet extends HttpServlet {
         if (e.getApellido() == null || e.getApellido().trim().length() < 3) {
             return "Apellido mínimo 3 caracteres";
         }
-        
+
         if (!e.getApellido().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
             return "El apellido no debe contener números ni caracteres especiales";
         }
@@ -234,6 +249,6 @@ public class EmpleadoServlet extends HttpServlet {
             return "El DUI debe tener el formato ########-#";
         }
 
-        return null; 
+        return null;
     }
 }

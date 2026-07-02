@@ -1,5 +1,4 @@
-/* 
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+/* * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
  */
 
@@ -9,15 +8,24 @@ document.addEventListener("DOMContentLoaded", function () {
     const tbody = document.querySelector("#tablaAlimentacion tbody");
     let table = null;
 
+    // 🛠️ CORRECCIÓN: Cambiado el selector a '#tablaAlimentacion' para que coincida con tu JSP
     function initDataTable() {
         table = $('#tablaAlimentacion').DataTable({
+            autoWidth: false,
             pageLength: 5,
             lengthMenu: [5, 10, 25, 50],
+            pagingType: "simple_numbers", // Activa la paginación esbelta
             destroy: true,
             language: {
                 lengthMenu: "Mostrar _MENU_ registros",
                 info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
-                paginate: { next: "Siguiente", previous: "Anterior" }
+                search: "Buscar",
+                infoEmpty: "No hay registros",
+                zeroRecords: "No se encontraron resultados",
+                paginate: {
+                    next: "→",
+                    previous: "←"
+                }
             }
         });
     }
@@ -52,7 +60,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
 
                 tbody.innerHTML = html;
+                
+                // Inicializamos y ajustamos columnas para asegurar el comportamiento responsivo
                 initDataTable();
+                $('#tablaAlimentacion').DataTable().columns.adjust().draw();
             })
             .catch(error => {
                 console.error("Error crítico atrapado en el catch:", error); // 🌟 Alerta de error
