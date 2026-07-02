@@ -43,6 +43,7 @@ public class Empleado {
     private String dui;
 
    @OneToOne(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
+       @Expose
 private transient Usuario usuario; // 🌟 Evita el bucle de regreso a Usuario
 
     @ManyToMany(mappedBy = "cuidadores")

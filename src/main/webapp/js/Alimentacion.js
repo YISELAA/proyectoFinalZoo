@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", function () {
 // 🌟 OBTENER SESIÓN ACTIVA DEL CUIDADOR 
 // ===================================================
 function autocompletarCuidador() {
-    fetch("AlimentacionServlet?accion=obtenerSesion")
+    fetch("AlimentacionServlet?accion=obtenerSesion")   
         .then(response => {
             if (!response.ok) throw new Error("No hay una sesión de cuidador activa.");
             return response.json();

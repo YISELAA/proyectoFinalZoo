@@ -31,11 +31,14 @@ public class Usuario {
     @Column(name = "contrasena", nullable = false, length = 70)
     private String contrasena;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    // Cambia FetchType.LAZY por FetchType.EAGER
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_empleado", unique = true, nullable = false)
+    @Expose
     private Empleado empleado;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "idrol", nullable = false)
+    @Expose
     private Rol rol;
-} 
+}

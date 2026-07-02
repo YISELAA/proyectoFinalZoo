@@ -1,142 +1,142 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-package com.ues.edu.controlador;
+    /*
+     * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+     * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+     */
+    package com.ues.edu.controlador;
 
-import com.google.gson.Gson;
-import com.ues.edu.entidades.Usuario;
-import com.ues.edu.service.LoginService;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-/**
- *
- * @author MINED
- */
-@WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
-public class LoginServlet extends HttpServlet {
-
-    private final Gson gson = new Gson();
-
-    LoginService service = new LoginService();
+    import com.google.gson.Gson;
+    import com.ues.edu.entidades.Usuario;
+    import com.ues.edu.service.LoginService;
+    import jakarta.servlet.ServletException;
+    import jakarta.servlet.annotation.WebServlet;
+    import jakarta.servlet.http.HttpServlet;
+    import jakarta.servlet.http.HttpServletRequest;
+    import jakarta.servlet.http.HttpServletResponse;
+    import jakarta.servlet.http.HttpSession;
+    import java.io.IOException;
+    import java.io.PrintWriter;
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
      *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @author MINED
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+    @WebServlet(name = "LoginServlet", urlPatterns = {"/LoginServlet"})
+    public class LoginServlet extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+        private final Gson gson = new Gson();
 
-        String accion = request.getParameter("accion");
+        LoginService service = new LoginService();
 
-        if ("logout".equals(accion)) {
-            HttpSession session = request.getSession(false);
-            if (session != null) {
-                session.removeAttribute("usuarioSesion"); // Limpiamos el objeto de sesión
-                session.invalidate(); // Destruimos la sesión en Tomcat
+        /**
+         * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+         * methods.
+         *
+         * @param request servlet request
+         * @param response servlet response
+         * @throws ServletException if a servlet-specific error occurs
+         * @throws IOException if an I/O error occurs
+         */
+        protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
+            response.setContentType("text/html;charset=UTF-8");
+            try (PrintWriter out = response.getWriter()) {
+                /* TODO output your page here. You may use following sample code. */
+                out.println("<!DOCTYPE html>");
+                out.println("<html>");
+                out.println("<head>");
+                out.println("<title>Servlet LoginServlet</title>");
+                out.println("</head>");
+                out.println("<body>");
+                out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
+                out.println("</body>");
+                out.println("</html>");
             }
-            //  Redirigimos al usuario de vuelta a la pantalla de entrada
-            response.sendRedirect("login.jsp");
-            return;
         }
 
-        response.sendRedirect("login.jsp");
-    }
+        // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+        /**
+         * Handles the HTTP <code>GET</code> method.
+         *
+         * @param request servlet request
+         * @param response servlet response
+         * @throws ServletException if a servlet-specific error occurs
+         * @throws IOException if an I/O error occurs
+         */
+        @Override
+        protected void doGet(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            String accion = request.getParameter("accion");
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+            if ("logout".equals(accion)) {
+                HttpSession session = request.getSession(false);
+                if (session != null) {
+                    session.removeAttribute("usuarioSesion"); // Limpiamos el objeto de sesión
+                    session.invalidate(); // Destruimos la sesión en Tomcat
+                }
+                //  Redirigimos al usuario de vuelta a la pantalla de entrada
+                response.sendRedirect("login.jsp");
+                return;
+            }
 
-        try {
-            Usuario login = gson.fromJson(request.getReader(), Usuario.class);
+            response.sendRedirect("login.jsp");
+        }
 
-            Usuario usuario = service.login(
-                    login.getNombreUsuario(),
-                    login.getContrasena()
-            );
+        /**
+         * Handles the HTTP <code>POST</code> method.
+         *
+         * @param request servlet request
+         * @param response servlet response
+         * @throws ServletException if a servlet-specific error occurs
+         * @throws IOException if an I/O error occurs
+         */
+        @Override
+        protected void doPost(HttpServletRequest request, HttpServletResponse response)
+                throws ServletException, IOException {
 
-            if (usuario != null) {
+            response.setContentType("application/json");
+            response.setCharacterEncoding("UTF-8");
 
-                request.getSession().setAttribute("usuarioSesion", usuario);
+            try {
+                Usuario login = gson.fromJson(request.getReader(), Usuario.class);
 
-                String json = String.format(
-                        "{\"redirect\":\"index.jsp\",\"nombreUsuario\":\"%s\"}",
-                        usuario.getNombreUsuario()
+                Usuario usuario = service.login(
+                        login.getNombreUsuario(),
+                        login.getContrasena()
                 );
 
-                response.getWriter().write(json);
-                return; 
+                if (usuario != null) {
+
+                    request.getSession().setAttribute("usuarioSesion", usuario);
+
+                    String json = String.format(
+                            "{\"redirect\":\"index.jsp\",\"nombreUsuario\":\"%s\"}",
+                            usuario.getNombreUsuario()
+                    );
+
+                    response.getWriter().write(json);
+                    return; 
+                }
+
+
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"Usuario o contraseña incorrectos.\"}");
+
+            } catch (Exception e) {
+
+                response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+                response.getWriter().write("{\"error\":\"Error interno en el servidor: " + e.getMessage() + "\"}");
             }
-
-            
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"error\":\"Usuario o contraseña incorrectos.\"}");
-
-        } catch (Exception e) {
-          
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\":\"Error interno en el servidor: " + e.getMessage() + "\"}");
         }
+
+        /**
+         * Returns a short description of the servlet.
+         *
+         * @return a String containing servlet description
+         */
+        @Override
+        public String getServletInfo() {
+            return "Short description";
+        }// </editor-fold>
+
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
-}

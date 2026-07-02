@@ -97,7 +97,9 @@ function mostrarUsuarios() {
     usuariosPagina.forEach(function(u) {
         var idUsr     = u.id || "-";
         var nombreUsr = u.nombreUsuario || "-";
-        var nombreEmp = (u.empleado && u.empleado.nombre) ? u.empleado.nombre : "No asignado";
+        var nombreEmp = (u.empleado && u.empleado.nombre && u.empleado.apellido)
+        ? u.empleado.nombre + " " + u.empleado.apellido
+        : "No asignado";
         var nombreRol = (u.rol && u.rol.nombreRol) ? u.rol.nombreRol : "Sin rol";
 
         html += "<tr>" +

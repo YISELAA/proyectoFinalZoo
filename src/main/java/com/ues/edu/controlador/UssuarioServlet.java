@@ -27,22 +27,21 @@ public class UssuarioServlet extends HttpServlet {
     private final UsuariosService usuarioService = new UsuariosService();
 
     // 🌟 Instancia global de Gson configurada con estrategia de exclusión segura
+  // 🌟 Instancia global de Gson CORREGIDA y optimizada
     private final Gson gson = new GsonBuilder()
-        .addSerializationExclusionStrategy(new com.google.gson.ExclusionStrategy() {
+        .excludeFieldsWithoutExposeAnnotation() // 👈 Obliga a Gson a hacer caso a los @Expose
+        .setExclusionStrategies(new com.google.gson.ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(com.google.gson.FieldAttributes f) {
-                // Cortamos de raíz los bucles circulares y colecciones perezosas de las relaciones
-                return f.getName().equals("usuario") 
-                    || f.getName().equals("historiales")
-                    || f.getName().equals("cuidadores")
-                    || f.getName().equals("animalesAsignados")
-                    || f.getName().equals("listaAnimales")
-                    || f.getName().equals("habitatsAsignados");
+                return false;
             }
+
             @Override
-            public boolean shouldSkipClass(Class<?> clazz) { return false; }
+            public boolean shouldSkipClass(Class<?> clazz) {
+                return clazz.getName().contains("hibernate")
+                    || clazz.getName().contains("HibernateProxy");
+            }
         })
-        .setDateFormat("yyyy-MM-dd") 
         .create();
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)

@@ -118,7 +118,7 @@
         <div id="paginacion" class="paginacion"></div>
 
         <div style="margin-top: 24px; text-align: right;">
-            <a href="${pageContext.request.contextPath}/index.html"
+            <a href="${pageContext.request.contextPath}/index.jsp"
                class="btn-back">
                 <i class="ti ti-arrow-left"></i>
             </a>

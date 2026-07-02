@@ -54,8 +54,7 @@
                                         if (empleados != null) {
                                             for (Empleado e : empleados) {
                                 %>
-                                <option value="<%= e.getId()%>"><%= e.getNombre()%></option>
-                                <%
+                                <option value="<%= e.getId()%>"><%= e.getNombre()%> <%= e.getApellido()%></option>                                <%
                                             }
                                         }
                                     } catch (Exception e) {

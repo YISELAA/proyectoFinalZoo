@@ -36,6 +36,7 @@ public class HistorialMedicoServlet extends HttpServlet {
                     || f.getName().equals("cuidadores")
                     || f.getName().equals("animalesAsignados")
                     || f.getName().equals("usuario")
+                        || f.getName().equals("habitatsAsignados")
                     || f.getName().equals("listaAnimales"); // <--- EL NUEVO CULPABLE AQUÍ
             }
             @Override
