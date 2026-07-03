@@ -106,8 +106,15 @@ document.getElementById("formEmpleado").addEventListener("submit", function (eve
                 console.log("STATUS:", response.status);
                 console.log("RESPUESTA:", texto);
 
+                // Si la respuesta no es OK, intentamos extraer la propiedad 'error' del JSON
                 if (!response.ok) {
-                    throw new Error(texto);
+                    try {
+                        const jsonError = JSON.parse(texto);
+                        throw new Error(jsonError.error || "Ocurrió un error inesperado");
+                    } catch (e) {
+                        // Si por alguna razón no era un JSON válido, lanzamos el texto original o el error del try
+                        throw new Error(e.name === "SyntaxError" ? texto : e.message);
+                    }
                 }
 
                 return JSON.parse(texto);
@@ -123,7 +130,6 @@ document.getElementById("formEmpleado").addEventListener("submit", function (eve
                 limpiarFormulario();
 
                 if (!id) {
-                    // Solo al crear un nuevo empleado ir a la primera página
                     paginaActual = 1;
                 }
 
@@ -133,7 +139,7 @@ document.getElementById("formEmpleado").addEventListener("submit", function (eve
                 Swal.fire({
                     icon: "warning",
                     title: "No se puede guardar",
-                    text: error.message,
+                    text: error.message, // <--- Aquí ahora se mostrará solo el texto limpio
                     confirmButtonColor: "#b05d4d"
                 });
             });

@@ -30,12 +30,12 @@
                     <div class="formulario">
 
                         <div class="campo">
-                            <label for="nombreEmpleado">Nombre</label>
+                            <label for="nombreEmpleado">Nombres</label>
                             <input type="text" id="nombreEmpleado" placeholder="Ingrese nombre" required>
                         </div>
 
                         <div class="campo">
-                            <label for="apellido">Apellido</label>
+                            <label for="apellido">Apellidos</label>
                             <input type="text" id="apellido" placeholder="Ingrese apellido" required>
                         </div>
 
@@ -62,8 +62,8 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
                             <th>DUI</th>
                             <th>Acciones</th>
                         </tr>

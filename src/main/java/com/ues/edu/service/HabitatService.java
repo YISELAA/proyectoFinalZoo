@@ -13,12 +13,11 @@ import java.util.List;
  * @author MINED
  */
 public class HabitatService {
-    
+
     private HabitatDao dao = new HabitatDao();
 
-    // CREAR
-    public void crearHabitat(Habitat h) {
-        dao.guardar(h);
+    public void crearHabitat(Habitat h){
+       dao.guardar(h);
     }
 
     // ACTUALIZAR
@@ -40,16 +39,6 @@ public class HabitatService {
     public Habitat buscarHabitat(long id) {
         return dao.buscarPorId(id);
     }
-
-//    // BUSCAR POR TIPO DE TERRENO
-//    public List<Habitat> buscarPorTipoTerreno(String tipoTerreno) {
-//        return dao.buscarPorTipoTerreno(tipoTerreno);
-//    }
-//
-//    // FILTRAR POR CAPACIDAD MÍNIMA
-//    public List<Habitat> filtrarPorCapacidadMinima(int capacidad) {
-//        return dao.filtrarPorCapacidadMinima(capacidad);
-//    }
 
     // LISTAR PAGINADO
     public List<Habitat> listarPaginado(int pagina, int size) {

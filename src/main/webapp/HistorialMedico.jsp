@@ -127,7 +127,7 @@
             </div>
         </div>
 
-        <script src="${pageContext.request.contextPath}/js/HistorialMedico.js"></script>
+<script src="${pageContext.request.contextPath}/js/HistorialMedico.js?v=2"></script>
 
     </body>
 

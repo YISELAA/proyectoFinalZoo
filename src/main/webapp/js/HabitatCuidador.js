@@ -10,7 +10,6 @@ let datosCompletos = []; // Almacén global para segmentar las asignaciones de l
 document.addEventListener("DOMContentLoaded", function () {
     cargarComponentes();
     listarAsignaciones();
-    autocompletarVeterinario();
 
 
 
@@ -43,8 +42,7 @@ function cargarComponentes() {
                 const select = document.getElementById("idEmpleadoSelect");
                 select.innerHTML = html;
 
-                // 🔥 refrescar select2
-                $('#idEmpleadoSelect').trigger('change');
+                $('#idEmpleadoSelect').val(null).trigger('change');
 
             })
             .catch(err => console.error("Error cargando empleados:", err));
@@ -275,11 +273,11 @@ function cargarParaEditar(idHabitat) {
                 if (btnGuardar) {
                     btnGuardar.textContent = "Actualizar Asignación";
                 }
-
-                window.scrollTo({
-                    top: 0,
-                    behavior: "smooth"
-                });
+//
+//                window.scrollTo({
+//                    top: 0,
+//                    behavior: "smooth"
+//                });
             })
             .catch(err => {
                 console.error("Error al buscar asignación:", err);

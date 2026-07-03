@@ -25,32 +25,32 @@ function buscarHabitats(pagina = 1) {
     paginaActual = pagina;
 
     fetch("HabitatServlet")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Error al cargar la lista de hábitats.");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Datos recibidos del Servlet:", data);
-            
-            // Evaluamos el formato dinámicamente y extraemos el array correspondiente
-            if (data.habitats && Array.isArray(data.habitats)) {
-                datosCompletos = data.habitats;
-            } else if (Array.isArray(data)) {
-                datosCompletos = data;
-            } else {
-                console.error("Formato de datos desconocido:", data);
-                return;
-            }
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error al cargar la lista de hábitats.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Datos recibidos del Servlet:", data);
 
-            // Aplicamos el motor de recorte local
-            redibujarTablaLocal();
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            mostrarAlertaError("No se pudieron cargar los hábitats");
-        });
+                // Evaluamos el formato dinámicamente y extraemos el array correspondiente
+                if (data.habitats && Array.isArray(data.habitats)) {
+                    datosCompletos = data.habitats;
+                } else if (Array.isArray(data)) {
+                    datosCompletos = data;
+                } else {
+                    console.error("Formato de datos desconocido:", data);
+                    return;
+                }
+
+                // Aplicamos el motor de recorte local
+                redibujarTablaLocal();
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                mostrarAlertaError("No se pudieron cargar los hábitats");
+            });
 }
 
 // ===============================
@@ -90,7 +90,8 @@ function mostrarHabitats(lista) {
 // ==========================================================
 function renderPaginacion(totalRegistros) {
     const pagContenedor = document.getElementById("paginacionHabitats");
-    if (!pagContenedor) return;
+    if (!pagContenedor)
+        return;
 
     const totalPaginas = Math.ceil(totalRegistros / size) || 1;
 
@@ -128,7 +129,7 @@ function redibujarTablaLocal() {
     const inicio = (paginaActual - 1) * size;
     const fin = inicio + size;
     const registrosSegmentados = datosCompletos.slice(inicio, fin);
-    
+
     mostrarHabitats(registrosSegmentados);
     renderPaginacion(datosCompletos.length);
 }
@@ -142,35 +143,40 @@ function cambiarPagina(nuevaPagina) {
 // ===============================
 function editarHabitat(id) {
     fetch(`HabitatServlet?id=${id}`)
-        .then(response => {
-            if (!response.ok) throw new Error("No se pudo obtener el hábitat.");
-            return response.json();
-        })
-        .then(h => {
-            document.getElementById("idHabitat").value = h.id;
-            document.getElementById("tipoTerreno").value = h.tipoTerreno;
-            document.getElementById("capacidad").value = h.capacidad;
+            .then(response => {
+                if (!response.ok)
+                    throw new Error("No se pudo obtener el hábitat.");
+                return response.json();
+            })
+            .then(h => {
+                document.getElementById("idHabitat").value = h.id;
+                document.getElementById("tipoTerreno").value = h.tipoTerreno;
+                document.getElementById("capacidad").value = h.capacidad;
 
-            // Cambiar texto del botón principal
-            let btnGuardar = document.getElementById("btnGuardarHabitat") || document.getElementById("btnGuardar");
-            if (btnGuardar) {
-                btnGuardar.textContent = "Actualizar Hábitat";
-            }
+                // Cambiar texto del botón principal
+                let btnGuardar = document.getElementById("btnGuardarHabitat") || document.getElementById("btnGuardar");
+                if (btnGuardar) {
+                    btnGuardar.textContent = "Actualizar Hábitat";
+                }
 
-            // Subir suavemente al formulario
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
+                // Subir suavemente al formulario
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            })
+            .catch(error => {
+                console.error(error);
+                mostrarAlertaError("Error al recuperar los datos del hábitat.");
             });
-        })
-        .catch(error => {
-            console.error(error);
-            mostrarAlertaError("Error al recuperar los datos del hábitat.");
-        });
 }
 
 // ===============================
 // GUARDAR O ACTUALIZAR
+// ===============================
+
+// ===============================
+// GUARDAR O ACTUALIZAR (CORREGIDO)
 // ===============================
 document.getElementById("formHabitat").addEventListener("submit", function (event) {
     event.preventDefault();
@@ -195,49 +201,50 @@ document.getElementById("formHabitat").addEventListener("submit", function (even
         },
         body: JSON.stringify(habitat)
     })
-    .then(async response => {
-        const text = await response.text();
-        let data;
-        
-        try {
-            data = JSON.parse(text);
-        } catch (e) {
-            throw new Error(text || "Error interno del servidor");
-        }
+            // 🔽 ¡ESTE ES EL BLOQUE QUE HACE LA MAGIA! 🔽
+            .then(async response => {
+                const text = await response.text();
+                let data;
 
-        if (!response.ok) {
-            throw new Error(data.error || "Error en la operación del hábitat");
-        }
-        return data;
-    })
-    .then(data => {
-        console.log(data);
-        
-        let msgError = document.getElementById("mensajeErrorHabitat") || document.getElementById("mensajeError");
-        if (msgError) msgError.innerHTML = "";
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    throw new Error(text || "Error interno del servidor");
+                }
 
-        limpiarFormularioHabitat();
-        buscarHabitats(paginaActual); // Mantiene la posición
+                if (!response.ok) {
+                    // Extrae el mensaje de error que configuraste en tu Servlet
+                    throw new Error(data.error || "Error en la operación del hábitat");
+                }
+                return data; // Si todo está bien, pasa al siguiente .then
+            })
+            .then(data => {
+                console.log("Éxito:", data);
+                let msgError = document.getElementById("mensajeErrorHabitat") || document.getElementById("mensajeError");
+                if (msgError)
+                    msgError.innerHTML = "";
 
-        Swal.fire({
-            icon: "success",
-            title: id ? "Hábitat Actualizado" : "Hábitat Guardado",
-            text: data.mensaje || "Operación realizada con éxito",
-            confirmButtonColor: "#3f5b4b"
-        });
-    })
-    .catch(error => {
-        console.error(error);
-        let msgError = document.getElementById("mensajeErrorHabitat") || document.getElementById("mensajeError");
-        if (msgError) {
-            msgError.innerHTML = `
-                <div style="color:white; background:#d62828; padding:10px; border-radius:8px; margin-bottom:15px;">
-                    ${error.message}
-                </div>`;
-        } else {
-            mostrarAlertaError(error.message);
-        }
-    });
+                limpiarFormularioHabitat();
+                buscarHabitats(paginaActual);
+
+                Swal.fire({
+                    icon: "success",
+                    title: id ? "Hábitat Actualizado" : "Hábitat Guardado",
+                    text: data.mensaje || "Operación realizada con éxito",
+                    confirmButtonColor: "#3f5b4b"
+                });
+            })
+            .catch(error => {
+                console.error("Error atrapado:", error);
+
+                // Limpia la barra roja por si acaso quedó pintada de antes
+                let msgError = document.getElementById("mensajeErrorHabitat") || document.getElementById("mensajeError");
+                if (msgError)
+                    msgError.innerHTML = "";
+
+                // Muestra la alerta flotante impecable
+                mostrarAlertaError(error.message);
+            });
 });
 
 // ===============================
@@ -254,33 +261,39 @@ function eliminarHabitat(id) {
         confirmButtonText: "Sí, eliminar",
         cancelButtonText: "Cancelar"
     }).then((result) => {
-        if (!result.isConfirmed) return;
+        if (!result.isConfirmed)
+            return;
 
         fetch(`HabitatServlet?id=${id}`, {
             method: "DELETE"
         })
-        .then(async response => {
-            const texto = await response.text();
-            if (!response.ok) throw new Error(texto || "No se pudo eliminar el hábitat");
-            try { return JSON.parse(texto); } catch (e) { return { mensaje: texto }; }
-        })
-        .then(data => {
-            Swal.fire({
-                icon: "success",
-                title: "Eliminado",
-                text: data.mensaje || "El hábitat ha sido removido.",
-                confirmButtonColor: "#3f5b4b"
-            });
-            buscarHabitats(paginaActual);
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: "error",
-                title: "No se puede eliminar",
-                text: error.message,
-                confirmButtonColor: "#b05d4d"
-            });
-        });
+                .then(async response => {
+                    const texto = await response.text();
+                    if (!response.ok)
+                        throw new Error(texto || "No se pudo eliminar el hábitat");
+                    try {
+                        return JSON.parse(texto);
+                    } catch (e) {
+                        return {mensaje: texto};
+                    }
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Eliminado",
+                        text: data.mensaje || "El hábitat ha sido removido.",
+                        confirmButtonColor: "#3f5b4b"
+                    });
+                    buscarHabitats(paginaActual);
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "No se puede eliminar",
+                        text: error.message,
+                        confirmButtonColor: "#b05d4d"
+                    });
+                });
     });
 }
 
@@ -288,9 +301,12 @@ function eliminarHabitat(id) {
 // LIMPIAR FORMULARIO
 // ===============================
 function limpiarFormularioHabitat() {
-    if (document.getElementById("idHabitat")) document.getElementById("idHabitat").value = "";
-    if (document.getElementById("tipoTerreno")) document.getElementById("tipoTerreno").value = "";
-    if (document.getElementById("capacidad")) document.getElementById("capacidad").value = "";
+    if (document.getElementById("idHabitat"))
+        document.getElementById("idHabitat").value = "";
+    if (document.getElementById("tipoTerreno"))
+        document.getElementById("tipoTerreno").value = "";
+    if (document.getElementById("capacidad"))
+        document.getElementById("capacidad").value = "";
 
     // Restaurar texto del botón principal
     let btnGuardar = document.getElementById("btnGuardarHabitat") || document.getElementById("btnGuardar");

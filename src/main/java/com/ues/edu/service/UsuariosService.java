@@ -17,17 +17,23 @@ public class UsuariosService {
         return dao.buscarPorId(id);
     }
 
-   public void crearUsuario(Usuario u) {
+  public void crearUsuario(Usuario u) {
 
     System.out.println("===============");
     System.out.println("Usuario recibido: " + u.getNombreUsuario());
     System.out.println("Contraseña recibida: " + u.getContrasena());
     System.out.println("===============");
 
+    // 1. 🔥 VALIDACIÓN: Verificar si el nombre de usuario ya existe en la base de datos
+    if (dao.existeNombreUsuario(u.getNombreUsuario())) {
+        throw new RuntimeException("El nombre de usuario ya existe");
+    }
+
     if (u.getContrasena() == null) {
         throw new RuntimeException("LA CONTRASEÑA LLEGA NULL");
     }
 
+    // 2. Si no está duplicado, se procede a encriptar y guardar
     EncriptarContrasenia enc = new EncriptarContrasenia();
 
     u.setContrasena(

@@ -101,38 +101,6 @@ public class HabitatDao {
     }
 
     // ==========================================================
-    // BUSCAR POR TIPO TERRENO (Corregido con orden)
-    // ==========================================================
-//    public List<Habitat> buscarPorTipoTerreno(String tipoTerreno) {
-//        EntityManager em = emf.createEntityManager();
-//        TypedQuery<Habitat> query =
-//                em.createQuery(
-//                        "SELECT h FROM Habitat h WHERE LOWER(h.tipoTerreno) LIKE LOWER(:tipo) ORDER BY h.id ASC",
-//                        Habitat.class
-//                );
-//        query.setParameter("tipo", "%" + tipoTerreno + "%");
-//        List<Habitat> lista = query.getResultList();
-//        em.close();
-//        return lista;
-//    }
-//
-//    // ==========================================================
-//    // FILTRAR POR CAPACIDAD MÍNIMA (Corregido con orden)
-//    // ==========================================================
-//    public List<Habitat> filtrarPorCapacidadMinima(int capacidad) {
-//        EntityManager em = emf.createEntityManager();
-//        TypedQuery<Habitat> query =
-//                em.createQuery(
-//                        "SELECT h FROM Habitat h WHERE h.capacidad >= :capacidad ORDER BY h.id ASC",
-//                        Habitat.class
-//                );
-//        query.setParameter("capacidad", capacidad);
-//        List<Habitat> lista = query.getResultList();
-//        em.close();
-//        return lista;
-//    }
-
-    // ==========================================================
     // PAGINADO (Corregido con orden)
     // ==========================================================
     public List<Habitat> listarPaginado(int pagina, int size) {
@@ -146,4 +114,19 @@ public class HabitatDao {
         em.close();
         return lista;
     }
+
+
+public boolean existeTipoTerreno(String tipo) {
+    EntityManager em = emf.createEntityManager();
+
+    Long count = em.createQuery(
+        "SELECT COUNT(h) FROM Habitat h WHERE LOWER(h.tipoTerreno) = LOWER(:tipo)",
+        Long.class
+    )
+    .setParameter("tipo", tipo)
+    .getSingleResult();
+
+    em.close();
+    return count > 0;
+}
 }

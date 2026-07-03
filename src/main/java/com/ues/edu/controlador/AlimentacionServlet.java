@@ -44,6 +44,9 @@ public class AlimentacionServlet extends HttpServlet {
     // ==========================
     // GET
     // ==========================
+   // ==========================
+    // MÉTODO doGet COMPLETO Y UNIFICADO
+    // ==========================
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -52,36 +55,34 @@ public class AlimentacionServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-
             String accion = request.getParameter("accion");
 
-            // ================= SESIÓN =================
+            // ================= 🌟 1. CONTROL DE SESIÓN AUTOMÁTICA =================
             if ("obtenerSesion".equals(accion)) {
-
                 HttpSession session = request.getSession(false);
 
-                Object logueado = null;
                 if (session != null) {
-                    logueado = session.getAttribute("usuarioLogueado");
-                    if (logueado == null) logueado = session.getAttribute("empleadoLogueado");
-                    if (logueado == null) logueado = session.getAttribute("usuario");
-                    if (logueado == null) logueado = session.getAttribute("empleado");
+                    // Extraemos el objeto Usuario que guardó tu LoginServlet
+                    Usuario user = (Usuario) session.getAttribute("usuarioSesion");
+
+                    // Si el usuario existe y tiene un empleado vinculado (Cuidador/Veterinario)
+                    if (user != null && user.getEmpleado() != null) {
+                        // Enviamos al JS el objeto Empleado en formato JSON
+                        response.getWriter().write(gson.toJson(user.getEmpleado()));
+                        return;
+                    }
                 }
 
-                if (logueado != null) {
-                    response.getWriter().write(gson.toJson(logueado));
-                } else {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    response.getWriter().write("{\"error\":\"No hay sesión activa\"}");
-                }
+                // Si no hay sesión válida, respondemos con 401 para el catch del JS
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"No hay sesión activa\"}");
                 return;
             }
 
-            // ================= ID =================
+            // ================= 🌟 2. BUSCAR POR ID (Para Edición) =================
             String idParam = request.getParameter("id");
 
             if (idParam != null && !idParam.isEmpty()) {
-
                 int id = Integer.parseInt(idParam);
                 Alimentacion a = alimentacionService.buscarAlimentacion(id);
 
@@ -95,14 +96,14 @@ public class AlimentacionServlet extends HttpServlet {
                 return;
             }
 
-            // ================= LISTAR =================
+            // ================= 🌟 3. LISTAR GENERAL (Para la Tabla) =================
             List<Alimentacion> lista = alimentacionService.obtenerAlimentaciones();
             response.getWriter().write(gson.toJson(lista));
 
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.getWriter().write("{\"error\":\"Error servidor\"}");
+            response.getWriter().write("{\"error\":\"Error interno en el servidor\"}");
         }
     }
 

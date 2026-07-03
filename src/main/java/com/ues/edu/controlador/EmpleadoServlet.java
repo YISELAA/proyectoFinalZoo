@@ -229,16 +229,16 @@ public class EmpleadoServlet extends HttpServlet {
             return "Empleado inválido";
         }
 
-        if (e.getNombre() == null || e.getNombre().trim().length() < 3) {
-            return "Nombre mínimo 3 caracteres";
+        if (e.getNombre() == null || e.getNombre().trim().length() <6) {
+            return "Nombre mínimo 6 caracteres";
         }
 
         if (!e.getNombre().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
             return "El nombre no debe contener números ni caracteres especiales";
         }
 
-        if (e.getApellido() == null || e.getApellido().trim().length() < 3) {
-            return "Apellido mínimo 3 caracteres";
+        if (e.getApellido() == null || e.getApellido().trim().length() <6) {
+            return "Apellido mínimo 6 caracteres";
         }
 
         if (!e.getApellido().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {

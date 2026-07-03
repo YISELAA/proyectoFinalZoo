@@ -1,10 +1,9 @@
 package com.ues.edu.entidades;
 
+import com.ues.edu.modelo.EncriptarContrasenia;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestBase {
 
@@ -14,29 +13,55 @@ public class TestBase {
         EntityManager em = emf.createEntityManager();
 
         try {
-
             em.getTransaction().begin();
 
-           
+            // ===========================
+            // ROLES DEL SISTEMA
+            // ===========================
 
-           
+            Rol admin = new Rol();
+            admin.setNombreRol("ADMINISTRADOR");
+            em.persist(admin);
 
-            // Crear hábitat
-            Habitat habitat = new Habitat();
-            habitat.setTipoTerreno("Selva");
-            habitat.setCapacidad(20);
+            Rol veterinario = new Rol();
+            veterinario.setNombreRol("VETERINARIO");
+            em.persist(veterinario);
 
-            List<Empleado> cuidadores = new ArrayList<>();
-          
+            Rol cuidador = new Rol();
+            cuidador.setNombreRol("CUIDADOR");
+            em.persist(cuidador);
 
-            habitat.setCuidadores(cuidadores);
+            // ===========================
+            // EMPLEADO ADMINISTRADOR
+            // ===========================
 
-            em.persist(habitat);
+            Empleado empleado = new Empleado();
+            empleado.setNombre("Karla");
+            empleado.setApellido("Ruiz");
+            empleado.setDui("00000000-0");
+
+            em.persist(empleado);
+
+            // ===========================
+            // USUARIO ADMINISTRADOR
+            // ===========================
+
+            EncriptarContrasenia enc = new EncriptarContrasenia();
+
+            Usuario usuario = new Usuario();
+            usuario.setNombreUsuario("karla123");
+            usuario.setContrasena(enc.contraseniaencriptar("karla123"));
+            usuario.setEmpleado(empleado);
+            usuario.setRol(admin);
+
+            em.persist(usuario);
 
             em.getTransaction().commit();
 
-            System.out.println("Datos guardados correctamente");
-
+            System.out.println("==================================");
+            System.out.println("BASE INICIAL CREADA");
+            System.out.println("==================================");
+           
         } catch (Exception e) {
 
             if (em.getTransaction().isActive()) {
@@ -46,7 +71,6 @@ public class TestBase {
             e.printStackTrace();
 
         } finally {
-
             em.close();
             emf.close();
         }

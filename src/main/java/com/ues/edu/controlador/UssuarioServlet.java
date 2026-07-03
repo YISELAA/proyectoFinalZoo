@@ -11,15 +11,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-    import java.io.IOException;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
 import com.ues.edu.entidades.Usuario;
-
-import jakarta.servlet.http.HttpServletResponse;
-
-import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
@@ -31,9 +28,8 @@ public class UssuarioServlet extends HttpServlet {
     private final UsuariosService usuarioService = new UsuariosService();
 
     // 🌟 Instancia global de Gson configurada con estrategia de exclusión segura
-  // 🌟 Instancia global de Gson CORREGIDA y optimizada
     private final Gson gson = new GsonBuilder()
-        .excludeFieldsWithoutExposeAnnotation() // 👈 Obliga a Gson a hacer caso a los @Expose
+        .excludeFieldsWithoutExposeAnnotation()
         .setExclusionStrategies(new com.google.gson.ExclusionStrategy() {
             @Override
             public boolean shouldSkipField(com.google.gson.FieldAttributes f) {
@@ -88,14 +84,12 @@ public class UssuarioServlet extends HttpServlet {
                     return;
                 }
 
-                // 🌟 CORREGIDO: Se usa "this.gson" seguro en lugar de la instancia vacía
                 response.getWriter().write(this.gson.toJson(usuario));
                 return;
             }
 
             // LISTAR TODOS (Cuando carga la tabla)
             List<Usuario> usuarios = usuarioService.mostrarUsuarios();
-            // 🌟 CORREGIDO: Se usa "this.gson" para formatear la lista sin bucles infinitos
             response.getWriter().write(this.gson.toJson(usuarios));
 
         } catch (Exception e) {
@@ -128,10 +122,10 @@ public class UssuarioServlet extends HttpServlet {
             
             System.out.println("JSON recibido en bruto: " + jsonRaw);
 
-            // 2. 🌟 CORREGIDO: Deserializar el JSON entrante usando de forma coherente "this.gson"
+            // 2. Deserializar el JSON entrante
             Usuario usuario = this.gson.fromJson(jsonRaw, Usuario.class);
 
-            // 3. Validar los datos esenciales del usuario
+            // 3. Validar los datos sintácticos esenciales
             String error = validarUsuario(usuario, false);
             if (error != null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -142,15 +136,21 @@ public class UssuarioServlet extends HttpServlet {
             // 4. Mandar a guardar usando el servicio
             usuarioService.crearUsuario(usuario);
 
-            // 5. Responder con JSON de éxito genuino
+            // 5. Responder con éxito genuino
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"mensaje\":\"Usuario guardado exitosamente\"}");
 
+        } catch (RuntimeException e) {
+            // 🚨 CAPTURA AQUÍ: Errores lógicos preventivos del negocio (Ej. "El nombre de usuario ya existe")
+            System.out.println("VALIDACIÓN DE NEGOCIO EN DO_POST: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
+            response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+
         } catch (Exception e) {
-            System.out.println("ERROR CRÍTICO EN DO_POST: " + e.getMessage());
+            // Error técnico físico imprevisto de base de datos o servidor
+            System.out.println("ERROR CRÍTICO INESPERADO EN DO_POST: " + e.getMessage());
             e.printStackTrace();
-            
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
             response.getWriter().write("{\"error\":\"Error interno en el servidor: " + e.getMessage() + "\"}");
         }
     }
@@ -166,10 +166,8 @@ public class UssuarioServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-            // 🌟 CORREGIDO: Mapear usando la configuración de exclusión global
             Usuario usuario = this.gson.fromJson(request.getReader(), Usuario.class);
 
-            // Validar los datos para actualizar
             String error = validarUsuario(usuario, true);
             if (error != null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -182,10 +180,16 @@ public class UssuarioServlet extends HttpServlet {
             response.setStatus(HttpServletResponse.SC_OK);
             response.getWriter().write("{\"mensaje\":\"Usuario actualizado con éxito\"}");
 
+        } catch (RuntimeException e) {
+            // 🚨 CAPTURA AQUÍ: Errores controlados del Service en actualizaciones si los implementas
+            System.out.println("VALIDACIÓN DE NEGOCIO EN DO_PUT: " + e.getMessage());
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
+            response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+
         } catch (Exception e) {
-            System.out.println("ERROR EN DO_PUT: " + e.getMessage());
+            System.out.println("ERROR CRÍTICO INESPERADO EN DO_PUT: " + e.getMessage());
             e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
             response.getWriter().write("{\"error\":\"Error al actualizar: " + e.getMessage() + "\"}");
         }
     }

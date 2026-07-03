@@ -111,4 +111,19 @@ public class UsuarioDao {
             em.close();
         }
     }
+    
+   public boolean existeNombreUsuario(String nombreUsuario) {
+    EntityManager em = emf.createEntityManager();
+    try {
+        // 🌟 CORREGIDO: Se cambia u.nombre_usuario por u.nombreUsuario
+        Long cantidad = em.createQuery(
+                "SELECT COUNT(u) FROM Usuario u WHERE u.nombreUsuario = :nombre",
+                Long.class)
+                .setParameter("nombre", nombreUsuario)
+                .getSingleResult();
+        return cantidad > 0;
+    } finally {
+        em.close();
+    }
+}
 }

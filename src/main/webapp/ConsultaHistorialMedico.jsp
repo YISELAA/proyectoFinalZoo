@@ -34,6 +34,7 @@
             <thead>
                 <tr>
                     <th>Animal</th>
+                    <th>Especie</th>
                     <th>Diagnóstico</th>
                     <th>Tratamiento</th>
                     <th>Fecha</th>
