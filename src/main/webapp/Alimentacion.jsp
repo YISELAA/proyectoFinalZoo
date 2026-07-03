@@ -54,11 +54,11 @@
                     <div class="campo"> <label>Cantidad</label> <div style="display: flex; width: 100%;"> <input type="number" step="0.01" id="cantidad" placeholder="Ingrese cantidad" required style="border-radius: 12px 0 0 12px; border-right: none; flex: 1;"> <span style="display: flex; align-items: center; padding: 0 15px; background: var(--verde-suave); border: 2px solid #cce3de; border-left: none; border-radius: 0 12px 12px 0; color: var(--verde-oscuro); font-weight: bold; font-size: 15px;"> kg </span> </div> </div>
 
                     <div class="campo">
-                        <label for="idAnimal">Animal</label>
+                        <label for="idAnimal">Especie</label>
 
                         <select id="idAnimal" required>
                             <option value="">
-                                Seleccione un animal
+                                Seleccione una especie
                             </option>
                         </select>
                     </div>
@@ -116,7 +116,7 @@
 
     </div>
 
-    <script src="${pageContext.request.contextPath}/js/Alimentacion.js?v=1.1"></script>
+    <script src="${pageContext.request.contextPath}/js/Alimentacion.js"></script>
 
 </body>
 

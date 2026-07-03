@@ -18,8 +18,7 @@ import java.util.List;
  */
 public class AnimalDao {
     
-    private EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("profinalPU");
+      private EntityManagerFactory emf = JPAUtil.getEMF();
 
     // ==========================
     // GUARDAR
@@ -72,9 +71,13 @@ public class AnimalDao {
     // ==========================================================
     public List<Animal> listar() {
         EntityManager em = emf.createEntityManager();
-        // 🌟 Agregamos ORDER BY a.id ASC para mantener el orden espacial
-        TypedQuery<Animal> query =
-                em.createQuery("SELECT a FROM Animal a JOIN FETCH a.habitat ORDER BY a.id ASC", Animal.class);
+        
+        // 🌟 Cambiamos "JOIN FETCH" por "LEFT JOIN FETCH" para incluir registros con hábitat NULL
+        TypedQuery<Animal> query = em.createQuery(
+                "SELECT a FROM Animal a LEFT JOIN FETCH a.habitat ORDER BY a.id ASC", 
+                Animal.class
+        );
+        
         List<Animal> lista = query.getResultList();
         em.close();
         return lista;
@@ -101,34 +104,34 @@ public class AnimalDao {
     // ==========================
     // BUSCAR POR NOMBRE (con hábitat)
     // ==========================
-    public List<Animal> buscarPorNombre(String nombre) {
-        EntityManager em = emf.createEntityManager();
-        TypedQuery<Animal> query =
-                em.createQuery(
-                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE LOWER(a.nombre) LIKE LOWER(:nombre) ORDER BY a.id ASC",
-                        Animal.class
-                );
-        query.setParameter("nombre", "%" + nombre + "%");
-        List<Animal> lista = query.getResultList();
-        em.close();
-        return lista;
-    }
+//    public List<Animal> buscarPorNombre(String nombre) {
+//        EntityManager em = emf.createEntityManager();
+//        TypedQuery<Animal> query =
+//                em.createQuery(
+//                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE LOWER(a.nombre) LIKE LOWER(:nombre) ORDER BY a.id ASC",
+//                        Animal.class
+//                );
+//        query.setParameter("nombre", "%" + nombre + "%");
+//        List<Animal> lista = query.getResultList();
+//        em.close();
+//        return lista;
+//    }
 
     // ==========================
     // FILTRAR POR HÁBITAT
     // ==========================
-    public List<Animal> filtrarPorHabitat(int idHabitat) {
-        EntityManager em = emf.createEntityManager();
-        TypedQuery<Animal> query =
-                em.createQuery(
-                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE a.habitat.id = :idHabitat ORDER BY a.id ASC",
-                        Animal.class
-                );
-        query.setParameter("idHabitat", idHabitat);
-        List<Animal> lista = query.getResultList();
-        em.close();
-        return lista;
-    }
+//    public List<Animal> filtrarPorHabitat(int idHabitat) {
+//        EntityManager em = emf.createEntityManager();
+//        TypedQuery<Animal> query =
+//                em.createQuery(
+//                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE a.habitat.id = :idHabitat ORDER BY a.id ASC",
+//                        Animal.class
+//                );
+//        query.setParameter("idHabitat", idHabitat);
+//        List<Animal> lista = query.getResultList();
+//        em.close();
+//        return lista;
+//    }
 
     // ==========================================================
     // PAGINACIÓN (Corregido: Indispensable ordenar aquí también)

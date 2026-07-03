@@ -19,8 +19,8 @@ document.addEventListener("DOMContentLoaded", function () {
         let usuario = {
             nombreUsuario: document.getElementById("nombreUsuario").value.trim(),
             contrasena: document.getElementById("contrasena").value,
-            empleado: { id: parseInt(document.getElementById("idEmpleado").value) },
-            rol: { id: idRolVal }
+            empleado: {id: parseInt(document.getElementById("idEmpleado").value)},
+            rol: {id: idRolVal}
         };
 
         if (id) {
@@ -31,50 +31,54 @@ document.addEventListener("DOMContentLoaded", function () {
 
         fetch("/ProyectoFinalZoo/UssuarioServlet", {
             method: metodo,
-            headers: { "Content-Type": "application/json" },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify(usuario)
         })
-        .then(async response => {
-            const data = await response.json();
-            if (!response.ok) throw new Error(data.error || "Ocurrió un error en la operación");
-            return data;
-        })
-        .then(data => {
-            document.getElementById("mensajeError").innerHTML = "";
-            limpiarFormulario();
-            paginaActual = 1;
-            buscarUsuarios();
-            
-            // Alerta de éxito con el verde corporativo
-            Swal.fire({
-                icon: "success",
-                title: id ? "Actualizado" : "Agregado",
-                text: data.mensaje,
-                confirmButtonColor: "#3f5b4b"
-            });
-        })
-        .catch(error => {
-            // Alerta de advertencia con el rojo terracota
-            Swal.fire({
-                icon: "warning",
-                title: "No se puede guardar",
-                text: error.message,
-                confirmButtonColor: "#b05d4d"
-            });
-            console.error(error);
-        });
+                .then(async response => {
+                    const data = await response.json();
+                    if (!response.ok)
+                        throw new Error(data.error || "Ocurrió un error en la operación");
+                    return data;
+                })
+                .then(data => {
+                    document.getElementById("mensajeError").innerHTML = "";
+                    limpiarFormulario();
+
+                    if (!id) {
+                        paginaActual = 1; // Solo cuando se crea un usuario
+                    }
+
+                    buscarUsuarios();
+
+                    Swal.fire({
+                        icon: "success",
+                        title: id ? "Actualizado" : "Agregado",
+                        text: data.mensaje,
+                        confirmButtonColor: "#3f5b4b"
+                    });
+                })
+                .catch(error => {
+                    // Alerta de advertencia con el rojo terracota
+                    Swal.fire({
+                        icon: "warning",
+                        title: "No se puede guardar",
+                        text: error.message,
+                        confirmButtonColor: "#b05d4d"
+                    });
+                    console.error(error);
+                });
     });
 });
 
 function buscarUsuarios() {
     fetch("UssuarioServlet")
-        .then(res => res.json())
-        .then(data => {
-            usuarios = data;
-            mostrarUsuarios();
-            renderPaginacion();
-        })
-        .catch(error => console.error("Error al cargar usuarios:", error));
+            .then(res => res.json())
+            .then(data => {
+                usuarios = data;
+                mostrarUsuarios();
+                renderPaginacion();
+            })
+            .catch(error => console.error("Error al cargar usuarios:", error));
 }
 
 function mostrarUsuarios() {
@@ -94,25 +98,26 @@ function mostrarUsuarios() {
         return;
     }
 
-    usuariosPagina.forEach(function(u) {
-        var idUsr     = u.id || "-";
+    usuariosPagina.forEach(function (u) {
+        var idUsr = u.id || "-";
         var nombreUsr = u.nombreUsuario || "-";
         var nombreEmp = (u.empleado && u.empleado.nombre && u.empleado.apellido)
-        ? u.empleado.nombre + " " + u.empleado.apellido
-        : "No asignado";
+                ? u.empleado.nombre + " " + u.empleado.apellido
+                : "No asignado";
         var nombreRol = (u.rol && u.rol.nombreRol) ? u.rol.nombreRol : "Sin rol";
 
         html += "<tr>" +
-            "<td>" + idUsr + "</td>" +
-            "<td>" + nombreUsr + "</td>" +
-            "<td>***</td>" +
-            "<td>" + nombreEmp + "</td>" +
-            "<td>" + nombreRol + "</td>" +
-            "<td>" +
+                "<td>" + idUsr + "</td>" +
+                "<td>" + nombreUsr + "</td>" +
+                "<td>***</td>" +
+                "<td>" + nombreEmp + "</td>" +
+                "<td>" + nombreRol + "</td>" +
+                "<td>" +
                 "<button class='btnEditar' onclick='editar(" + idUsr + ")'><i class='ti ti-edit'></i></button> " +
-                "<button class='btnEliminar' onclick='deshabilitarUsuario(" + idUsr + ")'><i class='ti ti-ban'></i></button>" +
-            "</td>" +
-            "</tr>";
+                "<button class='btnEliminar' onclick='deshabilitarUsuario(" + idUsr + ")'> <i class='ti ti-trash'></i></button>" +
+                "</td>" +
+                "</tr>";
+        
     });
 
     document.querySelector("#tablaUsuarios tbody").innerHTML = html;
@@ -120,25 +125,29 @@ function mostrarUsuarios() {
 
 function editar(id) {
     fetch("UssuarioServlet?id=" + id)
-        .then(function(response) { return response.json(); })
-        .then(function(usuario) {
-            document.getElementById("idUsuario").value = usuario.id;
-            document.getElementById("nombreUsuario").value = usuario.nombreUsuario;
-            document.getElementById("contrasena").value = "";
-            document.getElementById("contrasena").placeholder = "Dejar vacío para conservar contraseña actual";
+            .then(function (response) {
+                return response.json();
+            })
+            .then(function (usuario) {
+                document.getElementById("idUsuario").value = usuario.id;
+                document.getElementById("nombreUsuario").value = usuario.nombreUsuario;
+                document.getElementById("contrasena").value = "";
+                document.getElementById("contrasena").placeholder = "Dejar vacío para conservar contraseña actual";
 
-            if (usuario.empleado) {
-                document.getElementById("idEmpleado").value = usuario.empleado.id;
-            }
-            
-            if (usuario.rol) {
-                document.getElementById("idRol").value = usuario.rol.id;
-            }
+                if (usuario.empleado) {
+                    document.getElementById("idEmpleado").value = usuario.empleado.id;
+                }
 
-            document.getElementById("btnGuardar").textContent = "Actualizar Usuario";
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        })
-        .catch(function(error) { console.error(error); });
+                if (usuario.rol) {
+                    document.getElementById("idRol").value = usuario.rol.id;
+                }
+
+                document.getElementById("btnGuardar").textContent = "Actualizar Usuario";
+//            window.scrollTo({ top: 0, behavior: "smooth" });
+            })
+            .catch(function (error) {
+                console.error(error);
+            });
 }
 
 function deshabilitarUsuario(id) {
@@ -154,44 +163,46 @@ function deshabilitarUsuario(id) {
         cancelButtonText: "Cancelar"
     }).then((result) => {
         if (result.isConfirmed) {
-            fetch("/ProyectoFinalZoo/UssuarioServlet?id=" + id, { method: "DELETE" })
-                .then(function(response) { 
-                    if (!response.ok) throw new Error("No se pudo eliminar el usuario");
-                    return response.text(); 
-                })
-                .then(function(data) {
-                    // Alerta de éxito al purgar el registro con el verde corporativo
-                    Swal.fire({
-                        icon: "success",
-                        title: "Eliminado",
-                        text: "El usuario ha sido eliminado correctamente",
-                        confirmButtonColor: "#3f5b4b"
+            fetch("/ProyectoFinalZoo/UssuarioServlet?id=" + id, {method: "DELETE"})
+                    .then(function (response) {
+                        if (!response.ok)
+                            throw new Error("No se pudo eliminar el usuario");
+                        return response.text();
+                    })
+                    .then(function (data) {
+                        // Alerta de éxito al purgar el registro con el verde corporativo
+                        Swal.fire({
+                            icon: "success",
+                            title: "Eliminado",
+                            text: "El usuario ha sido eliminado correctamente",
+                            confirmButtonColor: "#3f5b4b"
+                        });
+                        paginaActual = 1;
+                        buscarUsuarios();
+                    })
+                    .catch(function (error) {
+                        Swal.fire({
+                            icon: "error",
+                            title: "Error",
+                            text: error.message,
+                            confirmButtonColor: "#b05d4d"
+                        });
                     });
-                    paginaActual = 1;
-                    buscarUsuarios();
-                })
-                .catch(function(error) { 
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: error.message,
-                        confirmButtonColor: "#b05d4d"
-                    });
-                });
         }
     });
 }
 
 function renderPaginacion() {
     var pagContenedor = document.getElementById("paginacion");
-    if (!pagContenedor) return;
+    if (!pagContenedor)
+        return;
 
     let totalPaginas = Math.ceil(usuarios.length / size);
 
     pagContenedor.innerHTML =
-        "<button onclick='anterior()'><i class='ti ti-chevron-left'></i></button>" +
-        " Página " + paginaActual + " de " + totalPaginas + " " +
-        "<button onclick='siguiente()'><i class='ti ti-chevron-right'></i></button>";
+            "<button onclick='anterior()'><i class='ti ti-chevron-left'></i></button>" +
+            " Página " + paginaActual + " de " + totalPaginas + " " +
+            "<button onclick='siguiente()'><i class='ti ti-chevron-right'></i></button>";
 }
 
 function siguiente() {

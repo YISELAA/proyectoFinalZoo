@@ -14,16 +14,20 @@ public class DetalleVisitaDao {
     // =========================
     // LISTAR — trae el ticket para que el JS acceda a d.ticket.tipo
     // =========================
-    public List<DetalleVisita> listar() {
-        EntityManager em = emf.createEntityManager();
-        TypedQuery<DetalleVisita> query = em.createQuery(
-            "SELECT d FROM DetalleVisita d JOIN FETCH d.ticket", 
-            DetalleVisita.class
-        );
-        List<DetalleVisita> lista = query.getResultList();
-        em.close();
-        return lista;
-    }
+  public List<DetalleVisita> listar() {
+
+    EntityManager em = emf.createEntityManager();
+
+    TypedQuery<DetalleVisita> query = em.createQuery(
+        "SELECT d FROM DetalleVisita d JOIN FETCH d.ticket ORDER BY d.id ASC",
+        DetalleVisita.class
+    );
+
+    List<DetalleVisita> lista = query.getResultList();
+    em.close();
+
+    return lista;
+}
 
     // =========================
     // GUARDAR

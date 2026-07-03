@@ -1,3 +1,5 @@
+
+=======
 <%-- 
     Document   : Animal
     Created on : 16 may. 2026, 23:24:02
@@ -128,5 +130,4 @@
     <script src="${pageContext.request.contextPath}/js/Animal.js"></script>
 
 </body>
-
 </html>

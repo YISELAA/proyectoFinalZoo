@@ -179,8 +179,14 @@ function guardarRegistro(e) {
             .then(() => {
 
                 let msgErr = document.getElementById("mensajeError");
-                if (msgErr) msgErr.innerHTML = "";
+                if (msgErr)
+                    msgErr.innerHTML = "";
                 idsOriginales = [];
+
+                if (!idExistente) {
+                    paginaActual = 1;      // solo cuando es un registro nuevo
+                }
+
                 cargarTabla();
                 limpiarFormulario();
 
@@ -196,7 +202,8 @@ function guardarRegistro(e) {
             .catch(error => {
 
                 let msgErr = document.getElementById("mensajeError");
-                if (msgErr) msgErr.innerHTML = "";
+                if (msgErr)
+                    msgErr.innerHTML = "";
 
                 Swal.fire({
                     icon: "error",
@@ -234,8 +241,8 @@ function mostrarTabla(lista) {
     lista.forEach(d => {
 
         let fecha = Array.isArray(d.fechaVisita)
-                ? `${d.fechaVisita[0]}-${String(d.fechaVisita[1]).padStart(2, "0")}-${String(d.fechaVisita[2]).padStart(2, "0")}`
-                : d.fechaVisita;
+                ? `${String(d.fechaVisita[2]).padStart(2, "0")}-${String(d.fechaVisita[1]).padStart(2, "0")}-${d.fechaVisita[0]}`
+                : d.fechaVisita.split("-").reverse().join("-");
 
         let clave = d.nombreVisitante + "_" + d.telefono + "_" + fecha;
 
@@ -255,7 +262,7 @@ function mostrarTabla(lista) {
     });
 
     gruposVisita = Object.values(grupos);
-    paginaActual = 1;
+//    paginaActual = 1;
 
     renderTablaPaginada();
     renderPaginacion();
@@ -275,12 +282,12 @@ function editarVisita(nombre, telefono, fecha) {
 
                 let registros = lista.filter(d => {
                     let fechaD = Array.isArray(d.fechaVisita)
-                            ? `${d.fechaVisita[0]}-${String(d.fechaVisita[1]).padStart(2, "0")}-${String(d.fechaVisita[2]).padStart(2, "0")}`
-                            : d.fechaVisita;
+                            ? `${String(d.fechaVisita[2]).padStart(2, "0")}-${String(d.fechaVisita[1]).padStart(2, "0")}-${d.fechaVisita[0]}`
+                            : d.fechaVisita.split("-").reverse().join("-");
 
                     return d.nombreVisitante === nombre &&
-                             d.telefono === telefono &&
-                             fechaD === fecha;
+                            d.telefono === telefono &&
+                            fechaD === fecha;
                 });
 
                 if (registros.length === 0)
@@ -303,7 +310,7 @@ function editarVisita(nombre, telefono, fecha) {
 
                 renderTickets();
                 document.querySelector(".guardar").textContent = "Actualizar";
-                window.scrollTo({top: 0, behavior: "smooth"});
+//                window.scrollTo({top: 0, behavior: "smooth"});
             });
 }
 
@@ -311,7 +318,8 @@ function editarVisita(nombre, telefono, fecha) {
 function renderTablaPaginada() {
 
     let tbody = document.querySelector("#tablaDetalleVisita tbody");
-    if (!tbody) return;
+    if (!tbody)
+        return;
 
     tbody.innerHTML = "";
 
@@ -361,7 +369,8 @@ function renderTablaPaginada() {
 function renderPaginacion() {
 
     const pagContenedor = document.getElementById("paginacion");
-    if (!pagContenedor) return;
+    if (!pagContenedor)
+        return;
 
     pagContenedor.innerHTML = `
         <button type="button" onclick="anterior()">
@@ -401,7 +410,8 @@ function limpiarFormulario() {
     document.getElementById("errorTicket").style.display = "none";
 
     let msgErr = document.getElementById("mensajeError");
-    if (msgErr) msgErr.innerHTML = "";
+    if (msgErr)
+        msgErr.innerHTML = "";
 
     document.querySelector(".guardar").textContent = "Guardar";
     idsOriginales = [];

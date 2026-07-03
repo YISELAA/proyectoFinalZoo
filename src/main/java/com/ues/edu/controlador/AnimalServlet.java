@@ -176,7 +176,7 @@ public class AnimalServlet extends HttpServlet {
         response.getWriter().write("{\"mensaje\":\"Animal eliminado\"}");
     }
 
-    // 🔥 VALIDACIÓN
+   // 🔥 VALIDACIÓN FLEXIBILIZADA PARA COADYUVAR CON HÁBITATS ELIMINADOS
     private String validarAnimal(Animal a) {
 
         if (a == null) {
@@ -195,8 +195,11 @@ public class AnimalServlet extends HttpServlet {
             return "Fecha de nacimiento requerida";
         }
 
-        if (a.getHabitat() == null || a.getHabitat().getId() == null) {
-            return "Debe asignar un hábitat válido";
+        // 🌟 QUITAMOS LA OBLIGATORIEDAD ESTRICTA DEL HÁBITAT
+        // Ahora, si viene un hábitat, validamos que su ID sea correcto; 
+        // pero si viene null (animal libre), el Servlet lo dejará pasar sin errores.
+        if (a.getHabitat() != null && a.getHabitat().getId() == null) {
+            return "El formato del hábitat asignado no es válido";
         }
 
         return null;

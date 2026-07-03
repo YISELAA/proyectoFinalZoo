@@ -42,14 +42,14 @@ public class AnimalService {
     }
 
     // 🔥 BUSCAR POR NOMBRE
-    public List<Animal> buscarPorNombre(String nombre) {
-        return dao.buscarPorNombre(nombre);
-    }
-
-    // 🔥 FILTRAR POR HÁBITAT
-    public List<Animal> filtrarPorHabitat(int idHabitat) {
-        return dao.filtrarPorHabitat(idHabitat);
-    }
+//    public List<Animal> buscarPorNombre(String nombre) {
+//        return dao.buscarPorNombre(nombre);
+//    }
+//
+//    // 🔥 FILTRAR POR HÁBITAT
+//    public List<Animal> filtrarPorHabitat(int idHabitat) {
+//        return dao.filtrarPorHabitat(idHabitat);
+//    }
 
     // 🔥 PAGINACIÓN
     public List<Animal> obtenerAnimalesPaginados(int pagina, int size) {

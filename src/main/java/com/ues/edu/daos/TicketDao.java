@@ -21,7 +21,7 @@ public class TicketDao {
     public List<Ticket> listarTodos() {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Ticket> query = em.createQuery(
-                "SELECT t FROM Ticket t ORDER BY t.estado ASC", Ticket.class);
+                "SELECT t FROM Ticket t ORDER BY t.id ASC", Ticket.class);
         List<Ticket> lista = query.getResultList();
         em.close();
         return lista;

@@ -119,8 +119,14 @@ document.getElementById("formEmpleado").addEventListener("submit", function (eve
                     text: data.mensaje,
                     confirmButtonColor: "#3f5b4b"
                 });
+
                 limpiarFormulario();
-                paginaActual = 1;
+
+                if (!id) {
+                    // Solo al crear un nuevo empleado ir a la primera página
+                    paginaActual = 1;
+                }
+
                 cargarEmpleados();
             })
             .catch(error => {
@@ -148,7 +154,7 @@ function editar(id) {
                 document.getElementById("numeroDui").value = e.dui;
 
                 document.querySelector(".guardar").textContent = "Actualizar Empleado";
-                window.scrollTo({top: 0, behavior: "smooth"});
+//                window.scrollTo({top: 0, behavior: "smooth"});
             })
             .catch(error => console.error("Error al cargar datos de edición:", error));
 }

@@ -24,6 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let metodo = id === "" ? "POST" : "PUT";
 
+            const scrollPos = window.scrollY; // 🔥 evita salto
+
             fetch("/ProyectoFinalZoo/TicketServlet", {
                 method: metodo,
                 headers: {
@@ -32,7 +34,14 @@ document.addEventListener("DOMContentLoaded", function () {
                 body: JSON.stringify(ticket)
             })
             .then(async response => {
-                const data = await response.json();
+                const text = await response.text();
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    throw new Error(text);
+                }
 
                 if (!response.ok) {
                     throw new Error(data.error || "Ocurrió un error en la operación");
@@ -51,6 +60,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 limpiarFormulario();
                 cargarTickets();
+
+                setTimeout(() => {
+                    window.scrollTo(0, scrollPos);
+                }, 0);
             })
             .catch(error => {
                 Swal.fire({
@@ -68,11 +81,26 @@ document.addEventListener("DOMContentLoaded", function () {
 function cargarTickets() {
 
     fetch("/ProyectoFinalZoo/TicketServlet?accion=listar")
-        .then(response => response.json())
+        .then(async response => {
+            const text = await response.text();
+
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(text);
+            }
+        })
         .then(data => {
 
-            tickets = data; // 🔥 IMPORTANTE PARA PAGINACIÓN
+            if (!Array.isArray(data)) {
+                console.error("Respuesta inválida:", data);
+                tickets = [];
+                return;
+            }
 
+            tickets = data;
+
+            paginaActual = 1; // 🔥 evita páginas vacías
             renderTabla();
             renderPaginacion();
         })
@@ -89,7 +117,20 @@ function renderTabla() {
 
     let paginaDatos = tickets.slice(inicio, fin);
 
+    if (paginaDatos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="5" style="text-align:center;">
+                    No hay tickets registrados
+                </td>
+            </tr>
+        `;
+        return;
+    }
+
     paginaDatos.forEach(ticket => {
+
+        const tipoSeguro = encodeURIComponent(ticket.tipo);
 
         tbody.innerHTML += `
             <tr>
@@ -101,7 +142,7 @@ function renderTabla() {
                 <td class="acciones">
 
                     <button class="btnEditar"
-                        onclick="editarTicket(${ticket.id}, \`${ticket.tipo}\`, ${ticket.precio})">
+                        onclick="editarTicket(${ticket.id}, '${tipoSeguro}', ${ticket.precio})">
                         <i class="ti ti-edit"></i>
                     </button>
 
@@ -161,15 +202,10 @@ function anterior() {
 function editarTicket(id, tipo, precio) {
 
     document.getElementById("idTicket").value = id;
-    document.getElementById("tipoTicket").value = tipo;
+    document.getElementById("tipoTicket").value = decodeURIComponent(tipo);
     document.getElementById("precio").value = precio;
 
     document.querySelector(".guardar").textContent = "Actualizar";
-
-    window.scrollTo({
-        top: 0,
-        behavior: "smooth"
-    });
 }
 
 function deshabilitarTicket(id) {
@@ -191,9 +227,13 @@ function deshabilitarTicket(id) {
             method: "DELETE"
         })
         .then(async response => {
-            const texto = await response.text();
-            if (!response.ok) throw new Error(texto);
-            return JSON.parse(texto);
+            const text = await response.text();
+
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(text);
+            }
         })
         .then(data => {
 
@@ -238,9 +278,13 @@ function habilitarTicket(id) {
             headers: { "X-Accion": "habilitar" }
         })
         .then(async response => {
-            const texto = await response.text();
-            if (!response.ok) throw new Error(texto);
-            return JSON.parse(texto);
+            const text = await response.text();
+
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                throw new Error(text);
+            }
         })
         .then(data => {
 

@@ -20,8 +20,8 @@ import java.util.List;
  */
 public class HistorialMedicoDao {
 
-    private EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("profinalPU");
+      private EntityManagerFactory emf = JPAUtil.getEMF();
+
 
     // ==========================
     // GUARDAR

@@ -23,7 +23,8 @@ document.addEventListener("DOMContentLoaded", function () {
 // FORMATEAR FECHA
 // ===============================
 function formatearFecha(fecha) {
-    if (!fecha) return "";
+    if (!fecha)
+        return "";
     const solo = fecha.substring(0, 10);
     const partes = solo.split("-");
     return `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`;
@@ -35,25 +36,25 @@ function formatearFecha(fecha) {
 function buscarAnimales(pagina = 1) {
     paginaActual = pagina;
     fetch("/ProyectoFinalZoo/AnimalServlet")
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("Error al obtener el listado de animales.");
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log("Datos recibidos del servidor:", data);
-            datosCompletos = data; // Guardamos el array completo de la BD
-            
-            if (Array.isArray(datosCompletos)) {
-                // Forzar el redibujado segmentado en la página solicitada
-                redibujarTablaLocal();
-            }
-        })
-        .catch(error => {
-            console.error("Error:", error);
-            mostrarAlertaError("No se pudieron cargar los animales.");
-        });
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Error al obtener el listado de animales.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log("Datos recibidos del servidor:", data);
+                datosCompletos = data; // Guardamos el array completo de la BD
+
+                if (Array.isArray(datosCompletos)) {
+                    // Forzar el redibujado segmentado en la página solicitada
+                    redibujarTablaLocal();
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                mostrarAlertaError("No se pudieron cargar los animales.");
+            });
 }
 
 // ===============================
@@ -66,30 +67,28 @@ function mostrarAnimales(lista) {
     }
 
     let html = "";
-    lista.forEach(a => {
-        html += `
-            <tr>
-                <td>${a.id ?? "—"}</td>
-                <td>${a.nombre ?? "—"}</td>
-                <td>${a.especie ?? "—"}</td>
-                <td>${formatearFecha(a.fechaNacimiento)}</td>
-                <td>${calcularEdad(a.fechaNacimiento)}</td>
-                <td>${formatearFecha(a.fechaIngreso)}</td>
-                <td>${a.habitat ? a.habitat.tipoTerreno : "No asignado"}</td>
-                <td class="acciones">
-                    <button class="btnEditar"
-                        onclick="editarAnimal(${a.id})">
-                        <i class="ti ti-edit"></i>
-                    </button>
+   lista.forEach(a => {
+    // Manejo seguro por si a.habitat es null o no tiene tipoTerreno
+    let nombreHabitat = a.habitat?.tipoTerreno || '<span class="badge bg-secondary">Sin Hábitat</span>';
 
-                    <button class="btnEliminar"
-                        onclick="eliminarAnimal(${a.id})">
-                          <i class="ti ti-trash"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
+    html += `
+        <tr>
+            <td>${a.id ?? "—"}</td>
+            <td>${a.nombre ?? "—"}</td>
+            <td>${a.especie ?? "—"}</td>
+            <td>${formatearFecha(a.fechaNacimiento)}</td>
+            <td>${calcularEdad(a.fechaNacimiento)}</td>
+            <td>${formatearFecha(a.fechaIngreso)}</td>
+            <td>${nombreHabitat}</td>
+            <td class="acciones">
+                <button class="btnEditar" onclick="editarAnimal(${a.id})">
+                    <i class="ti ti-edit"></i>
+                </button>
+                <button class="btnEliminar" onclick="eliminarAnimal(${a.id})">
+                    <i class="ti ti-trash"></i>
+                </button>
+            </td> </tr> `;
+});
     document.getElementById("tbodyAnimales").innerHTML = html;
 }
 
@@ -98,22 +97,23 @@ function mostrarAnimales(lista) {
 // ===============================
 function cargarHabitats() {
     fetch("/ProyectoFinalZoo/HabitatServlet")
-        .then(response => {
-            if (!response.ok) throw new Error();
-            return response.json();
-        })
-        .then(data => {
-            let combo = document.getElementById("habitat");
-            combo.innerHTML = '<option value="">Seleccione hábitat</option>';
-            data.forEach(h => {
-                combo.innerHTML += `
+            .then(response => {
+                if (!response.ok)
+                    throw new Error();
+                return response.json();
+            })
+            .then(data => {
+                let combo = document.getElementById("habitat");
+                combo.innerHTML = '<option value="">Seleccione hábitat</option>';
+                data.forEach(h => {
+                    combo.innerHTML += `
                     <option value="${h.id}">${h.tipoTerreno}</option>
                 `;
+                });
+            })
+            .catch(error => {
+                console.error("Error cargando hábitats:", error);
             });
-        })
-        .catch(error => {
-            console.error("Error cargando hábitats:", error);
-        });
 }
 
 // ==========================================================
@@ -121,7 +121,8 @@ function cargarHabitats() {
 // ==========================================================
 function renderPaginacion(totalRegistros) {
     const pagContenedor = document.getElementById("paginacion");
-    if (!pagContenedor) return;
+    if (!pagContenedor)
+        return;
 
     // Calcular cuántas páginas existen en total basándonos en los datos reales
     const totalPaginas = Math.ceil(totalRegistros / size) || 1;
@@ -160,7 +161,7 @@ function redibujarTablaLocal() {
     const inicio = (paginaActual - 1) * size;
     const fin = inicio + size;
     const registrosSegmentados = datosCompletos.slice(inicio, fin);
-    
+
     // Mandamos a pintar únicamente los 5 registros seleccionados
     mostrarAnimales(registrosSegmentados);
     renderPaginacion(datosCompletos.length);
@@ -171,111 +172,113 @@ function redibujarTablaLocal() {
 // ===============================
 function editarAnimal(id) {
     fetch(`/ProyectoFinalZoo/AnimalServlet?id=${id}`)
-        .then(response => {
-            if (!response.ok) throw new Error("No se pudo obtener la información del animal.");
-            return response.json();
-        })
-        .then(a => {
-            document.getElementById("idAnimal").value = a.id;
-            document.getElementById("nombreAnimal").value = a.nombre;
-            document.getElementById("especie").value = a.especie;
-            document.getElementById("fechaNacimiento").value =
-                a.fechaNacimiento ? a.fechaNacimiento.substring(0, 10) : "";
-            document.getElementById("fechaIngreso").value =
-                a.fechaIngreso ? a.fechaIngreso.substring(0, 10) : "";
-            document.getElementById("habitat").value =
-                a.habitat ? a.habitat.id : "";
+            .then(response => {
+                if (!response.ok)
+                    throw new Error("No se pudo obtener la información del animal.");
+                return response.json();
+            })
+            .then(a => {
+                document.getElementById("idAnimal").value = a.id;
+                document.getElementById("nombreAnimal").value = a.nombre;
+                document.getElementById("especie").value = a.especie;
+                document.getElementById("fechaNacimiento").value =
+                        a.fechaNacimiento ? a.fechaNacimiento.substring(0, 10) : "";
+                document.getElementById("fechaIngreso").value =
+                        a.fechaIngreso ? a.fechaIngreso.substring(0, 10) : "";
+                document.getElementById("habitat").value =
+                        a.habitat ? a.habitat.id : "";
 
-            let btnGuardar = document.getElementById("btnGuardarAnimal") || document.getElementById("btnGuardar");
-            if (btnGuardar) {
-                btnGuardar.textContent = "Actualizar Animal";
-            }
+                let btnGuardar = document.getElementById("btnGuardarAnimal") || document.getElementById("btnGuardar");
+                if (btnGuardar) {
+                    btnGuardar.textContent = "Actualizar Animal";
+                }
 
-            window.scrollTo({
-                top: 0,
-                behavior: "smooth"
+                window.scrollTo({
+                    top: 0,
+                    behavior: "smooth"
+                });
+            })
+            .catch(error => {
+                console.error(error);
+                mostrarAlertaError("Error al recuperar los datos del animal.");
             });
-        })
-        .catch(error => {
-            console.error(error);
-            mostrarAlertaError("Error al recuperar los datos del animal.");
-        });
 }
 
 // ===============================
 // GUARDAR O ACTUALIZAR
 // ===============================
 document.getElementById("formAnimal")
-    .addEventListener("submit", function (event) {
-        event.preventDefault();
+        .addEventListener("submit", function (event) {
+            event.preventDefault();
 
-        let id = document.getElementById("idAnimal").value;
-        let idHabitatRaw = document.getElementById("habitat").value;
+            let id = document.getElementById("idAnimal").value;
+            let idHabitatRaw = document.getElementById("habitat").value;
 
-        let animal = {
-            nombre: document.getElementById("nombreAnimal").value,
-            especie: document.getElementById("especie").value,
-            fechaNacimiento: document.getElementById("fechaNacimiento").value,
-            fechaIngreso: document.getElementById("fechaIngreso").value,
-            habitat: idHabitatRaw ? { id: parseInt(idHabitatRaw) } : null
-        };
+            let animal = {
+                nombre: document.getElementById("nombreAnimal").value,
+                especie: document.getElementById("especie").value,
+                fechaNacimiento: document.getElementById("fechaNacimiento").value,
+                fechaIngreso: document.getElementById("fechaIngreso").value,
+                habitat: idHabitatRaw ? {id: parseInt(idHabitatRaw)} : null
+            };
 
-        if (id) {
-            animal.id = parseInt(id);
-        }
-
-        let metodo = id ? "PUT" : "POST";
-
-        fetch("/ProyectoFinalZoo/AnimalServlet", {
-            method: metodo,
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify(animal)
-        })
-        .then(async response => {
-            const text = await response.text();
-            let data;
-            
-            try {
-                data = JSON.parse(text);
-            } catch (e) {
-                throw new Error(text || "Error interno del servidor");
+            if (id) {
+                animal.id = parseInt(id);
             }
 
-            if (!response.ok) {
-                throw new Error(data.error || "Error al procesar el registro del animal");
-            }
-            return data;
-        })
-        .then(data => {
-            let msgError = document.getElementById("mensajeErrorAnimal") || document.getElementById("mensajeError");
-            if (msgError) msgError.innerHTML = "";
+            let metodo = id ? "PUT" : "POST";
 
-            limpiarFormularioAnimal();
-            buscarAnimales(paginaActual); 
+            fetch("/ProyectoFinalZoo/AnimalServlet", {
+                method: metodo,
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(animal)
+            })
+                    .then(async response => {
+                        const text = await response.text();
+                        let data;
 
-            Swal.fire({
-                icon: "success",
-                title: id ? "Animal Actualizado" : "Animal Registrado",
-                text: data.mensaje || "La operación se completó con éxito.",
-                confirmButtonColor: "#3f5b4b"
-            });
-        })
-        .catch(error => {
-            console.error(error);
-            
-            let msgError = document.getElementById("mensajeErrorAnimal") || document.getElementById("mensajeError");
-            if (msgError) {
-                msgError.innerHTML = `
+                        try {
+                            data = JSON.parse(text);
+                        } catch (e) {
+                            throw new Error(text || "Error interno del servidor");
+                        }
+
+                        if (!response.ok) {
+                            throw new Error(data.error || "Error al procesar el registro del animal");
+                        }
+                        return data;
+                    })
+                    .then(data => {
+                        let msgError = document.getElementById("mensajeErrorAnimal") || document.getElementById("mensajeError");
+                        if (msgError)
+                            msgError.innerHTML = "";
+
+                        limpiarFormularioAnimal();
+                        buscarAnimales(paginaActual);
+
+                        Swal.fire({
+                            icon: "success",
+                            title: id ? "Animal Actualizado" : "Animal Registrado",
+                            text: data.mensaje || "La operación se completó con éxito.",
+                            confirmButtonColor: "#3f5b4b"
+                        });
+                    })
+                    .catch(error => {
+                        console.error(error);
+
+                        let msgError = document.getElementById("mensajeErrorAnimal") || document.getElementById("mensajeError");
+                        if (msgError) {
+                            msgError.innerHTML = `
                     <div style="color:white; background:#d62828; padding:10px; border-radius:8px; margin-bottom:15px;">
                         ${error.message}
                     </div>`;
-            } else {
-                mostrarAlertaError(error.message);
-            }
+                        } else {
+                            mostrarAlertaError(error.message);
+                        }
+                    });
         });
-    });
 
 // ===============================
 // ELIMINAR ANIMAL
@@ -298,36 +301,36 @@ function eliminarAnimal(id) {
         fetch(`/ProyectoFinalZoo/AnimalServlet?id=${id}`, {
             method: "DELETE"
         })
-        .then(async response => {
-            const texto = await response.text();
+                .then(async response => {
+                    const texto = await response.text();
 
-            if (!response.ok) {
-                throw new Error(texto || "No se pudo eliminar el registro del animal.");
-            }
+                    if (!response.ok) {
+                        throw new Error(texto || "No se pudo eliminar el registro del animal.");
+                    }
 
-            try {
-                return JSON.parse(texto);
-            } catch (e) {
-                return { mensaje: texto };
-            }
-        })
-        .then(data => {
-            Swal.fire({
-                icon: "success",
-                title: "Eliminado",
-                text: data.mensaje || "El animal ha sido removido.",
-                confirmButtonColor: "#3f5b4b"
-            });
-            buscarAnimales(paginaActual);
-        })
-        .catch(error => {
-            Swal.fire({
-                icon: "error",
-                title: "No se pudo completar",
-                text: error.message,
-                confirmButtonColor: "#b05d4d"
-            });
-        });
+                    try {
+                        return JSON.parse(texto);
+                    } catch (e) {
+                        return {mensaje: texto};
+                    }
+                })
+                .then(data => {
+                    Swal.fire({
+                        icon: "success",
+                        title: "Eliminado",
+                        text: data.mensaje || "El animal ha sido removido.",
+                        confirmButtonColor: "#3f5b4b"
+                    });
+                    buscarAnimales(paginaActual);
+                })
+                .catch(error => {
+                    Swal.fire({
+                        icon: "error",
+                        title: "No se pudo completar",
+                        text: error.message,
+                        confirmButtonColor: "#b05d4d"
+                    });
+                });
     });
 }
 
@@ -335,31 +338,36 @@ function eliminarAnimal(id) {
 // CALCULAR EDAD DINÁMICA
 // ===============================
 function calcularEdad(fechaNacimiento) {
-    if (!fechaNacimiento) return "—";
-    
+    if (!fechaNacimiento)
+        return "—";
+
     const soloFecha = fechaNacimiento.substring(0, 10);
     const partes = soloFecha.split("-");
-    
+
     const hoy = new Date();
     const fechaHoyCero = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
     const nacimiento = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
-    
+
     const diferenciaMilisegundos = fechaHoyCero - nacimiento;
     const diasTotales = Math.floor(diferenciaMilisegundos / (1000 * 60 * 60 * 24));
 
-    if (diasTotales < 0) return "No nacido aún";
-    if (diasTotales === 0) return "Recién nacido";
-    if (diasTotales === 1) return "1 día";
-    if (diasTotales < 30) return `${diasTotales} días`;
+    if (diasTotales < 0)
+        return "No nacido aún";
+    if (diasTotales === 0)
+        return "Recién nacido";
+    if (diasTotales === 1)
+        return "1 día";
+    if (diasTotales < 30)
+        return `${diasTotales} días`;
 
     let años = hoy.getFullYear() - nacimiento.getFullYear();
     let meses = hoy.getMonth() - nacimiento.getMonth();
-    
+
     if (meses < 0 || (meses === 0 && hoy.getDate() < nacimiento.getDate())) {
         años--;
         meses += 12;
     }
-    
+
     if (años === 0) {
         if (meses === 0 && hoy.getDate() < nacimiento.getDate()) {
             return `${diasTotales} días`;
@@ -368,7 +376,7 @@ function calcularEdad(fechaNacimiento) {
     }
 
     let textoEdad = años === 1 ? "1 año" : `${años} años`;
-    
+
     if (meses > 0) {
         textoEdad += meses === 1 ? " y 1 mes" : ` y ${meses} meses`;
     }
@@ -382,7 +390,7 @@ function calcularEdad(fechaNacimiento) {
 function limpiarFormularioAnimal() {
     document.getElementById("formAnimal").reset();
     document.getElementById("idAnimal").value = "";
-    
+
     let btnGuardar = document.getElementById("btnGuardarAnimal") || document.getElementById("btnGuardar");
     if (btnGuardar) {
         btnGuardar.textContent = "Guardar Animal";

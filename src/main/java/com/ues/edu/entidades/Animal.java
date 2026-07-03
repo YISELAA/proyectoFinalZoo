@@ -42,7 +42,7 @@ public class Animal {
     private Integer id;
     
     @NotBlank
-    @Column(name = "especie", nullable = false, length = 50)
+    @Column(name = "especie", nullable = false,unique = true, length = 50)
     private String especie;
 
     @NotBlank

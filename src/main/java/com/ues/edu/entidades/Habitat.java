@@ -47,8 +47,9 @@ public class Habitat {
     @Column(name = "capacidad", nullable = false)
     private Integer capacidad;
 
-    @OneToMany(mappedBy = "habitat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Animal> listaAnimales;
+    // Quitamos ALL y orphanRemoval para proteger a los animales
+@OneToMany(mappedBy = "habitat", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+private List<Animal> listaAnimales;
 
     @ManyToMany
     @JoinTable(

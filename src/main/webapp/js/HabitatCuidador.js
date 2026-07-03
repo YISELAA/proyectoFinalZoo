@@ -10,16 +10,18 @@ let datosCompletos = []; // Almacén global para segmentar las asignaciones de l
 document.addEventListener("DOMContentLoaded", function () {
     cargarComponentes();
     listarAsignaciones();
+    autocompletarVeterinario();
+
 
 
     // Escuchar el evento del formulario para Guardar/Editar
     document.getElementById("formCategoriaCuidador").addEventListener("submit", guardarOEditar);
 
     $('#idEmpleadoSelect').select2({
-    placeholder: "Seleccione cuidadores",
-    width: '100%',
-    closeOnSelect: false
-});
+        placeholder: "Seleccione cuidadores",
+        width: '100%',
+        closeOnSelect: false
+    });
 });
 
 // ==========================================
@@ -359,4 +361,4 @@ function mostrarAlertaError(mensaje) {
         text: mensaje,
         confirmButtonColor: "#b05d4d"
     });
-}   
+}

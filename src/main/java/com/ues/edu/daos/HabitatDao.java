@@ -42,17 +42,42 @@ public class HabitatDao {
         em.close();
     }
 
-    public void eliminar(long id) {
+    public void eliminar(Integer id) {
         EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
+        try {
+            em.getTransaction().begin();
 
-        Habitat h = em.find(Habitat.class, id);
-        if (h != null) {
-            em.remove(h);
+            // 1. Buscar el hábitat por su ID
+            Habitat h = em.find(Habitat.class, id);
+            if (h != null) {
+                
+                // 2. Limpiar la relación ManyToMany en la tabla intermedia (habitat_cuidador)
+                // Esto evita errores de clave foránea sin borrar a los empleados
+                if (h.getCuidadores() != null) {
+                    h.getCuidadores().clear();
+                    em.merge(h);
+                }
+
+                // 3. Romper la relación ManyToOne con los animales de forma masiva
+                // Pone en NULL el campo idhabitat de todos los animales que dependían de este hábitat
+                em.createQuery("UPDATE Animal a SET a.habitat = null WHERE a.habitat.id = :id")
+                  .setParameter("id", id)
+                  .executeUpdate();
+
+                // 4. Ahora que no hay dependencias vivas en la base de datos, eliminamos el hábitat
+                em.remove(h);
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            // Si algo falla, revertimos los cambios para no dejar datos corruptos
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw e; // Lanzamos la excepción para verla en la consola de Tomcat
+        } finally {
+            em.close();
         }
-
-        em.getTransaction().commit();
-        em.close();
     }
 
     // ==========================================================
@@ -78,34 +103,34 @@ public class HabitatDao {
     // ==========================================================
     // BUSCAR POR TIPO TERRENO (Corregido con orden)
     // ==========================================================
-    public List<Habitat> buscarPorTipoTerreno(String tipoTerreno) {
-        EntityManager em = emf.createEntityManager();
-        TypedQuery<Habitat> query =
-                em.createQuery(
-                        "SELECT h FROM Habitat h WHERE LOWER(h.tipoTerreno) LIKE LOWER(:tipo) ORDER BY h.id ASC",
-                        Habitat.class
-                );
-        query.setParameter("tipo", "%" + tipoTerreno + "%");
-        List<Habitat> lista = query.getResultList();
-        em.close();
-        return lista;
-    }
-
-    // ==========================================================
-    // FILTRAR POR CAPACIDAD MÍNIMA (Corregido con orden)
-    // ==========================================================
-    public List<Habitat> filtrarPorCapacidadMinima(int capacidad) {
-        EntityManager em = emf.createEntityManager();
-        TypedQuery<Habitat> query =
-                em.createQuery(
-                        "SELECT h FROM Habitat h WHERE h.capacidad >= :capacidad ORDER BY h.id ASC",
-                        Habitat.class
-                );
-        query.setParameter("capacidad", capacidad);
-        List<Habitat> lista = query.getResultList();
-        em.close();
-        return lista;
-    }
+//    public List<Habitat> buscarPorTipoTerreno(String tipoTerreno) {
+//        EntityManager em = emf.createEntityManager();
+//        TypedQuery<Habitat> query =
+//                em.createQuery(
+//                        "SELECT h FROM Habitat h WHERE LOWER(h.tipoTerreno) LIKE LOWER(:tipo) ORDER BY h.id ASC",
+//                        Habitat.class
+//                );
+//        query.setParameter("tipo", "%" + tipoTerreno + "%");
+//        List<Habitat> lista = query.getResultList();
+//        em.close();
+//        return lista;
+//    }
+//
+//    // ==========================================================
+//    // FILTRAR POR CAPACIDAD MÍNIMA (Corregido con orden)
+//    // ==========================================================
+//    public List<Habitat> filtrarPorCapacidadMinima(int capacidad) {
+//        EntityManager em = emf.createEntityManager();
+//        TypedQuery<Habitat> query =
+//                em.createQuery(
+//                        "SELECT h FROM Habitat h WHERE h.capacidad >= :capacidad ORDER BY h.id ASC",
+//                        Habitat.class
+//                );
+//        query.setParameter("capacidad", capacidad);
+//        List<Habitat> lista = query.getResultList();
+//        em.close();
+//        return lista;
+//    }
 
     // ==========================================================
     // PAGINADO (Corregido con orden)

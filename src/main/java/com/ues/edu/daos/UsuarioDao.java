@@ -22,7 +22,7 @@ public class UsuarioDao {
 
     public List<Usuario> listar() {
         EntityManager em = emf.createEntityManager();
-        TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u", Usuario.class);
+        TypedQuery<Usuario> query = em.createQuery("SELECT u FROM Usuario u ORDER BY u.id ASC", Usuario.class);
         List<Usuario> lista = query.getResultList();
         em.close();
         return lista;

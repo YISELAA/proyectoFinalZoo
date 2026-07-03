@@ -157,7 +157,7 @@ public class HabitatServlet extends HttpServlet {
             throws IOException {
 
         long id = Long.parseLong(request.getParameter("id"));
-        habitatService.eliminarHabitat(id);
+        habitatService.eliminarHabitat((int) id);
 
         response.setContentType("application/json");
         response.getWriter().write("{\"mensaje\":\"Habitat eliminado\"}");

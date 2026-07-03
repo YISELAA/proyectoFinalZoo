@@ -1,234 +1,20 @@
-/* * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/JavaScript.js to edit this template
- */
-
-/* * HistorialMedico.js
- */
-
 console.log("JS HISTORIAL MÉDICO CARGADO - CORREGIDO CON SESIÓN GLOBAL AUTOMÁTICA");
 
 let mapaAnimalesEspecies = {};
 let paginaActual = 1;
-const size = 5; // 🌟 Límite estricto de 5 registros por página
-let datosCompletos = []; // Almacén global para segmentar los historiales médicos
+const size = 5;
+let datosCompletos = [];
 
-// 🌟 VARIABLE GLOBAL: Guarda el ID del veterinario logueado para que no se pierda al limpiar o editar el formulario
-let idVeterinarioSesion = null; 
+// 🌟 VARIABLE GLOBAL
+let idVeterinarioSesion = null;
 
 // ===============================
 // INICIO
 // ===============================
 document.addEventListener("DOMContentLoaded", function () {
-    cargarVeterinarios();
+    autocompletarVeterinario();
     cargarAnimales();
 });
-
-// ===================================================
-//  FORMATEAR FECHA 
-// ===================================================
-function formatearFecha(fecha) {
-    if (!fecha) return "";
-    const solo = fecha.substring(0, 10);
-    const partes = solo.split("-");
-    if (partes.length < 3) return fecha;
-    return `${parseInt(partes[2])}/${parseInt(partes[1])}/${partes[0]}`;
-}
-
-// ===============================
-// CARGAR ANIMALES
-// ===============================
-function cargarAnimales() {
-    fetch("/ProyectoFinalZoo/AnimalServlet")
-        .then(response => {
-            if (!response.ok) throw new Error("Error al obtener catálogo de animales.");
-            return response.json();
-        })
-        .then(data => {
-            let select = document.getElementById("idAnimal");
-            select.innerHTML = '<option value="">Seleccione un animal...</option>';
-            mapaAnimalesEspecies = {};
-
-            data.forEach(animal => {
-                let nombreEspecie = (animal.especie && typeof animal.especie === 'object') ? animal.especie.nombre : animal.especie;
-                if (animal.nombre) {
-                    mapaAnimalesEspecies[animal.nombre.trim().toLowerCase()] = nombreEspecie || "Sin especie";
-                }
-                select.innerHTML += `<option value="${animal.id}">${animal.nombre}</option>`;
-            });
-
-            buscarHistoriales();
-        })
-        .catch(error => {
-            console.error(error);
-            mostrarAlertaError("No se pudieron cargar los animales.");
-            buscarHistoriales();
-        });
-}
-
-// ===============================
-// CARGAR VETERINARIOS
-// ===============================
-function cargarVeterinarios() {
-    fetch("/ProyectoFinalZoo/EmpleadoServlet")
-        .then(response => response.json())
-        .then(data => {
-            let select = document.getElementById("idVeterinario");
-            select.innerHTML = '<option value="">Seleccione un veterinario...</option>';
-            data.forEach(emp => {
-                if (emp.rol === 'Veterinario') {
-                    select.innerHTML += `<option value="${emp.id}">${emp.nombre} ${emp.apellido}</option>`;
-                }
-            });
-            
-            // Mapeamos al veterinario que está usando el sistema actualmente
-            autocompletarVeterinario();
-        })
-        .catch(error => console.error("Error cargando veterinarios:", error));
-}
-
-// ===============================
-// BUSCAR HISTORIALES (CORREGIDO)
-// ===============================
-function buscarHistoriales(pagina = 1) {
-    paginaActual = pagina;
-
-    fetch(`/ProyectoFinalZoo/HistorialMedicoServlet?_=${new Date().getTime()}`)
-        .then(response => response.json())
-        .then(data => {
-            console.log("Datos de historial recibidos:", data);
-            datosCompletos = data; // Guardamos el array completo de la BD
-            
-            if (Array.isArray(datosCompletos)) {
-                // Forzar el redibujado segmentado local
-                redibujarTablaLocal();
-            }
-        })
-        .catch(error => {
-            console.error(error);
-            mostrarAlertaError("No se pudo cargar la lista de historiales médicos.");
-        });
-}
-
-// ==========================================================
-// MOSTRAR HISTORIALES EN TABLA
-// ==========================================================
-function mostrarHistoriales(lista) {
-    if (!Array.isArray(lista)) return;
-    let html = "";
-    lista.forEach(h => {
-        let nombreAnimal = h.animal ? h.animal.nombre : null;
-        let especieReal = nombreAnimal ? (mapaAnimalesEspecies[nombreAnimal.trim().toLowerCase()] || "Sin especie") : "Sin especie";
-
-        html += `
-            <tr>
-                <td>${h.id ?? "—"}</td>
-                <td>${formatearFecha(h.fecha)}</td> 
-                <td>${h.diagnostico ?? "—"}</td>
-                <td>${h.treatment || h.tratamiento || "—"}</td>
-                <td>${nombreAnimal || "Sin animal"}</td>
-                <td>${especieReal}</td>
-                <td>${h.veterinario ? h.veterinario.nombre + ' ' + h.veterinario.apellido : "Sin veterinario"}</td>
-                <td class="acciones">
-                    <button class="btnEditar" onclick="editarHistorial(${h.id})">
-                        <i class="ti ti-edit"></i>
-                    </button>
-                </td>
-            </tr>
-        `;
-    });
-    document.getElementById("tbodyHistoriales").innerHTML = html;
-}
-
-// ==========================================================
-// RENDERIZAR CONTROLES DE PAGINACIÓN (SÍNCRO TOTAL)
-// ==========================================================
-function renderPaginacion(totalRegistros) {
-    const pagContenedor = document.getElementById("paginacion");
-    if (!pagContenedor) return;
-
-    const totalPaginas = Math.ceil(totalRegistros / size) || 1;
-
-    pagContenedor.innerHTML = `
-        <button onclick="anterior()" ${paginaActual === 1 ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-            <i class="ti ti-chevron-left"></i>
-        </button>
-        <span style="margin: 0 10px; font-weight: bold;">Página ${paginaActual} de ${totalPaginas}</span>
-        <button onclick="siguiente()" ${paginaActual === totalPaginas ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : ''}>
-            <i class="ti ti-chevron-right"></i>
-        </button>
-    `;
-}
-
-// ==========================================================
-// LÓGICAS DE NAVEGACIÓN LOCAL (EL MOTOR DEL RECORTE)
-// ==========================================================
-function anterior() {
-    if (paginaActual > 1) {
-        paginaActual--;
-        redibujarTablaLocal();
-    }
-}
-
-function siguiente() {
-    const totalPaginas = Math.ceil(datosCompletos.length / size);
-    if (paginaActual < totalPaginas) {
-        paginaActual++;
-        redibujarTablaLocal();
-    }
-}
-
-function redibujarTablaLocal() {
-    // 🧠 Segmentamos matemáticamente la lista en bloques de 5
-    const inicio = (paginaActual - 1) * size;
-    const fin = inicio + size;
-    const registrosSegmentados = datosCompletos.slice(inicio, fin);
-    
-    mostrarHistoriales(registrosSegmentados);
-    renderPaginacion(datosCompletos.length);
-}
-
-function cambiarPagina(nuevaPagina) {
-    buscarHistoriales(nuevaPagina);
-}
-
-// ==========================================================
-// EDITAR HISTORIAL
-// ==========================================================
-function editarHistorial(id) {
-    fetch(`/ProyectoFinalZoo/HistorialMedicoServlet?id=${id}`)
-        .then(response => {
-            if (!response.ok) throw new Error("No se pudo obtener el registro.");
-            return response.json();
-        })
-        .then(h => {
-            document.getElementById("idHistorial").value = h.id;
-            document.getElementById("fecha").value = h.fecha ? h.fecha.substring(0, 10) : "";
-            document.getElementById("diagnostico").value = h.diagnostico ?? "";
-            document.getElementById("tratamiento").value = h.tratamiento || h.treatment || "";
-            document.getElementById("idAnimal").value = h.animal ? h.animal.id : "";
-            
-            // 🛡️ Sincronizamos el veterinario que ya poseía el registro en BD para que no viaje nulo
-            if (h.veterinario && h.veterinario.id) {
-                let selectVet = document.getElementById("idVeterinario");
-                if (selectVet) selectVet.value = h.veterinario.id;
-                idVeterinarioSesion = h.veterinario.id; // Asegura la persistencia global
-            } else if (idVeterinarioSesion) {
-                let selectVet = document.getElementById("idVeterinario");
-                if (selectVet) selectVet.value = idVeterinarioSesion;
-            }
-
-            let btnGuardar = document.getElementById("btnGuardar");
-            if (btnGuardar) {
-                btnGuardar.textContent = "Actualizar Historial";
-            }
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        })
-        .catch(error => {
-            console.error(error);
-            mostrarAlertaError("Error al cargar los datos en el formulario.");
-        });
-}
 
 // ==========================================================
 // GUARDAR O ACTUALIZAR
@@ -293,10 +79,232 @@ document.getElementById("formHistorial").addEventListener("submit", function (ev
         mostrarAlertaError(error.message);
     });
 });
+// ===================================================
+// FORMATEAR FECHA (CORREGIDO)
+// ===================================================
+function formatearFecha(fecha) {
+    if (!fecha) return "";
+
+    const soloFecha = fecha.toString().split("T")[0];
+    const partes = soloFecha.split("-");
+
+    if (partes.length !== 3) return fecha;
+
+    const anio = partes[0];
+    const mes = partes[1];
+    const dia = partes[2];
+
+    return `${dia}/${mes}/${anio}`;
+}
+
+function autocompletarVeterinario() {
+    fetch("/ProyectoFinalZoo/HistorialMedicoServlet?accion=obtenerSesion")
+        .then(response => {
+            if (!response.ok) throw new Error("No hay sesión activa.");
+            return response.json();
+        })
+        .then(empleado => {
+            idVeterinarioSesion = empleado.id;
+            console.log("Veterinario de sesión:", idVeterinarioSesion);
+        })
+        .catch(error => console.error(error));
+}
+// ===============================
+// CARGAR ANIMALES
+// ===============================
+function cargarAnimales() {
+    fetch("/ProyectoFinalZoo/AnimalServlet")
+        .then(response => {
+            if (!response.ok) throw new Error("Error al obtener catálogo de animales.");
+            return response.json();
+        })
+        .then(data => {
+            let select = document.getElementById("idAnimal");
+            select.innerHTML = '<option value="">Seleccione un animal...</option>';
+            mapaAnimalesEspecies = {};
+
+            data.forEach(animal => {
+                let nombreEspecie =
+                    (animal.especie && typeof animal.especie === 'object')
+                        ? animal.especie.nombre
+                        : animal.especie;
+
+                if (animal.nombre) {
+                    mapaAnimalesEspecies[animal.nombre.trim().toLowerCase()] =
+                        nombreEspecie || "Sin especie";
+                }
+
+                select.innerHTML += `<option value="${animal.id}">${animal.nombre}</option>`;
+            });
+
+            buscarHistoriales();
+        })
+        .catch(error => {
+            console.error(error);
+            mostrarAlertaError("No se pudieron cargar los animales.");
+            buscarHistoriales();
+        });
+}
 
 // ===============================
-// LIMPIAR FORMULARIO
+// BUSCAR HISTORIALES
 // ===============================
+function buscarHistoriales(pagina = 1) {
+    paginaActual = pagina;
+
+    fetch(`/ProyectoFinalZoo/HistorialMedicoServlet?_=${new Date().getTime()}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log("Datos de historial recibidos:", data);
+            datosCompletos = data;
+
+            if (Array.isArray(datosCompletos)) {
+                redibujarTablaLocal();
+            }
+        })
+        .catch(error => {
+            console.error(error);
+            mostrarAlertaError("No se pudo cargar la lista de historiales médicos.");
+        });
+}
+
+// ===============================
+// MOSTRAR TABLA
+// ===============================
+function mostrarHistoriales(lista) {
+    if (!Array.isArray(lista)) return;
+
+    let html = "";
+
+    lista.forEach(h => {
+        let nombreAnimal = h.animal ? h.animal.nombre : null;
+
+        let especieReal = nombreAnimal
+            ? (mapaAnimalesEspecies[nombreAnimal.trim().toLowerCase()] || "Sin especie")
+            : "Sin especie";
+
+        html += `
+            <tr>
+                <td>${h.id ?? "—"}</td>
+                <td>${formatearFecha(h.fecha)}</td>
+                <td>${h.diagnostico ?? "—"}</td>
+                <td>${h.tratamiento ?? h.treatment ?? "—"}</td>
+                <td>${nombreAnimal || "Sin animal"}</td>
+                <td>${especieReal}</td>
+                <td>${h.veterinario ? h.veterinario.nombre + ' ' + h.veterinario.apellido : "Sin veterinario"}</td>
+                <td class="acciones">
+                    <button class="btnEditar" onclick="editarHistorial(${h.id})">
+                        <i class="ti ti-edit"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+
+    document.getElementById("tbodyHistoriales").innerHTML = html;
+}
+
+// ===============================
+// PAGINACIÓN
+// ===============================
+function renderPaginacion(totalRegistros) {
+    const pagContenedor = document.getElementById("paginacion");
+    if (!pagContenedor) return;
+
+    const totalPaginas = Math.ceil(totalRegistros / size) || 1;
+
+    pagContenedor.innerHTML = `
+        <button onclick="anterior()" ${paginaActual === 1 ? 'disabled' : ''}>
+            <i class="ti ti-chevron-left"></i>
+        </button>
+
+        <span>Página ${paginaActual} de ${totalPaginas}</span>
+
+        <button onclick="siguiente()" ${paginaActual === totalPaginas ? 'disabled' : ''}>
+            <i class="ti ti-chevron-right"></i>
+        </button>
+    `;
+}
+
+function anterior() {
+    if (paginaActual > 1) {
+        paginaActual--;
+        redibujarTablaLocal();
+    }
+}
+
+function siguiente() {
+    const totalPaginas = Math.ceil(datosCompletos.length / size);
+
+    if (paginaActual < totalPaginas) {
+        paginaActual++;
+        redibujarTablaLocal();
+    }
+}
+
+function redibujarTablaLocal() {
+    const inicio = (paginaActual - 1) * size;
+    const fin = inicio + size;
+
+    const datos = datosCompletos.slice(inicio, fin);
+
+    mostrarHistoriales(datos);
+    renderPaginacion(datosCompletos.length);
+}
+
+// ===============================
+// EDITAR (CORREGIDO FECHA)
+// ===============================
+function editarHistorial(id) {
+    fetch(`/ProyectoFinalZoo/HistorialMedicoServlet?id=${id}`)
+        .then(response => {
+            if (!response.ok) throw new Error("No se pudo obtener el registro.");
+            return response.json();
+        })
+        .then(h => {
+
+            document.getElementById("idHistorial").value = h.id;
+
+            document.getElementById("fecha").value =
+                h.fecha ? h.fecha.toString().split("T")[0] : "";
+
+            document.getElementById("diagnostico").value = h.diagnostico ?? "";
+
+            document.getElementById("tratamiento").value =
+                h.tratamiento ?? h.treatment ?? "";
+
+            document.getElementById("idAnimal").value =
+                h.animal ? h.animal.id : "";
+
+            if (h.veterinario && h.veterinario.id) {
+                let selectVet = document.getElementById("idVeterinario");
+                if (selectVet) selectVet.value = h.veterinario.id;
+                idVeterinarioSesion = h.veterinario.id;
+            }
+
+            let btnGuardar = document.getElementById("btnGuardar");
+            if (btnGuardar) btnGuardar.textContent = "Actualizar Historial";
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        })
+        .catch(error => {
+            console.error(error);
+            mostrarAlertaError("Error al cargar los datos.");
+        });
+}
+
+// ===============================
+// ALERTA
+// ===============================
+function mostrarAlertaError(mensaje) {
+    Swal.fire({
+        icon: "error",
+        title: "Error Clínico",
+        text: mensaje,
+        confirmButtonColor: "#b05d4d"
+    });
+}
+
 function limpiarFormularioHistorial() {
     document.getElementById("formHistorial").reset();
     document.getElementById("idHistorial").value = "";
@@ -311,41 +319,4 @@ function limpiarFormularioHistorial() {
     if (selectVet && idVeterinarioSesion) {
         selectVet.value = idVeterinarioSesion;
     }
-}
-
-function mostrarAlertaError(mensaje) {
-    Swal.fire({
-        icon: "error",
-        title: "Error Clínico",
-        text: mensaje,
-        confirmButtonColor: "#b05d4d"
-    });
-}
-
-// ===================================================
-// AUTOCOMPLETAR Y OCULTAR EL SELECTOR DESDE LA SESIÓN
-// ===================================================
-function autocompletarVeterinario() {
-    fetch("/ProyectoFinalZoo/HistorialMedicoServlet?accion=obtenerSesion")
-        .then(response => {
-            if (!response.ok) throw new Error("No hay una sesión de veterinario activa.");
-            return response.json();
-        })
-        .then(empleado => {
-            idVeterinarioSesion = empleado.id; 
-            
-            let selectVet = document.getElementById("idVeterinario");
-            if (selectVet) {
-                selectVet.value = empleado.id; 
-                selectVet.disabled = true;     
-                
-                let contenedorPadre = selectVet.parentElement;
-                if (contenedorPadre) {
-                    contenedorPadre.style.display = "none";
-                }
-            }
-        })
-        .catch(error => {
-            console.log("Aviso de Sesión:", error.message);
-        });
 }

@@ -62,5 +62,4 @@ public class HistorialMedicoService {
     public List<HistorialMedico> listarPaginado(int pagina, int size) {
         return dao.listarPaginado(pagina, size);
     }
-}  
-
+}

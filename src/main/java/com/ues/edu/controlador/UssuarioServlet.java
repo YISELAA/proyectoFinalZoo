@@ -6,16 +6,20 @@ package com.ues.edu.controlador;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.ues.edu.entidades.Usuario;
 import com.ues.edu.service.UsuariosService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
+    import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
+
+import com.ues.edu.entidades.Usuario;
+
+import jakarta.servlet.http.HttpServletResponse;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *

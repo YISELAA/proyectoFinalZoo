@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.ues.edu.controlador;
 
 import com.google.gson.Gson;
@@ -14,203 +10,211 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
-/**
- *
- * @author coc44
- */
 @WebServlet(name = "HistorialMedicoServlet", urlPatterns = {"/HistorialMedicoServlet"})
 public class HistorialMedicoServlet extends HttpServlet {
 
-    private HistorialMedicoService historialService = new HistorialMedicoService();
+    private final HistorialMedicoService historialService = new HistorialMedicoService();
 
-   private Gson gson = new GsonBuilder()
-        .addSerializationExclusionStrategy(new com.google.gson.ExclusionStrategy() {
-            @Override
-            public boolean shouldSkipField(com.google.gson.FieldAttributes f) {
-                // Bloqueamos todas las listas y relaciones profundas que el frontend no necesita
-                return f.getName().equals("historiales")
-                    || f.getName().equals("cuidadores")
-                    || f.getName().equals("animalesAsignados")
-                    || f.getName().equals("usuario")
-                        || f.getName().equals("habitatsAsignados")
-                    || f.getName().equals("listaAnimales"); // <--- EL NUEVO CULPABLE AQUÍ
-            }
-            @Override
-            public boolean shouldSkipClass(Class<?> clazz) { return false; }
-        })
-        .setDateFormat("dd-MM-yyyy") 
-        .create();
+    private final Gson gson = new GsonBuilder()
+            .addSerializationExclusionStrategy(new com.google.gson.ExclusionStrategy() {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet HistorialMedicoServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet HistorialMedicoServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
+                @Override
+                public boolean shouldSkipField(com.google.gson.FieldAttributes f) {
+                    String name = f.getName();
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    
+                    return name.equals("historiales")
+                            || name.equals("cuidadores")
+                            || name.equals("animalesAsignados")
+                            || name.equals("usuario")
+                            || name.equals("habitatsAsignados")
+                            || name.equals("listaAnimales");
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            })
+            .setDateFormat("yyyy-MM-dd")
+            .create();
+
+    // ==========================
+    // GET
+    // ==========================
     @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
-    response.setContentType("application/json");
-    response.setCharacterEncoding("UTF-8");
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-    // 🌟 1. CAPTURAR SI EL FRONTEND PIDE LA SESIÓN
-    String accion = request.getParameter("accion");
-    if ("obtenerSesion".equals(accion)) {
-        // Obtenemos la sesión actual (sin crear una nueva si no existe)
-        jakarta.servlet.http.HttpSession session = request.getSession(false);
-        
-        if (session != null && session.getAttribute("usuario") != null) {
-            Usuario userLogueado = (Usuario) session.getAttribute("usuario");
-            
-            // Si el usuario tiene un empleado asociado, lo enviamos al JS
-            if (userLogueado.getEmpleado() != null) {
-                response.getWriter().write(gson.toJson(userLogueado.getEmpleado()));
-            } else {
-                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-                response.getWriter().write("{\"error\":\"El usuario no tiene un empleado/veterinario asignado\"}");
-            }
-        } else {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.getWriter().write("{\"error\":\"No hay una sesión activa\"}");
-        }
-        return; // Detiene la ejecución aquí para que no intente listar todo lo demás
-    }
+        String accion = request.getParameter("accion");
 
-    // --- FLUJO NORMAL DE TU SERVLET QUE YA TENÍAS ---
-    String idParam = request.getParameter("id");
+        HttpSession session = request.getSession(false);
 
-    if (idParam != null && !idParam.isEmpty()) {
-        int id = Integer.parseInt(idParam);
-        HistorialMedico h = historialService.buscarHistorial(id);
+        Usuario user = (session != null)
+                ? (Usuario) session.getAttribute("usuarioSesion")
+                : null;
 
-        if (h == null) {
-            response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-            response.getWriter().write("{\"mensaje\":\"Historial no encontrado\"}");
-            return;
-        }
-        response.getWriter().write(gson.toJson(h));
-        return;
-    }
+        // ==========================
+        // OBTENER SESIÓN
+        // ==========================
+        if ("obtenerSesion".equals(accion)) {
 
-    List<HistorialMedico> historiales = historialService.obtenerHistoriales();
-    response.getWriter().write(gson.toJson(historiales));
-}
-        
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-        try {
-            // USAMOS EL GSON GLOBAL QUE TIENE LAS EXCLUSIONES Y EL FORMATO CORRECTO
-            HistorialMedico historial = this.gson.fromJson(request.getReader(), HistorialMedico.class);
-            
-            String error = validarHistorial(historial);
-            if (error != null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.setContentType("application/json;charset=UTF-8");
-                response.getWriter().write("{\"error\":\"" + error + "\"}");
+            if (user == null || user.getEmpleado() == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"No hay sesión activa\"}");
                 return;
             }
 
-            // Guardamos en la base de datos
-            historialService.crearHistorial(historial);
-
-            // Enviamos mensaje de éxito
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"mensaje\":\"Historial guardado exitosamente\"}");
-            
-        } catch (Exception e) {
-            e.printStackTrace(); 
-           
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("application/json;charset=UTF-8");
-
-            String mensajeError = e.getMessage() != null ? e.getMessage().replace("\"", "'") : "Error desconocido";
-            response.getWriter().write("{\"error\":\"Error en el servidor: " + mensajeError + "\"}");
+            // SOLO ENVIAMOS EL EMPLEADO (veterinario)
+            response.getWriter().write(gson.toJson(user.getEmpleado()));
+            return;
         }
+
+        // ==========================
+        // BUSCAR POR ID
+        // ==========================
+        String idParam = request.getParameter("id");
+
+        if (idParam != null && !idParam.isEmpty()) {
+
+            int id = Integer.parseInt(idParam);
+
+            HistorialMedico h = historialService.buscarHistorial(id);
+
+            if (h == null) {
+                response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                response.getWriter().write("{\"mensaje\":\"Historial no encontrado\"}");
+                return;
+            }
+
+            response.getWriter().write(gson.toJson(h));
+            return;
+        }
+
+        // ==========================
+        // LISTAR TODOS
+        // ==========================
+        List<HistorialMedico> lista = historialService.obtenerHistoriales();
+        response.getWriter().write(gson.toJson(lista));
     }
-    
-    // ===============================
-    // PUT → actualizar historial
-    // ===============================
+
+    // ==========================
+    // POST
+    // ==========================
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         try {
-            // ¡CORREGIDO! Usamos el gson global configurado con "yyyy-MM-dd" y ExclusionStrategy
-            HistorialMedico historial = this.gson.fromJson(request.getReader(), HistorialMedico.class);
 
-            historialService.editarHistorial(historial); 
+            HttpSession session = request.getSession(false);
 
-            response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"mensaje\":\"Historial actualizado exitosamente\"}");
-            
+            Usuario user = (session != null)
+                    ? (Usuario) session.getAttribute("usuarioSesion")
+                    : null;
+
+            if (user == null || user.getEmpleado() == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"Sin sesión\"}");
+                return;
+            }
+
+            HistorialMedico historial
+                    = this.gson.fromJson(request.getReader(), HistorialMedico.class);
+
+            System.out.println("===== HISTORIAL =====");
+            System.out.println("Fecha: " + historial.getFecha());
+            System.out.println("Diagnóstico: " + historial.getDiagnostico());
+            System.out.println("Tratamiento: " + historial.getTratamiento());
+            System.out.println("Animal: " + (historial.getAnimal() != null ? historial.getAnimal().getId() : "NULL"));
+            System.out.println("Veterinario sesión: " + user.getEmpleado().getId());
+
+            // 🔥 AQUÍ SE ASIGNA EL VETERINARIO AUTOMÁTICO
+            historial.setVeterinario(user.getEmpleado());
+
+            // ✔ ahora sí validas
+            String error = validarHistorial(historial);
+            if (error != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"" + error + "\"}");
+                return;
+            }
+            System.out.println("===== DEBUG =====");
+            System.out.println("Usuario: " + user.getNombreUsuario());
+
+            if (user.getEmpleado() != null) {
+                System.out.println("Empleado ID: " + user.getEmpleado().getId());
+            } else {
+                System.out.println("Empleado: NULL");
+            }
+
+            if (historial.getAnimal() != null) {
+                System.out.println("Animal ID: " + historial.getAnimal().getId());
+            } else {
+                System.out.println("Animal: NULL");
+            }
+
+            System.out.println("Entrando a guardar...");
+            historialService.crearHistorial(historial);
+            System.out.println("Guardó correctamente");
+
+            response.getWriter().write("{\"mensaje\":\"Historial guardado exitosamente\"}");
+
         } catch (Exception e) {
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-            response.setContentType("application/json;charset=UTF-8");
-            String mensajeError = e.getMessage() != null ? e.getMessage().replace("\"", "'") : "Error al actualizar";
-            response.getWriter().write("{\"error\":\"Error en el servidor al editar: " + mensajeError + "\"}");
+            response.getWriter().write("{\"error\":\"Error servidor\"}");
         }
     }
-    
-    @Override
-protected void doDelete(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
-    
-    // 🚫 Bloqueado por reglas de negocio clínicas
-    response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
-    response.setContentType("application/json;charset=UTF-8");
-    response.getWriter().write("{\"error\":\"Por normativa de auditoría, los historiales médicos no pueden ser eliminados del sistema.\"}");
-}
 
-    // ===============================
+    // ==========================
+    // PUT
+    // ==========================
+    @Override
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        response.setContentType("application/json");
+
+        try {
+
+            HistorialMedico h = gson.fromJson(request.getReader(), HistorialMedico.class);
+
+            historialService.editarHistorial(h);
+
+            response.getWriter().write("{\"mensaje\":\"Historial actualizado exitosamente\"}");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+        }
+    }
+
+    // ==========================
+    // DELETE (bloqueado)
+    // ==========================
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        response.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
+        response.setContentType("application/json");
+        response.getWriter().write("{\"error\":\"No se permite eliminar historiales médicos\"}");
+    }
+
+    // ==========================
     // VALIDACIÓN
-    // ===============================
+    // ==========================
     private String validarHistorial(HistorialMedico h) {
+
         if (h == null) {
             return "Historial inválido";
         }
@@ -226,20 +230,7 @@ protected void doDelete(HttpServletRequest request, HttpServletResponse response
         if (h.getAnimal() == null) {
             return "Debe asociar un animal";
         }
-        if (h.getVeterinario() == null) {
-            return "Debe asociar un veterinario";
-        }
+
         return null;
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
