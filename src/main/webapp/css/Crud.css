@@ -188,10 +188,12 @@ th{
     letter-spacing:1px;
 }
 
+/* 👇 REEMPLAZA ESTE BLOQUE ESPECÍFICO 👇 */
 td{
     padding:16px;
     text-align:center;
     border-bottom:1px solid #e4e4e4;
+    text-transform: capitalize; /* 👈 Esta es la línea que debes agregar */
 }
 
 tbody tr:nth-child(even){

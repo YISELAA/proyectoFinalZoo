@@ -38,10 +38,7 @@
 
                         <div class="campo">
                             <label>Teléfono</label>
-                            <input type="text" id="telefono"
-                                   maxlength="8"
-                                   pattern="[0-9]{8}"
-                                   required>
+                            <input type="number" id="telefono" required>
                         </div>
 
                         <div class="campo">

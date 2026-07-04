@@ -176,34 +176,43 @@ public class AnimalServlet extends HttpServlet {
         response.getWriter().write("{\"mensaje\":\"Animal eliminado\"}");
     }
 
-   // 🔥 VALIDACIÓN FLEXIBILIZADA PARA COADYUVAR CON HÁBITATS ELIMINADOS
-    private String validarAnimal(Animal a) {
+    // 🔥 VALIDACIÓN FLEXIBILIZADA PARA COADYUVAR CON HÁBITATS ELIMINADOS
+   private String validarAnimal(Animal a) {
 
-        if (a == null) {
-            return "Animal inválido";
-        }
-
-        if (a.getNombre() == null || a.getNombre().trim().length() < 3) {
-            return "Nombre mínimo 3 caracteres";
-        }
-
-        if (a.getEspecie() == null || a.getEspecie().trim().length() < 3) {
-            return "La especie es requerida";
-        }
-
-        if (a.getFechaNacimiento() == null) {
-            return "Fecha de nacimiento requerida";
-        }
-
-        // 🌟 QUITAMOS LA OBLIGATORIEDAD ESTRICTA DEL HÁBITAT
-        // Ahora, si viene un hábitat, validamos que su ID sea correcto; 
-        // pero si viene null (animal libre), el Servlet lo dejará pasar sin errores.
-        if (a.getHabitat() != null && a.getHabitat().getId() == null) {
-            return "El formato del hábitat asignado no es válido";
-        }
-
-        return null;
+    if (a == null) {
+        return "Animal inválido";
     }
+
+    if (a.getNombre() == null || a.getNombre().trim().length() < 3) {
+        return "El nombre debe tener al menos 3 caracteres";
+    }
+
+    if (!a.getNombre().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+        return "El nombre solo puede contener letras y espacios";
+    }
+
+    if (a.getEspecie() == null || a.getEspecie().trim().length() < 3) {
+        return "La especie debe tener al menos 3 caracteres";
+    }
+
+    if (!a.getEspecie().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
+        return "La especie solo puede contener letras y espacios";
+    }
+
+    if (a.getSexo() == null || a.getSexo().trim().isEmpty()) {
+        return "Debe seleccionar el sexo";
+    }
+
+    if (a.getFechaNacimiento() == null) {
+        return "La fecha de nacimiento es requerida";
+    }
+
+    if (a.getHabitat() != null && a.getHabitat().getId() == null) {
+        return "El formato del hábitat asignado no es válido";
+    }
+
+    return null;
+}
 
     /**
      * Returns a short description of the servlet.

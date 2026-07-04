@@ -20,6 +20,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -42,12 +43,16 @@ public class Animal {
     private Integer id;
     
     @NotBlank
-    @Column(name = "especie", nullable = false,unique = true, length = 50)
+    @Column(name = "especie", nullable = false, length = 50)
     private String especie;
 
     @NotBlank
     @Column(name = "nombre_animal", nullable = false, length = 70)
     private String nombre;
+
+    @NotBlank
+    @Column(name = "sexo", nullable = false, length = 15)
+    private String sexo;
 
     @NotNull
     @Temporal(TemporalType.DATE)
@@ -61,34 +66,33 @@ public class Animal {
     @JoinColumn(name = "idhabitat")
     private Habitat habitat;
 
-   @Transient
-public String getEdad() {
+    @Transient
+    public String getEdad() {
 
-    if (fechaNacimiento == null) {
-        return "";
+        if (fechaNacimiento == null) {
+            return "";
+        }
+
+        LocalDate nacimiento = new java.sql.Date(
+                fechaNacimiento.getTime()
+        ).toLocalDate();
+
+        Period edad = Period.between(nacimiento, LocalDate.now());
+
+        if (edad.getYears() > 0) {
+            return edad.getYears() == 1
+                    ? "1 año"
+                    : edad.getYears() + " años";
+        }
+
+        if (edad.getMonths() > 0) {
+            return edad.getMonths() == 1
+                    ? "1 mes"
+                    : edad.getMonths() + " meses";
+        }
+
+        return edad.getDays() == 1
+                ? "1 día"
+                : edad.getDays() + " días";
     }
-
-    LocalDate nacimiento = new java.sql.Date(
-            fechaNacimiento.getTime()
-    ).toLocalDate();
-
-    Period edad = Period.between(nacimiento, LocalDate.now());
-
-    if (edad.getYears() > 0) {
-        return edad.getYears() == 1
-                ? "1 año"
-                : edad.getYears() + " años";
-    }
-
-    if (edad.getMonths() > 0) {
-        return edad.getMonths() == 1
-                ? "1 mes"
-                : edad.getMonths() + " meses";
-    }
-
-    return edad.getDays() == 1
-            ? "1 día"
-            : edad.getDays() + " días";
-}
-
 }

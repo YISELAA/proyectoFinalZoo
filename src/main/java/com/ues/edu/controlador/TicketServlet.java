@@ -133,6 +133,10 @@ public class TicketServlet extends HttpServlet {
         if (t.getTipo() == null || t.getTipo().trim().length() < 4) {
             return "El tipo debe tener mínimo 4 caracteres";
         }
+        
+         if (!t.getTipo().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
+            return "El tipo de ticket no debe contener números ni caracteres especiales";
+        }
 
         if (t.getPrecio() <= 0) {
             return "El precio debe ser mayor a 0";

@@ -13,7 +13,39 @@ public class TestBase {
         EntityManager em = emf.createEntityManager();
 
         try {
+
             em.getTransaction().begin();
+
+            // ===========================
+            // CARGOS (Originales + Limpieza)
+            // ===========================
+
+            Cargo administrador = new Cargo();
+            administrador.setNombreCargo("Administrador");
+            administrador.setDescripcion("Administrador del zoológico");
+            em.persist(administrador);
+
+            Cargo veterinarioCargo = new Cargo();
+            veterinarioCargo.setNombreCargo("Veterinario");
+            veterinarioCargo.setDescripcion("Atiende a los animales");
+            em.persist(veterinarioCargo);
+
+            Cargo cuidadorCargo = new Cargo();
+            cuidadorCargo.setNombreCargo("Cuidador");
+            cuidadorCargo.setDescripcion("Cuida y alimenta a los animales");
+            em.persist(cuidadorCargo);
+
+            // 🔥 NUEVOS CARGOS DE LIMPIEZA
+            Cargo limpiezaHabitats = new Cargo();
+            limpiezaHabitats.setNombreCargo("Auxiliar de Limpieza de Hábitats");
+            limpiezaHabitats.setDescripcion("Limpieza y desinfección de recintos de animales y manejo de desechos");
+            em.persist(limpiezaHabitats);
+
+            Cargo conserjeAreas = new Cargo();
+            conserjeAreas.setNombreCargo("Conserje de Áreas Comunes");
+            conserjeAreas.setDescripcion("Mantenimiento de la limpieza en pasillos, plazas, baños y oficinas");
+            em.persist(conserjeAreas);
+
 
             // ===========================
             // ROLES DEL SISTEMA
@@ -31,6 +63,7 @@ public class TestBase {
             cuidador.setNombreRol("CUIDADOR");
             em.persist(cuidador);
 
+
             // ===========================
             // EMPLEADO ADMINISTRADOR
             // ===========================
@@ -39,8 +72,13 @@ public class TestBase {
             empleado.setNombre("Karla");
             empleado.setApellido("Ruiz");
             empleado.setDui("00000000-0");
+            empleado.setTelefono("71234567");
+            empleado.setCorreo("karla@gmail.com");
+            empleado.setSalario(800.00);
+            empleado.setCargo(administrador);
 
             em.persist(empleado);
+
 
             // ===========================
             // USUARIO ADMINISTRADOR
@@ -59,9 +97,9 @@ public class TestBase {
             em.getTransaction().commit();
 
             System.out.println("==================================");
-            System.out.println("BASE INICIAL CREADA");
+            System.out.println("BASE INICIAL CREADA CON NUEVOS CARGOS");
             System.out.println("==================================");
-           
+
         } catch (Exception e) {
 
             if (em.getTransaction().isActive()) {

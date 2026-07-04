@@ -228,7 +228,6 @@ function cargarTabla() {
 
 
 // MOSTRAR TABLA
-
 function mostrarTabla(lista) {
 
     if (!Array.isArray(lista)) {
@@ -248,7 +247,7 @@ function mostrarTabla(lista) {
 
         if (!grupos[clave]) {
             grupos[clave] = {
-                id: d.id,
+                id: d.id, 
                 nombre: d.nombreVisitante,
                 telefono: d.telefono,
                 fecha: fecha,
@@ -261,14 +260,15 @@ function mostrarTabla(lista) {
         grupos[clave].total += d.subtotal;
     });
 
-    gruposVisita = Object.values(grupos);
-//    paginaActual = 1;
+    // 🛠️ AQUÍ SE RE-ASIGNAN LOS IDS CORRELATIVOS EN LA PANTALLA:
+    gruposVisita = Object.values(grupos).map((grupo, index) => {
+        grupo.id = index + 1; // Genera de forma limpia 1, 2, 3... correlativamente
+        return grupo;
+    });
 
     renderTablaPaginada();
     renderPaginacion();
 }
-
-
 
 
 function editarVisita(nombre, telefono, fecha) {

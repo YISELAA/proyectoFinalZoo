@@ -16,10 +16,14 @@ public class EmpleadosService {
     
    private EmpleadoDao dao = new EmpleadoDao();
 
-    public void crearEmpleado(Empleado e) {
+   public void crearEmpleado(Empleado e) {
 
     if (dao.existeDui(e.getDui())) {
         throw new RuntimeException("Ya existe un empleado con ese DUI");
+    }
+
+    if (dao.existeCorreo(e.getCorreo())) {
+        throw new RuntimeException("Ya existe un empleado con ese correo");
     }
 
     dao.guardar(e);

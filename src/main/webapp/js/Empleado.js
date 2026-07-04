@@ -8,10 +8,11 @@ const size = 5;
 
 
 
+
 document.addEventListener("DOMContentLoaded", function () {
 
     cargarEmpleados();
-
+    
     const btnCancelar = document.querySelector(".cancelar");
     if (btnCancelar) {
         btnCancelar.addEventListener("click", function (e) {
@@ -20,7 +21,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 });
-
 
 // LISTAR   
 
@@ -41,6 +41,10 @@ function cargarEmpleados() {
 
 function mostrarEmpleados() {
 
+    console.log(empleados);
+    console.log(JSON.stringify(empleados[0], null, 2));
+    console.log(empleados[0].cargo);
+
     const inicio = (paginaActual - 1) * size;
     const fin = inicio + size;
     const empleadosPagina = empleados.slice(inicio, fin);
@@ -48,7 +52,7 @@ function mostrarEmpleados() {
     if (empleadosPagina.length === 0) {
         document.getElementById("tbodyEmpleados").innerHTML = `
             <tr>
-                <td colspan="6" style="text-align:center;">
+                <td colspan="9" style="text-align:center;">
                     No se encontraron empleados registrados
                 </td>
             </tr>`;
@@ -56,21 +60,26 @@ function mostrarEmpleados() {
     }
 
     const html = empleadosPagina.map(e => `
-        <tr>
-            <td>${e.id}</td>
-            <td>${e.nombre}</td>
-            <td>${e.apellido}</td>
-            <td>${e.dui}</td>
-            <td class="acciones">
-                <button class="btnEditar"   onclick="editar(${e.id})">
-                    <i class="ti ti-edit"></i>
-                </button>
-                <button class="btnEliminar" onclick="eliminarEmpleado(${e.id})">
-                    <i class="ti ti-trash"></i>
-                </button>
-            </td>
-        </tr>`
-    ).join("");
+    <tr>
+        <td>${e.id}</td>
+        <td>${e.nombre}</td>
+        <td>${e.apellido}</td>
+        <td>${e.dui}</td>
+        <td>${e.telefono}</td>
+        <td>${e.correo}</td>
+        <td>$${parseFloat(e.salario).toFixed(2)}</td>
+        <td>${e.cargo ? e.cargo.nombreCargo : ""}</td>
+        <td class="acciones">
+            <button class="btnEditar" onclick="editar(${e.id})">
+                <i class="ti ti-edit"></i>
+            </button>
+
+            <button class="btnEliminar" onclick="eliminarEmpleado(${e.id})">
+                <i class="ti ti-trash"></i>
+            </button>
+        </td>
+    </tr>
+`).join("");
 
     document.getElementById("tbodyEmpleados").innerHTML = html;
 }
@@ -83,11 +92,17 @@ document.getElementById("formEmpleado").addEventListener("submit", function (eve
 
     const id = document.getElementById("idEmpleado").value;
 
-    const empleado = {
-        nombre: document.getElementById("nombreEmpleado").value,
-        apellido: document.getElementById("apellido").value,
-        dui: document.getElementById("numeroDui").value,
-    };
+   const empleado = {
+    nombre: document.getElementById("nombreEmpleado").value,
+    apellido: document.getElementById("apellido").value,
+    dui: document.getElementById("numeroDui").value,
+    telefono: document.getElementById("telefono").value,
+    correo: document.getElementById("correo").value,
+    salario: parseFloat(document.getElementById("salario").value),
+    cargo: {
+        id: parseInt(document.getElementById("cargo").value)
+    }
+};
 
     if (id)
         empleado.id = parseInt(id);
@@ -153,15 +168,22 @@ function editar(id) {
                     throw new Error("No se pudo obtener el registro");
                 return response.json();
             })
-            .then(e => {
-                document.getElementById("idEmpleado").value = e.id;
-                document.getElementById("nombreEmpleado").value = e.nombre;
-                document.getElementById("apellido").value = e.apellido;
-                document.getElementById("numeroDui").value = e.dui;
+           .then(e => {
 
-                document.querySelector(".guardar").textContent = "Actualizar Empleado";
-//                window.scrollTo({top: 0, behavior: "smooth"});
-            })
+    document.getElementById("idEmpleado").value = e.id;
+    document.getElementById("nombreEmpleado").value = e.nombre;
+    document.getElementById("apellido").value = e.apellido;
+    document.getElementById("numeroDui").value = e.dui;
+    document.getElementById("telefono").value = e.telefono;
+    document.getElementById("correo").value = e.correo;
+    document.getElementById("salario").value = e.salario;
+
+    if (e.cargo) {
+        document.getElementById("cargo").value = e.cargo.id;
+    }
+
+    document.querySelector(".guardar").textContent = "Actualizar Empleado";
+})
             .catch(error => console.error("Error al cargar datos de edición:", error));
 }
 
@@ -260,3 +282,6 @@ function irPagina(numero) {
     mostrarEmpleados();
     renderPaginacion();
 }
+
+
+

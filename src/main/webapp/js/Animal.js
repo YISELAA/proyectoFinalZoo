@@ -67,15 +67,16 @@ function mostrarAnimales(lista) {
     }
 
     let html = "";
-   lista.forEach(a => {
-    // Manejo seguro por si a.habitat es null o no tiene tipoTerreno
-    let nombreHabitat = a.habitat?.tipoTerreno || '<span class="badge bg-secondary">Sin Hábitat</span>';
+    lista.forEach(a => {
+        // Manejo seguro por si a.habitat es null o no tiene tipoTerreno
+        let nombreHabitat = a.habitat?.tipoTerreno || '<span class="badge bg-secondary">Sin Hábitat</span>';
 
-    html += `
+        html += `
         <tr>
             <td>${a.id ?? "—"}</td>
             <td>${a.nombre ?? "—"}</td>
             <td>${a.especie ?? "—"}</td>
+            <td>${a.sexo ?? "—"}</td>
             <td>${formatearFecha(a.fechaNacimiento)}</td>
             <td>${calcularEdad(a.fechaNacimiento)}</td>
             <td>${formatearFecha(a.fechaIngreso)}</td>
@@ -88,7 +89,7 @@ function mostrarAnimales(lista) {
                     <i class="ti ti-trash"></i>
                 </button>
             </td> </tr> `;
-});
+    });
     document.getElementById("tbodyAnimales").innerHTML = html;
 }
 
@@ -181,6 +182,7 @@ function editarAnimal(id) {
                 document.getElementById("idAnimal").value = a.id;
                 document.getElementById("nombreAnimal").value = a.nombre;
                 document.getElementById("especie").value = a.especie;
+                document.getElementById("sexo").value = a.sexo;
                 document.getElementById("fechaNacimiento").value =
                         a.fechaNacimiento ? a.fechaNacimiento.substring(0, 10) : "";
                 document.getElementById("fechaIngreso").value =
@@ -217,11 +219,13 @@ document.getElementById("formAnimal")
             let animal = {
                 nombre: document.getElementById("nombreAnimal").value,
                 especie: document.getElementById("especie").value,
+                sexo: document.getElementById("sexo").value,
                 fechaNacimiento: document.getElementById("fechaNacimiento").value,
                 fechaIngreso: document.getElementById("fechaIngreso").value,
                 habitat: idHabitatRaw ? {id: parseInt(idHabitatRaw)} : null
             };
-
+            console.log("Objeto animal:", animal);
+            console.log("Sexo:", document.getElementById("sexo").value);
             if (id) {
                 animal.id = parseInt(id);
             }

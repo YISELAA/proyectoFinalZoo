@@ -17,6 +17,7 @@ import java.io.PrintWriter;
 import java.util.List;
 
 import com.ues.edu.entidades.Usuario;
+import java.io.BufferedReader;
 
 /**
  *
@@ -103,97 +104,121 @@ public class UssuarioServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+   @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        response.setCharacterEncoding("UTF-8");
-        response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
+    response.setContentType("application/json");
 
-        try {
-            // 1. Leer el cuerpo de la petición como texto plano
-            java.io.BufferedReader reader = request.getReader();
-            StringBuilder sb = new StringBuilder();
-            String linea;
-            while ((linea = reader.readLine()) != null) {
-                sb.append(linea);
-            }
-            String jsonRaw = sb.toString();
-            
-            System.out.println("JSON recibido en bruto: " + jsonRaw);
+    try {
 
-            // 2. Deserializar el JSON entrante
-            Usuario usuario = this.gson.fromJson(jsonRaw, Usuario.class);
+        // Leer el JSON recibido
+        StringBuilder sb = new StringBuilder();
+        BufferedReader reader = request.getReader();
+        String linea;
 
-            // 3. Validar los datos sintácticos esenciales
-            String error = validarUsuario(usuario, false);
-            if (error != null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\":\"" + error + "\"}");
-                return;
-            }
-
-            // 4. Mandar a guardar usando el servicio
-            usuarioService.crearUsuario(usuario);
-
-            // 5. Responder con éxito genuino
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("{\"mensaje\":\"Usuario guardado exitosamente\"}");
-
-        } catch (RuntimeException e) {
-            // 🚨 CAPTURA AQUÍ: Errores lógicos preventivos del negocio (Ej. "El nombre de usuario ya existe")
-            System.out.println("VALIDACIÓN DE NEGOCIO EN DO_POST: " + e.getMessage());
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400 Bad Request
-            response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
-
-        } catch (Exception e) {
-            // Error técnico físico imprevisto de base de datos o servidor
-            System.out.println("ERROR CRÍTICO INESPERADO EN DO_POST: " + e.getMessage());
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
-            response.getWriter().write("{\"error\":\"Error interno en el servidor: " + e.getMessage() + "\"}");
+        while ((linea = reader.readLine()) != null) {
+            sb.append(linea);
         }
+
+        String jsonRaw = sb.toString();
+
+        System.out.println("========== JSON RECIBIDO ==========");
+        System.out.println(jsonRaw);
+
+        // Convertir JSON a objeto
+        Usuario usuario = gson.fromJson(jsonRaw, Usuario.class);
+
+        System.out.println("========== OBJETO DESERIALIZADO ==========");
+        System.out.println(gson.toJson(usuario));
+
+        // Validaciones
+        String error = validarUsuario(usuario, false);
+
+        if (error != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"" + error + "\"}");
+            return;
+        }
+
+        // Guardar
+        usuarioService.crearUsuario(usuario);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("{\"mensaje\":\"Usuario guardado exitosamente\"}");
+
+    } catch (RuntimeException e) {
+
+        System.out.println("========== ERROR DE NEGOCIO ==========");
+        e.printStackTrace();   // <-- MUY IMPORTANTE
+
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+
+    } catch (Exception e) {
+
+        System.out.println("========== ERROR INTERNO ==========");
+        e.printStackTrace();
+
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"error\":\"Error interno del servidor\"}");
     }
+}
     
     /**
      * Handles the HTTP <code>PUT</code> method.
      */
     @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+protected void doPut(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
+    response.setContentType("application/json");
+    response.setCharacterEncoding("UTF-8");
 
-        try {
-            Usuario usuario = this.gson.fromJson(request.getReader(), Usuario.class);
+    try {
 
-            String error = validarUsuario(usuario, true);
-            if (error != null) {
-                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-                response.getWriter().write("{\"error\":\"" + error + "\"}");
-                return;
-            }
+        Usuario usuario = gson.fromJson(request.getReader(), Usuario.class);
 
-            usuarioService.actualizarUsuario(usuario);
+        System.out.println("========== USUARIO RECIBIDO EN PUT ==========");
+        System.out.println(gson.toJson(usuario));
 
-            response.setStatus(HttpServletResponse.SC_OK);
-            response.getWriter().write("{\"mensaje\":\"Usuario actualizado con éxito\"}");
+        String error = validarUsuario(usuario, true);
 
-        } catch (RuntimeException e) {
-            // 🚨 CAPTURA AQUÍ: Errores controlados del Service en actualizaciones si los implementas
-            System.out.println("VALIDACIÓN DE NEGOCIO EN DO_PUT: " + e.getMessage());
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST); // 400
-            response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
-
-        } catch (Exception e) {
-            System.out.println("ERROR CRÍTICO INESPERADO EN DO_PUT: " + e.getMessage());
-            e.printStackTrace();
-            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR); // 500
-            response.getWriter().write("{\"error\":\"Error al actualizar: " + e.getMessage() + "\"}");
+        if (error != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"" + error + "\"}");
+            return;
         }
-    }
 
+        usuarioService.actualizarUsuario(usuario);
+
+        response.setStatus(HttpServletResponse.SC_OK);
+        response.getWriter().write("{\"mensaje\":\"Usuario actualizado con éxito\"}");
+
+    } catch (RuntimeException e) {
+
+        System.out.println("========== ERROR DE NEGOCIO EN PUT ==========");
+        e.printStackTrace();   // <-- IMPORTANTE: imprime la causa completa
+
+        // Si existe una causa interna (Hibernate/SQL), también la imprime
+        if (e.getCause() != null) {
+            System.out.println("========== CAUSA ==========");
+            e.getCause().printStackTrace();
+        }
+
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+
+    } catch (Exception e) {
+
+        System.out.println("========== ERROR CRÍTICO EN PUT ==========");
+        e.printStackTrace();
+
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"error\":\"Error al actualizar: " + e.getMessage() + "\"}");
+    }
+}
     /**
      * Handles the HTTP <code>DELETE</code> method.
      */
