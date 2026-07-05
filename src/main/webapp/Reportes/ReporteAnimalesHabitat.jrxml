@@ -5,7 +5,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="BaseZoo"/>
 	<style name="encabezado_col" forecolor="#FFFFFF" fontName="DejaVu Sans" fontSize="10" isBold="true"/>
 	<style name="dato_texto" forecolor="#2D3A2E" fontName="DejaVu Sans" fontSize="11"/>
-	<style name="dato_numero" forecolor="#1A3A1A" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="dato_numero" forecolor="#1B4332" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
 	<style name="footer_texto" forecolor="#74857A" fontName="DejaVu Sans" fontSize="9"/>
 	<parameter name="USUARIO_RESPONSABLE" class="java.lang.String">
 		<defaultValueExpression><![CDATA["N/A"]]></defaultValueExpression>
@@ -40,13 +40,13 @@ ORDER BY total_animales DESC]]>
 	<title>
 		<band height="90" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="90" forecolor="#1A3A1A" backcolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000001"/>
+				<reportElement x="0" y="0" width="802" height="90" forecolor="#1B4332" backcolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000001"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="5" height="90" forecolor="#5CB85C" backcolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000002"/>
+				<reportElement x="0" y="0" width="5" height="90" forecolor="#52B788" backcolor="#52B788" uuid="dd000001-0000-0000-0000-000000000002"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -59,25 +59,25 @@ ORDER BY total_animales DESC]]>
 				<text><![CDATA[WILD ZOO MK]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="18" y="52" width="600" height="22" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000004"/>
+				<reportElement x="18" y="52" width="600" height="22" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000004"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<text><![CDATA[Reporte de animales por hábitat]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="560" y="58" width="240" height="18" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000005"/>
+				<reportElement x="560" y="58" width="240" height="18" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000005"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Generado: " + new java.text.SimpleDateFormat("dd/MM/yyyy h:mma", java.util.Locale.ENGLISH).format(new java.util.Date())]]></textFieldExpression>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy h:mma", java.util.Locale.ENGLISH).format(new java.util.Date())]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="560" y="36" width="240" height="18" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000099"/>
+				<reportElement x="560" y="36" width="240" height="18" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000099"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Responsable: " + ($P{USUARIO_RESPONSABLE} != null ? $P{USUARIO_RESPONSABLE} : "N/A")]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Generado por: " + ($P{USUARIO_RESPONSABLE} != null ? $P{USUARIO_RESPONSABLE} : "N/A")]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -87,7 +87,7 @@ ORDER BY total_animales DESC]]>
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="36" forecolor="#2E7D32" backcolor="#2E7D32" uuid="dd000001-0000-0000-0000-000000000006"/>
+				<reportElement x="0" y="0" width="802" height="36" forecolor="#2D6A4F" backcolor="#2D6A4F" uuid="dd000001-0000-0000-0000-000000000006"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -100,7 +100,7 @@ ORDER BY total_animales DESC]]>
 				<text><![CDATA[Tipo de terreno]]></text>
 			</staticText>
 			<line>
-				<reportElement x="260" y="6" width="1" height="24" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000008"/>
+				<reportElement x="260" y="6" width="1" height="24" forecolor="#52B788" uuid="dd000001-0000-0000-0000-000000000008"/>
 			</line>
 			<staticText>
 				<reportElement style="encabezado_col" x="270" y="0" width="170" height="36" uuid="dd000001-0000-0000-0000-000000000009"/>
@@ -110,7 +110,7 @@ ORDER BY total_animales DESC]]>
 				<text><![CDATA[Capacidad máxima]]></text>
 			</staticText>
 			<line>
-				<reportElement x="440" y="6" width="1" height="24" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000010"/>
+				<reportElement x="440" y="6" width="1" height="24" forecolor="#52B788" uuid="dd000001-0000-0000-0000-000000000010"/>
 			</line>
 			<staticText>
 				<reportElement style="encabezado_col" x="450" y="0" width="170" height="36" uuid="dd000001-0000-0000-0000-000000000011"/>
@@ -120,7 +120,7 @@ ORDER BY total_animales DESC]]>
 				<text><![CDATA[Animales actuales]]></text>
 			</staticText>
 			<line>
-				<reportElement x="620" y="6" width="1" height="24" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000012"/>
+				<reportElement x="620" y="6" width="1" height="24" forecolor="#52B788" uuid="dd000001-0000-0000-0000-000000000012"/>
 			</line>
 			<staticText>
 				<reportElement style="encabezado_col" x="630" y="0" width="162" height="36" uuid="dd000001-0000-0000-0000-000000000013"/>
@@ -134,7 +134,7 @@ ORDER BY total_animales DESC]]>
 	<detail>
 		<band height="34" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="34" forecolor="#C8E6C9" backcolor="#C8E6C9" uuid="dd000001-0000-0000-0000-000000000014">
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#D8F3DC" backcolor="#D8F3DC" uuid="dd000001-0000-0000-0000-000000000014">
 					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -142,7 +142,7 @@ ORDER BY total_animales DESC]]>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="34" forecolor="#E8F5E9" backcolor="#E8F5E9" uuid="dd000001-0000-0000-0000-000000000015">
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#F0FFF4" backcolor="#F0FFF4" uuid="dd000001-0000-0000-0000-000000000015">
 					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -150,7 +150,7 @@ ORDER BY total_animales DESC]]>
 				</graphicElement>
 			</rectangle>
 			<line>
-				<reportElement x="0" y="33" width="802" height="1" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000016"/>
+				<reportElement x="0" y="33" width="802" height="1" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000016"/>
 			</line>
 			<textField>
 				<reportElement style="dato_texto" x="10" y="0" width="250" height="34" uuid="dd000001-0000-0000-0000-000000000017"/>
@@ -160,7 +160,7 @@ ORDER BY total_animales DESC]]>
 				<textFieldExpression><![CDATA[$F{tipo_terreno}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="260" y="4" width="1" height="26" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000018"/>
+				<reportElement x="260" y="4" width="1" height="26" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000018"/>
 			</line>
 			<textField>
 				<reportElement style="dato_numero" x="270" y="0" width="170" height="34" uuid="dd000001-0000-0000-0000-000000000019"/>
@@ -170,7 +170,7 @@ ORDER BY total_animales DESC]]>
 				<textFieldExpression><![CDATA[$F{capacidad}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="440" y="4" width="1" height="26" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000020"/>
+				<reportElement x="440" y="4" width="1" height="26" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000020"/>
 			</line>
 			<textField>
 				<reportElement style="dato_numero" x="450" y="0" width="170" height="34" uuid="dd000001-0000-0000-0000-000000000021"/>
@@ -180,7 +180,7 @@ ORDER BY total_animales DESC]]>
 				<textFieldExpression><![CDATA[$F{total_animales}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="620" y="4" width="1" height="26" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000022"/>
+				<reportElement x="620" y="4" width="1" height="26" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000022"/>
 			</line>
 			<textField>
 				<reportElement style="dato_numero" x="630" y="0" width="162" height="34" uuid="dd000001-0000-0000-0000-000000000023"/>
@@ -194,31 +194,31 @@ ORDER BY total_animales DESC]]>
 	<columnFooter>
 		<band height="36" splitType="Stretch">
 			<line>
-				<reportElement x="0" y="0" width="802" height="1" forecolor="#2E7D32" uuid="dd000001-0000-0000-0000-000000000024"/>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#2D6A4F" uuid="dd000001-0000-0000-0000-000000000024"/>
 			</line>
 			<staticText>
-				<reportElement x="10" y="6" width="250" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000025"/>
+				<reportElement x="10" y="6" width="250" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000025"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTALES]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="270" y="6" width="170" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000026"/>
+				<reportElement x="270" y="6" width="170" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000026"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{TOTAL_CAPACIDAD}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="450" y="6" width="170" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000027"/>
+				<reportElement x="450" y="6" width="170" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000027"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{TOTAL_ANIMALES}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="630" y="6" width="162" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000028"/>
+				<reportElement x="630" y="6" width="162" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000028"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
@@ -229,7 +229,7 @@ ORDER BY total_animales DESC]]>
 	<pageFooter>
 		<band height="28" splitType="Stretch">
 			<line>
-				<reportElement x="0" y="0" width="802" height="1" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000029"/>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000029"/>
 			</line>
 			<staticText>
 				<reportElement style="footer_texto" x="0" y="5" width="400" height="18" uuid="dd000001-0000-0000-0000-000000000030"/>
@@ -250,7 +250,7 @@ ORDER BY total_animales DESC]]>
 	<summary>
 		<band height="240" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="8" width="802" height="22" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000032"/>
+				<reportElement x="0" y="8" width="802" height="22" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000032"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="13" isBold="true"/>
 				</textElement>
@@ -286,15 +286,15 @@ ORDER BY total_animales DESC]]>
 				</categoryDataset>
 				<barPlot isShowTickLabels="true" isShowTickMarks="true">
 					<plot>
-						<seriesColor seriesOrder="0" color="#1565C0"/>
-						<seriesColor seriesOrder="1" color="#2E7D32"/>
-						<seriesColor seriesOrder="2" color="#F57F17"/>
+						<seriesColor seriesOrder="0" color="#1B4332"/>
+						<seriesColor seriesOrder="1" color="#52B788"/>
+						<seriesColor seriesOrder="2" color="#B7E4C7"/>
 					</plot>
-					<itemLabel color="#1A3A1A">
+					<itemLabel color="#1B4332">
 						<font fontName="DejaVu Sans" size="8" isBold="true"/>
 					</itemLabel>
 					<categoryAxisFormat>
-						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2E7D32">
+						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2D6A4F">
 							<labelFont>
 								<font fontName="DejaVu Sans" size="9" isBold="true"/>
 							</labelFont>
@@ -304,7 +304,7 @@ ORDER BY total_animales DESC]]>
 						</axisFormat>
 					</categoryAxisFormat>
 					<valueAxisFormat>
-						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2E7D32">
+						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2D6A4F">
 							<labelFont>
 								<font fontName="DejaVu Sans" size="9" isBold="true"/>
 							</labelFont>
