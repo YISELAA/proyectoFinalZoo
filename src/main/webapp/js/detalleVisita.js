@@ -1,6 +1,4 @@
-/* =============================================================
- * detalleVisita.js
- * ============================================================= */
+
 
 console.log("JS NUEVO CARGADO");
 
@@ -10,9 +8,7 @@ let gruposVisita = [];
 let paginaActual = 1;
 const size = 5;
 
-// =========================
-// ESTADO GLOBAL
-// =========================
+
 let tickets = [];
 let idsOriginales = [];
 const precios = {};
@@ -25,9 +21,7 @@ const colores = [
     "badge-rosa"
 ];
 
-// =========================
-// INICIALIZACIÓN
-// =========================
+
 document.addEventListener("DOMContentLoaded", function () {
 
     cargarTabla();
@@ -55,16 +49,10 @@ document.addEventListener("DOMContentLoaded", function () {
     renderTickets();
 });
 
-// =========================
-// TOTAL
-// =========================
 function calcTotal() {
     return tickets.reduce((a, t) => a + t.subtotal, 0);
 }
 
-// =========================
-// RENDER TICKETS
-// =========================
 function renderTickets() {
 
     let lista = document.getElementById("ticketLista");
@@ -85,9 +73,7 @@ function renderTickets() {
             tickets.length > 0 ? "$" + total.toFixed(2) : "";
 }
 
-// =========================
-// AGREGAR TICKET
-// =========================
+
 function agregarTicket() {
 
     let select = document.getElementById("idTicket");
@@ -118,17 +104,15 @@ function agregarTicket() {
     renderTickets();
 }
 
-// =========================
-// QUITAR TICKET
-// =========================
+
 function quitarTicket(i) {
     tickets.splice(i, 1);
     renderTickets();
 }
 
-// =========================
+
 // GUARDAR / ACTUALIZAR
-// =========================
+
 function guardarRegistro(e) {
 
     e.preventDefault();
@@ -195,8 +179,14 @@ function guardarRegistro(e) {
             .then(() => {
 
                 let msgErr = document.getElementById("mensajeError");
-                if (msgErr) msgErr.innerHTML = "";
+                if (msgErr)
+                    msgErr.innerHTML = "";
                 idsOriginales = [];
+
+                if (!idExistente) {
+                    paginaActual = 1;      // solo cuando es un registro nuevo
+                }
+
                 cargarTabla();
                 limpiarFormulario();
 
@@ -212,7 +202,8 @@ function guardarRegistro(e) {
             .catch(error => {
 
                 let msgErr = document.getElementById("mensajeError");
-                if (msgErr) msgErr.innerHTML = "";
+                if (msgErr)
+                    msgErr.innerHTML = "";
 
                 Swal.fire({
                     icon: "error",
@@ -225,9 +216,9 @@ function guardarRegistro(e) {
             });
 }
 
-// =========================
+
 // CARGAR TABLA
-// =========================
+
 function cargarTabla() {
     fetch("DetalleVisitaServlet")
             .then(res => res.json())
@@ -235,9 +226,7 @@ function cargarTabla() {
             .catch(error => console.error(error));
 }
 
-// =========================
-// MOSTRAR TABLA
-// =========================
+
 function mostrarTabla(lista) {
 
     if (!Array.isArray(lista)) {
@@ -250,14 +239,14 @@ function mostrarTabla(lista) {
     lista.forEach(d => {
 
         let fecha = Array.isArray(d.fechaVisita)
-                ? `${d.fechaVisita[0]}-${String(d.fechaVisita[1]).padStart(2, "0")}-${String(d.fechaVisita[2]).padStart(2, "0")}`
-                : d.fechaVisita;
+                ? `${String(d.fechaVisita[2]).padStart(2, "0")}-${String(d.fechaVisita[1]).padStart(2, "0")}-${d.fechaVisita[0]}`
+                : d.fechaVisita.split("-").reverse().join("-");
 
         let clave = d.nombreVisitante + "_" + d.telefono + "_" + fecha;
 
         if (!grupos[clave]) {
             grupos[clave] = {
-                id: d.id,
+                id: d.id, 
                 nombre: d.nombreVisitante,
                 telefono: d.telefono,
                 fecha: fecha,
@@ -270,71 +259,16 @@ function mostrarTabla(lista) {
         grupos[clave].total += d.subtotal;
     });
 
-    gruposVisita = Object.values(grupos);
-    paginaActual = 1;
+    gruposVisita = Object.values(grupos).map((grupo, index) => {
+        grupo.id = index + 1; // Genera de forma limpia 1, 2, 3... correlativamente
+        return grupo;
+    });
 
     renderTablaPaginada();
     renderPaginacion();
 }
 
-// =========================
-// ELIMINAR
-// =========================
-function eliminar(nombre, telefono, fecha) {
 
-    Swal.fire({
-        title: "¿Eliminar registro?",
-        text: "Esta acción no se puede deshacer",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#b05d4d",
-        cancelButtonColor: "#3f5b4b",
-        confirmButtonText: "Sí, eliminar",
-        cancelButtonText: "Cancelar"
-    }).then(result => {
-
-        if (!result.isConfirmed)
-            return;
-
-        fetch("DetalleVisitaServlet")
-                .then(r => r.json())
-                .then(lista => {
-
-                    let registros = lista.filter(d => {
-                        let fechaD = Array.isArray(d.fechaVisita)
-                                ? `${d.fechaVisita[0]}-${String(d.fechaVisita[1]).padStart(2, "0")}-${String(d.fechaVisita[2]).padStart(2, "0")}`
-                                : d.fechaVisita;
-
-                        return d.nombreVisitante === nombre &&
-                                d.telefono === telefono &&
-                                fechaD === fecha;
-                    });
-
-                    let promesas = registros.map(d =>
-                        fetch("DetalleVisitaServlet?id=" + d.id, {method: "DELETE"})
-                                .then(r => r.json())
-                    );
-
-                    return Promise.all(promesas);
-                })
-                .then(() => {
-                    cargarTabla();
-                    Swal.fire({
-                        icon: "success",
-                        title: "Eliminado",
-                        text: "Registro eliminado correctamente",
-                        confirmButtonColor: "#3f5b4b",
-                        timer: 2000,
-                        timerProgressBar: true
-                    });
-                })
-                .catch(error => console.error(error));
-    });
-}
-
-// =========================
-// EDITAR
-// =========================
 function editarVisita(nombre, telefono, fecha) {
 
     fetch("DetalleVisitaServlet")
@@ -346,12 +280,12 @@ function editarVisita(nombre, telefono, fecha) {
 
                 let registros = lista.filter(d => {
                     let fechaD = Array.isArray(d.fechaVisita)
-                            ? `${d.fechaVisita[0]}-${String(d.fechaVisita[1]).padStart(2, "0")}-${String(d.fechaVisita[2]).padStart(2, "0")}`
-                            : d.fechaVisita;
+                            ? `${String(d.fechaVisita[2]).padStart(2, "0")}-${String(d.fechaVisita[1]).padStart(2, "0")}-${d.fechaVisita[0]}`
+                            : d.fechaVisita.split("-").reverse().join("-");
 
                     return d.nombreVisitante === nombre &&
-                             d.telefono === telefono &&
-                             fechaD === fecha;
+                            d.telefono === telefono &&
+                            fechaD === fecha;
                 });
 
                 if (registros.length === 0)
@@ -374,17 +308,16 @@ function editarVisita(nombre, telefono, fecha) {
 
                 renderTickets();
                 document.querySelector(".guardar").textContent = "Actualizar";
-                window.scrollTo({top: 0, behavior: "smooth"});
+//                window.scrollTo({top: 0, behavior: "smooth"});
             });
 }
 
-// ===================================
-// RENDER TABLA CON FILAS PAGINADAS
-// ===================================
+
 function renderTablaPaginada() {
 
     let tbody = document.querySelector("#tablaDetalleVisita tbody");
-    if (!tbody) return;
+    if (!tbody)
+        return;
 
     tbody.innerHTML = "";
 
@@ -421,10 +354,6 @@ function renderTablaPaginada() {
                                 onclick="editarVisita('${g.nombre}', '${g.telefono}', '${g.fecha}')">
                             <i class="ti ti-edit"></i>
                         </button>
-                        <button class="btnEliminar"
-                                onclick="eliminar('${g.nombre}', '${g.telefono}', '${g.fecha}')">
-                            <i class="ti ti-trash"></i>
-                        </button>
                     </div>
                 </td>
             </tr>
@@ -434,13 +363,12 @@ function renderTablaPaginada() {
     tbody.innerHTML = html;
 }
 
-// =========================
-// RENDER CONTROLES PAGINACIÓN  ← ÚNICO CAMBIO
-// =========================
+
 function renderPaginacion() {
 
     const pagContenedor = document.getElementById("paginacion");
-    if (!pagContenedor) return;
+    if (!pagContenedor)
+        return;
 
     pagContenedor.innerHTML = `
         <button type="button" onclick="anterior()">
@@ -473,16 +401,15 @@ function anterior() {
     }
 }
 
-// =========================
-// LIMPIAR FORMULARIO
-// =========================
+
 function limpiarFormulario() {
     document.getElementById("formDetalleVisita").reset();
     document.getElementById("idDetalleVisita").value = "";
     document.getElementById("errorTicket").style.display = "none";
 
     let msgErr = document.getElementById("mensajeError");
-    if (msgErr) msgErr.innerHTML = "";
+    if (msgErr)
+        msgErr.innerHTML = "";
 
     document.querySelector(".guardar").textContent = "Guardar";
     idsOriginales = [];

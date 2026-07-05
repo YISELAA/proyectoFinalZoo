@@ -1,25 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="ReporteAnimalesHabitat"
-              pageWidth="842" pageHeight="595"
-              orientation="Landscape"
-              columnWidth="802"
-              leftMargin="20" rightMargin="20"
-              topMargin="20" bottomMargin="20"
-              uuid="a95b3e40-6f1d-7c4e-a9b3-45678901abcd">
-
-    <property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="BaseZoo"/>
-
-    <style name="encabezado_col" fontName="DejaVu Sans" fontSize="10" isBold="true" forecolor="#FFFFFF"/>
-    <style name="dato_texto"     fontName="DejaVu Sans" fontSize="11"               forecolor="#2D3A2E"/>
-    <style name="dato_numero"    fontName="DejaVu Sans" fontSize="11" isBold="true" forecolor="#1A3A1A"/>
-    <style name="footer_texto"   fontName="DejaVu Sans" fontSize="9"                forecolor="#74857A"/>
-
-    <queryString language="SQL">
-        <![CDATA[SELECT
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteAnimalesHabitat" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a95b3e40-6f1d-7c4e-a9b3-45678901abcd">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="BaseZoo"/>
+	<style name="encabezado_col" forecolor="#FFFFFF" fontName="DejaVu Sans" fontSize="10" isBold="true"/>
+	<style name="dato_texto" forecolor="#2D3A2E" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="dato_numero" forecolor="#1B4332" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="footer_texto" forecolor="#74857A" fontName="DejaVu Sans" fontSize="9"/>
+	<parameter name="USUARIO_RESPONSABLE" class="java.lang.String">
+		<defaultValueExpression><![CDATA["N/A"]]></defaultValueExpression>
+	</parameter>
+	<queryString language="SQL">
+		<![CDATA[SELECT
     h.tipo_terreno,
     h.capacidad,
     COUNT(a.id) AS total_animales,
@@ -28,300 +20,301 @@ FROM public.habitat h
 LEFT JOIN public.animal a ON a.idhabitat = h.id
 GROUP BY h.id, h.tipo_terreno, h.capacidad
 ORDER BY total_animales DESC]]>
-    </queryString>
-
-    <field name="tipo_terreno"        class="java.lang.String"/>
-    <field name="capacidad"           class="java.lang.Integer"/>
-    <field name="total_animales"      class="java.lang.Long"/>
-    <field name="espacios_disponibles" class="java.lang.Long"/>
-
-    <variable name="TOTAL_CAPACIDAD" class="java.lang.Long" calculation="Sum">
-        <variableExpression><![CDATA[$F{capacidad}.longValue()]]></variableExpression>
-    </variable>
-    <variable name="TOTAL_ANIMALES" class="java.lang.Long" calculation="Sum">
-        <variableExpression><![CDATA[$F{total_animales}]]></variableExpression>
-    </variable>
-    <variable name="TOTAL_DISPONIBLES" class="java.lang.Long" calculation="Sum">
-        <variableExpression><![CDATA[$F{espacios_disponibles}]]></variableExpression>
-    </variable>
-
-    <background>
-        <band splitType="Stretch"/>
-    </background>
-
-    <!-- ══════════════ TITLE ══════════════ -->
-    <title>
-        <band height="90" splitType="Stretch">
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="90" backcolor="#1A3A1A" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000001"/>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="0" y="0" width="5" height="90" backcolor="#5CB85C" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000002"/>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <staticText>
-                <reportElement x="18" y="10" width="600" height="38" forecolor="#FFFFFF" uuid="dd000001-0000-0000-0000-000000000003"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="26" isBold="true"/>
-                </textElement>
-                <text><![CDATA[WILD ZOO MK]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="18" y="52" width="600" height="22" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000004"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="12"/>
-                </textElement>
-                <text><![CDATA[Reporte de animales por hábitat]]></text>
-            </staticText>
-            <textField>
-                <reportElement x="560" y="36" width="240" height="18" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000005"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Generado: " + new java.text.SimpleDateFormat("dd/MM/yyyy h:mma", java.util.Locale.ENGLISH).format(new java.util.Date())]]></textFieldExpression>
-            </textField>
-        </band>
-    </title>
-
-    <pageHeader>
-        <band height="8" splitType="Stretch"/>
-    </pageHeader>
-
-    <!-- ══════════════ COLUMN HEADER ══════════════ -->
-    <columnHeader>
-        <band height="36" splitType="Stretch">
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="36" backcolor="#2E7D32" forecolor="#2E7D32" uuid="dd000001-0000-0000-0000-000000000006"/>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <staticText>
-                <reportElement x="10" y="0" width="250" height="36" style="encabezado_col" uuid="dd000001-0000-0000-0000-000000000007"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="10" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Tipo de terreno]]></text>
-            </staticText>
-            <line>
-                <reportElement x="260" y="6" width="1" height="24" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000008"/>
-            </line>
-            <staticText>
-                <reportElement x="270" y="0" width="170" height="36" style="encabezado_col" uuid="dd000001-0000-0000-0000-000000000009"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="10" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Capacidad máxima]]></text>
-            </staticText>
-            <line>
-                <reportElement x="440" y="6" width="1" height="24" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000010"/>
-            </line>
-            <staticText>
-                <reportElement x="450" y="0" width="170" height="36" style="encabezado_col" uuid="dd000001-0000-0000-0000-000000000011"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="10" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Animales actuales]]></text>
-            </staticText>
-            <line>
-                <reportElement x="620" y="6" width="1" height="24" forecolor="#5CB85C" uuid="dd000001-0000-0000-0000-000000000012"/>
-            </line>
-            <staticText>
-                <reportElement x="630" y="0" width="162" height="36" style="encabezado_col" uuid="dd000001-0000-0000-0000-000000000013"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="10" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Espacios disponibles]]></text>
-            </staticText>
-        </band>
-    </columnHeader>
-
-    <!-- ══════════════ DETAIL ══════════════ -->
-    <detail>
-        <band height="34" splitType="Stretch">
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="34" backcolor="#C8E6C9" forecolor="#C8E6C9" uuid="dd000001-0000-0000-0000-000000000014">
-                    <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
-                </reportElement>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="34" backcolor="#E8F5E9" forecolor="#E8F5E9" uuid="dd000001-0000-0000-0000-000000000015">
-                    <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
-                </reportElement>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <line>
-                <reportElement x="0" y="33" width="802" height="1" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000016"/>
-            </line>
-            <!-- Tipo terreno -->
-            <textField>
-                <reportElement x="10" y="0" width="250" height="34" style="dato_texto" uuid="dd000001-0000-0000-0000-000000000017"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{tipo_terreno}]]></textFieldExpression>
-            </textField>
-            <line>
-                <reportElement x="260" y="4" width="1" height="26" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000018"/>
-            </line>
-            <!-- Capacidad -->
-            <textField>
-                <reportElement x="270" y="0" width="170" height="34" style="dato_numero" uuid="dd000001-0000-0000-0000-000000000019"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{capacidad}]]></textFieldExpression>
-            </textField>
-            <line>
-                <reportElement x="440" y="4" width="1" height="26" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000020"/>
-            </line>
-            <!-- Total animales -->
-            <textField>
-                <reportElement x="450" y="0" width="170" height="34" style="dato_numero" uuid="dd000001-0000-0000-0000-000000000021"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{total_animales}]]></textFieldExpression>
-            </textField>
-            <line>
-                <reportElement x="620" y="4" width="1" height="26" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000022"/>
-            </line>
-            <!-- Espacios disponibles -->
-            <textField>
-                <reportElement x="630" y="0" width="162" height="34" style="dato_numero" uuid="dd000001-0000-0000-0000-000000000023"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{espacios_disponibles}]]></textFieldExpression>
-            </textField>
-        </band>
-    </detail>
-
-    <!-- ══════════════ COLUMN FOOTER ══════════════ -->
-    <columnFooter>
-        <band height="36" splitType="Stretch">
-            <line>
-                <reportElement x="0" y="0" width="802" height="1" forecolor="#2E7D32" uuid="dd000001-0000-0000-0000-000000000024"/>
-            </line>
-            <staticText>
-                <reportElement x="10" y="6" width="250" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000025"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <text><![CDATA[TOTALES]]></text>
-            </staticText>
-            <textField>
-                <reportElement x="270" y="6" width="170" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000026"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="12" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$V{TOTAL_CAPACIDAD}]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="450" y="6" width="170" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000027"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="12" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$V{TOTAL_ANIMALES}]]></textFieldExpression>
-            </textField>
-            <textField>
-                <reportElement x="630" y="6" width="162" height="24" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000028"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="12" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$V{TOTAL_DISPONIBLES}]]></textFieldExpression>
-            </textField>
-        </band>
-    </columnFooter>
-
-    <!-- ══════════════ PAGE FOOTER ══════════════ -->
-    <pageFooter>
-        <band height="28" splitType="Stretch">
-            <line>
-                <reportElement x="0" y="0" width="802" height="1" forecolor="#A8D5A8" uuid="dd000001-0000-0000-0000-000000000029"/>
-            </line>
-            <staticText>
-                <reportElement x="0" y="5" width="400" height="18" style="footer_texto" uuid="dd000001-0000-0000-0000-000000000030"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="9"/>
-                </textElement>
-                <text><![CDATA[© Wild Zoo MK — Reporte de animales por hábitat]]></text>
-            </staticText>
-            <textField>
-                <reportElement x="402" y="5" width="400" height="18" style="footer_texto" uuid="dd000001-0000-0000-0000-000000000031"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
-            </textField>
-        </band>
-    </pageFooter>
-
-    <!-- ══════════════ SUMMARY: BARRAS AGRUPADAS ══════════════ -->
-    <summary>
-        <band height="240" splitType="Stretch">
-            <staticText>
-                <reportElement x="0" y="8" width="802" height="22" forecolor="#1A3A1A" uuid="dd000001-0000-0000-0000-000000000032"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="13" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Capacidad vs Animales actuales vs Espacios disponibles]]></text>
-            </staticText>
-            <barChart>
-                <chart evaluationTime="Report" theme="default">
-                    <reportElement x="0" y="34" width="802" height="200" uuid="dd000001-0000-0000-0000-000000000033"/>
-                    <chartTitle position="Top">
-                        <titleExpression><![CDATA[""]]></titleExpression>
-                    </chartTitle>
-                    <chartSubtitle/>
-                    <chartLegend position="Bottom" textColor="#2D3A2E">
-                        <font fontName="DejaVu Sans" size="9"/>
-                    </chartLegend>
-                </chart>
-                <categoryDataset>
-                    <!-- Serie 1: Capacidad -->
-                    <categorySeries>
-                        <seriesExpression><![CDATA["Capacidad máxima"]]></seriesExpression>
-                        <categoryExpression><![CDATA[$F{tipo_terreno}]]></categoryExpression>
-                        <valueExpression><![CDATA[$F{capacidad}]]></valueExpression>
-                    </categorySeries>
-                    <!-- Serie 2: Animales actuales -->
-                    <categorySeries>
-                        <seriesExpression><![CDATA["Animales actuales"]]></seriesExpression>
-                        <categoryExpression><![CDATA[$F{tipo_terreno}]]></categoryExpression>
-                        <valueExpression><![CDATA[$F{total_animales}]]></valueExpression>
-                    </categorySeries>
-                    <!-- Serie 3: Espacios disponibles -->
-                    <categorySeries>
-                        <seriesExpression><![CDATA["Espacios disponibles"]]></seriesExpression>
-                        <categoryExpression><![CDATA[$F{tipo_terreno}]]></categoryExpression>
-                        <valueExpression><![CDATA[$F{espacios_disponibles}]]></valueExpression>
-                    </categorySeries>
-                </categoryDataset>
-                <barPlot isShowTickMarks="true" isShowTickLabels="true">
-                    <plot>
-                        <seriesColor seriesOrder="0" color="#1565C0"/>
-                        <seriesColor seriesOrder="1" color="#2E7D32"/>
-                        <seriesColor seriesOrder="2" color="#F57F17"/>
-                    </plot>
-                    <itemLabel color="#1A3A1A">
-                        <font fontName="DejaVu Sans" size="8" isBold="true"/>
-                    </itemLabel>
-                    <categoryAxisFormat>
-                        <axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2E7D32">
-                            <labelFont><font fontName="DejaVu Sans" size="9" isBold="true"/></labelFont>
-                            <tickLabelFont><font fontName="DejaVu Sans" size="8"/></tickLabelFont>
-                        </axisFormat>
-                    </categoryAxisFormat>
-                    <valueAxisFormat>
-                        <axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2E7D32">
-                            <labelFont><font fontName="DejaVu Sans" size="9" isBold="true"/></labelFont>
-                            <tickLabelFont><font fontName="DejaVu Sans" size="8"/></tickLabelFont>
-                        </axisFormat>
-                    </valueAxisFormat>
-                </barPlot>
-            </barChart>
-        </band>
-    </summary>
-
+	</queryString>
+	<field name="tipo_terreno" class="java.lang.String"/>
+	<field name="capacidad" class="java.lang.Integer"/>
+	<field name="total_animales" class="java.lang.Long"/>
+	<field name="espacios_disponibles" class="java.lang.Long"/>
+	<variable name="TOTAL_CAPACIDAD" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{capacidad}.longValue()]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_ANIMALES" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_animales}]]></variableExpression>
+	</variable>
+	<variable name="TOTAL_DISPONIBLES" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{espacios_disponibles}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="90" forecolor="#1B4332" backcolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000001"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="5" height="90" forecolor="#52B788" backcolor="#52B788" uuid="dd000001-0000-0000-0000-000000000002"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="10" width="600" height="38" forecolor="#FFFFFF" uuid="dd000001-0000-0000-0000-000000000003"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[WILD ZOO MK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="52" width="600" height="22" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000004"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<text><![CDATA[Reporte de animales por hábitat]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="560" y="58" width="240" height="18" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000005"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.text.SimpleDateFormat("dd/MM/yyyy h:mma", java.util.Locale.ENGLISH).format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="560" y="36" width="240" height="18" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000099"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generado por: " + ($P{USUARIO_RESPONSABLE} != null ? $P{USUARIO_RESPONSABLE} : "N/A")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="8" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="36" forecolor="#2D6A4F" backcolor="#2D6A4F" uuid="dd000001-0000-0000-0000-000000000006"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement style="encabezado_col" x="10" y="0" width="250" height="36" uuid="dd000001-0000-0000-0000-000000000007"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tipo de terreno]]></text>
+			</staticText>
+			<line>
+				<reportElement x="260" y="6" width="1" height="24" forecolor="#52B788" uuid="dd000001-0000-0000-0000-000000000008"/>
+			</line>
+			<staticText>
+				<reportElement style="encabezado_col" x="270" y="0" width="170" height="36" uuid="dd000001-0000-0000-0000-000000000009"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capacidad máxima]]></text>
+			</staticText>
+			<line>
+				<reportElement x="440" y="6" width="1" height="24" forecolor="#52B788" uuid="dd000001-0000-0000-0000-000000000010"/>
+			</line>
+			<staticText>
+				<reportElement style="encabezado_col" x="450" y="0" width="170" height="36" uuid="dd000001-0000-0000-0000-000000000011"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Animales actuales]]></text>
+			</staticText>
+			<line>
+				<reportElement x="620" y="6" width="1" height="24" forecolor="#52B788" uuid="dd000001-0000-0000-0000-000000000012"/>
+			</line>
+			<staticText>
+				<reportElement style="encabezado_col" x="630" y="0" width="162" height="36" uuid="dd000001-0000-0000-0000-000000000013"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Espacios disponibles]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="34" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#D8F3DC" backcolor="#D8F3DC" uuid="dd000001-0000-0000-0000-000000000014">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#F0FFF4" backcolor="#F0FFF4" uuid="dd000001-0000-0000-0000-000000000015">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="33" width="802" height="1" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000016"/>
+			</line>
+			<textField>
+				<reportElement style="dato_texto" x="10" y="0" width="250" height="34" uuid="dd000001-0000-0000-0000-000000000017"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tipo_terreno}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="260" y="4" width="1" height="26" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000018"/>
+			</line>
+			<textField>
+				<reportElement style="dato_numero" x="270" y="0" width="170" height="34" uuid="dd000001-0000-0000-0000-000000000019"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{capacidad}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="440" y="4" width="1" height="26" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000020"/>
+			</line>
+			<textField>
+				<reportElement style="dato_numero" x="450" y="0" width="170" height="34" uuid="dd000001-0000-0000-0000-000000000021"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_animales}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="620" y="4" width="1" height="26" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000022"/>
+			</line>
+			<textField>
+				<reportElement style="dato_numero" x="630" y="0" width="162" height="34" uuid="dd000001-0000-0000-0000-000000000023"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{espacios_disponibles}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#2D6A4F" uuid="dd000001-0000-0000-0000-000000000024"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="6" width="250" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000025"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTALES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="270" y="6" width="170" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000026"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_CAPACIDAD}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="450" y="6" width="170" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000027"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_ANIMALES}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="630" y="6" width="162" height="24" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000028"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{TOTAL_DISPONIBLES}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#95D5B2" uuid="dd000001-0000-0000-0000-000000000029"/>
+			</line>
+			<staticText>
+				<reportElement style="footer_texto" x="0" y="5" width="400" height="18" uuid="dd000001-0000-0000-0000-000000000030"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<text><![CDATA[© Wild Zoo MK — Reporte de animales por hábitat]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="footer_texto" x="402" y="5" width="400" height="18" uuid="dd000001-0000-0000-0000-000000000031"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="240" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="8" width="802" height="22" forecolor="#1B4332" uuid="dd000001-0000-0000-0000-000000000032"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Capacidad vs Animales actuales vs Espacios disponibles]]></text>
+			</staticText>
+			<barChart>
+				<chart evaluationTime="Report" theme="default">
+					<reportElement x="0" y="34" width="802" height="200" uuid="dd000001-0000-0000-0000-000000000033"/>
+					<chartTitle position="Top">
+						<titleExpression><![CDATA[""]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend textColor="#2D3A2E" position="Bottom">
+						<font fontName="DejaVu Sans" size="9"/>
+					</chartLegend>
+				</chart>
+				<categoryDataset>
+					<categorySeries>
+						<seriesExpression><![CDATA["Capacidad máxima"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{tipo_terreno}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{capacidad}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Animales actuales"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{tipo_terreno}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{total_animales}]]></valueExpression>
+					</categorySeries>
+					<categorySeries>
+						<seriesExpression><![CDATA["Espacios disponibles"]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{tipo_terreno}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{espacios_disponibles}]]></valueExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot isShowTickLabels="true" isShowTickMarks="true">
+					<plot>
+						<seriesColor seriesOrder="0" color="#1B4332"/>
+						<seriesColor seriesOrder="1" color="#52B788"/>
+						<seriesColor seriesOrder="2" color="#B7E4C7"/>
+					</plot>
+					<itemLabel color="#1B4332">
+						<font fontName="DejaVu Sans" size="8" isBold="true"/>
+					</itemLabel>
+					<categoryAxisFormat>
+						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2D6A4F">
+							<labelFont>
+								<font fontName="DejaVu Sans" size="9" isBold="true"/>
+							</labelFont>
+							<tickLabelFont>
+								<font fontName="DejaVu Sans" size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2D6A4F">
+							<labelFont>
+								<font fontName="DejaVu Sans" size="9" isBold="true"/>
+							</labelFont>
+							<tickLabelFont>
+								<font fontName="DejaVu Sans" size="8"/>
+							</tickLabelFont>
+						</axisFormat>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+	</summary>
 </jasperReport>

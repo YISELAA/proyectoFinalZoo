@@ -31,7 +31,6 @@ public class HabitatCuidadorServlet extends HttpServlet {
     private HabitatCuidadorService service = new HabitatCuidadorService();
     private Gson gson = new Gson();
 
-    // === BORRA EL VIEJO Y PEGA ESTE AQUÍ ===
     private Map<String, Object> transformarAMap(Habitat habitat) {
         Map<String, Object> map = new HashMap<>();
         map.put("id", habitat.getId());
@@ -45,7 +44,6 @@ public class HabitatCuidadorServlet extends HttpServlet {
                 empMap.put("id", emp.getId());
                 empMap.put("nombre", emp.getNombre()); 
                 empMap.put("apellido", emp.getApellido());
-                empMap.put("rol", emp.getRol());
                 cuidadoresJSON.add(empMap);
             }
         }
@@ -53,7 +51,6 @@ public class HabitatCuidadorServlet extends HttpServlet {
         return map;
     }
 
-    // Esto ya lo tienes abajo, déjalo tal cual:
     private static class HabitatCuidadorDTO {
         int idHabitat;
         List<Long> idsEmpleados;
@@ -113,7 +110,6 @@ public class HabitatCuidadorServlet extends HttpServlet {
                 return;
             }
 
-            // === ESTA ES LA PARTE QUE MODIFICAMOS ===
             List<Habitat> lista = service.obtenerAsignaciones();
             List<Map<String, Object>> jsonListo = new ArrayList<>();
             for (Habitat h : lista) {

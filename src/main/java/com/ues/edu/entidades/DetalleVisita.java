@@ -78,6 +78,7 @@ public class DetalleVisita {
             this.subtotal = this.cantidad * this.ticket.getPrecio();
         }
     }
+    
 
     @PrePersist
     public void asignarFecha() {

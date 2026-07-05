@@ -17,12 +17,16 @@ public class UsuariosService {
         return dao.buscarPorId(id);
     }
 
-   public void crearUsuario(Usuario u) {
+  public void crearUsuario(Usuario u) {
 
     System.out.println("===============");
     System.out.println("Usuario recibido: " + u.getNombreUsuario());
     System.out.println("Contraseña recibida: " + u.getContrasena());
     System.out.println("===============");
+
+    if (dao.existeNombreUsuario(u.getNombreUsuario())) {
+        throw new RuntimeException("El nombre de usuario ya existe");
+    }
 
     if (u.getContrasena() == null) {
         throw new RuntimeException("LA CONTRASEÑA LLEGA NULL");

@@ -33,16 +33,28 @@ public class EmpleadoServlet extends HttpServlet {
             .addSerializationExclusionStrategy(new com.google.gson.ExclusionStrategy() {
                 @Override
                 public boolean shouldSkipField(com.google.gson.FieldAttributes f) {
-                    return f.getName().equals("habitatsAsignados")
+                    // 1. Tus exclusiones de negocio normales
+                    boolean excluirNegocio = f.getName().equals("habitatsAsignados")
                             || f.getName().equals("cuidadores")
                             || f.getName().equals("historiales")
                             || f.getName().equals("usuario")
-                            || f.getName().equals("listaAnimales");
+                            || f.getName().equals("listaAnimales")
+                            || f.getName().equals("empleados")
+                            || f.getName().equals("empleado")
+                            || f.getName().equals("opcionesMenu");
+
+                    boolean esCampoTecnico = f.getName().equalsIgnoreCase("LOG")
+                            || f.getName().equals("handler")
+                            || f.getName().equals("hibernateLazyInitializer");
+
+                    return excluirNegocio || esCampoTecnico;
                 }
 
                 @Override
                 public boolean shouldSkipClass(Class<?> clazz) {
-                    return false;
+                    // Ignorar clases internas generadas por los proxies de Hibernate
+                    return clazz.getName().contains("HibernateProxy")
+                            || clazz.getName().contains("bytebuddy");
                 }
             })
             .create();
@@ -87,8 +99,10 @@ public class EmpleadoServlet extends HttpServlet {
             throws ServletException, IOException {
 
         String idParam = request.getParameter("id");
+        String tipo = request.getParameter("tipo");
 
-        // 🔥 BUSCAR POR ID
+        response.setContentType("application/json");
+
         if (idParam != null && !idParam.isEmpty()) {
 
             int id = Integer.parseInt(idParam);
@@ -100,29 +114,38 @@ public class EmpleadoServlet extends HttpServlet {
                 return;
             }
 
-            response.setContentType("application/json");
             response.getWriter().write(gson.toJson(empleado));
             return;
         }
 
-        // 🔥 LISTAR TODOS
-        List<Empleado> empleados = empleadoService.obtenerEmpleados();
+        List<Empleado> empleados;
 
-        response.setContentType("application/json");
+        if ("cuidadores".equalsIgnoreCase(tipo)) {
+            empleados = empleadoService.obtenerSoloCuidadores();
+
+        } else if ("veterinarios".equalsIgnoreCase(tipo)) {
+            empleados = empleadoService.obtenerSoloVeterinarios();
+
+        } else {
+            empleados = empleadoService.obtenerEmpleados();
+        }
+
         response.getWriter().write(gson.toJson(empleados));
     }
 
     @Override
+
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8"); 
 
         try {
 
             Empleado empleado
                     = gson.fromJson(request.getReader(), Empleado.class);
-
+            System.out.println("DUI RECIBIDO: " + empleado.getDui());
             String error = validarEmpleado(empleado);
 
             if (error != null) {
@@ -140,6 +163,8 @@ public class EmpleadoServlet extends HttpServlet {
             );
 
         } catch (RuntimeException e) {
+
+            e.printStackTrace();
 
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
 
@@ -163,6 +188,7 @@ public class EmpleadoServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8"); 
 
         Empleado empleado = gson.fromJson(request.getReader(), Empleado.class);
 
@@ -185,6 +211,7 @@ public class EmpleadoServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
+        response.setCharacterEncoding("UTF-8"); 
 
         response.setContentType("application/json");
 
@@ -210,38 +237,48 @@ public class EmpleadoServlet extends HttpServlet {
         }
     }
 
-    // VALIDACIÓN MODIFICADA
     private String validarEmpleado(Empleado e) {
 
         if (e == null) {
             return "Empleado inválido";
         }
 
-        // 1. Validar presencia y longitud del Nombre
-        if (e.getNombre() == null || e.getNombre().trim().length() < 3) {
-            return "Nombre mínimo 3 caracteres";
+        if (e.getNombre() == null || e.getNombre().trim().length() < 6) {
+            return "Nombre mínimo 6 caracteres";
         }
-        
-        // 🔥 VALIDACIÓN: Que el nombre NO contenga números (Solo letras y espacios)
+
         if (!e.getNombre().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
             return "El nombre no debe contener números ni caracteres especiales";
         }
 
-        // 2. Validar presencia y longitud del Apellido
-        if (e.getApellido() == null || e.getApellido().trim().length() < 3) {
-            return "Apellido mínimo 3 caracteres";
+        if (e.getApellido() == null || e.getApellido().trim().length() < 6) {
+            return "Apellido mínimo 6 caracteres";
         }
-        
-        // 🔥 VALIDACIÓN: Que el apellido NO contenga números (Solo letras y espacios)
+
         if (!e.getApellido().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
             return "El apellido no debe contener números ni caracteres especiales";
         }
 
-        // 3. Validar formato de DUI
         if (e.getDui() == null || !e.getDui().matches("^\\d{8}-\\d$")) {
             return "El DUI debe tener el formato ########-#";
         }
 
-        return null; // Si todo está bien, retorna null
+        if (e.getTelefono() == null || !e.getTelefono().matches("^\\d{8}$")) {
+            return "El teléfono debe tener 8 dígitos";
+        }
+        // Cambia la validación del correo por esta:
+        if (e.getCorreo() == null || !e.getCorreo().matches("^[A-Za-z0-9+_.-]+@(gmail|hotmail|outlook|yahoo)\\.com$")) {
+            return "El correo debe ser un correo válido";
+        }
+
+        if (e.getSalario() == null || e.getSalario() <= 0) {
+            return "El salario debe ser mayor que 0";
+        }
+
+        if (e.getCargo() == null || e.getCargo().getId() == null) {
+            return "Debe seleccionar un cargo";
+        }
+
+        return null;
     }
 }

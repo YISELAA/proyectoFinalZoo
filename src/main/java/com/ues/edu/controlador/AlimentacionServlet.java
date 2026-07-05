@@ -1,45 +1,36 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.ues.edu.controlador;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.ues.edu.entidades.Alimentacion;
+import com.ues.edu.entidades.Empleado;
+import com.ues.edu.entidades.Usuario;
 import com.ues.edu.service.AlimentacionService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.List;
 
-/**
- *
- * @author coc44
- */
 @WebServlet(name = "AlimentacionServlet", urlPatterns = {"/AlimentacionServlet"})
 public class AlimentacionServlet extends HttpServlet {
-    
-    private AlimentacionService alimentacionService =
-            new AlimentacionService();
+
+    private AlimentacionService alimentacionService = new AlimentacionService();
 
     private Gson gson = new GsonBuilder()
-            .excludeFieldsWithModifiers(
-                    java.lang.reflect.Modifier.TRANSIENT)
-            .addSerializationExclusionStrategy(
-                    new com.google.gson.ExclusionStrategy() {
+            .excludeFieldsWithModifiers(java.lang.reflect.Modifier.TRANSIENT)
+            .addSerializationExclusionStrategy(new com.google.gson.ExclusionStrategy() {
 
                 @Override
-                public boolean shouldSkipField(
-                        com.google.gson.FieldAttributes f) {
-
+                public boolean shouldSkipField(com.google.gson.FieldAttributes f) {
                     return f.getName().equals("alimentaciones")
                             || f.getName().equals("historiales")
                             || f.getName().equals("cuidadores")
+                            || f.getName().equals("habitatsAsignados")
                             || f.getName().equals("listaAnimales");
                 }
 
@@ -50,228 +41,158 @@ public class AlimentacionServlet extends HttpServlet {
             })
             .create();
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AlimentacionServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AlimentacionServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
-    String idParam = request.getParameter("id");
 
-        // 🔥 BUSCAR POR ID
-        if (idParam != null && !idParam.isEmpty()) {
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-            int id = Integer.parseInt(idParam);
+        try {
+            String accion = request.getParameter("accion");
 
-            Alimentacion alimentacion =
-                    alimentacionService.buscarAlimentacion(id);
+            if ("obtenerSesion".equals(accion)) {
+                HttpSession session = request.getSession(false);
 
-            if (alimentacion == null) {
+                if (session != null) {
+                    Usuario user = (Usuario) session.getAttribute("usuarioSesion");
 
-                response.setStatus(
-                        HttpServletResponse.SC_NOT_FOUND);
+                    if (user != null && user.getEmpleado() != null) {
+                        response.getWriter().write(gson.toJson(user.getEmpleado()));
+                        return;
+                    }
+                }
 
-                response.getWriter().write(
-                        "{\"mensaje\":\"Registro no encontrado\"}"
-                );
-
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"No hay sesión activa\"}");
                 return;
             }
 
-            response.setContentType("application/json");
+            String idParam = request.getParameter("id");
 
-            response.getWriter().write(
-                    gson.toJson(alimentacion));
+            if (idParam != null && !idParam.isEmpty()) {
+                int id = Integer.parseInt(idParam);
+                Alimentacion a = alimentacionService.buscarAlimentacion(id);
 
-            return;
+                if (a == null) {
+                    response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+                    response.getWriter().write("{\"mensaje\":\"No encontrado\"}");
+                    return;
+                }
+
+                response.getWriter().write(gson.toJson(a));
+                return;
+            }
+
+            List<Alimentacion> lista = alimentacionService.obtenerAlimentaciones();
+            response.getWriter().write(gson.toJson(lista));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"Error interno en el servidor\"}");
         }
-
-        // 🔥 LISTAR TODOS
-        List<Alimentacion> lista =
-                alimentacionService.obtenerAlimentaciones();
-
-        response.setContentType("application/json");
-
-        response.getWriter().write(
-                gson.toJson(lista));
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        
-    Alimentacion alimentacion =
-                gson.fromJson(
-                        request.getReader(),
-                        Alimentacion.class
-                );
-
-        String error =
-                validarAlimentacion(alimentacion);
-
-        if (error != null) {
-
-            response.setStatus(
-                    HttpServletResponse.SC_BAD_REQUEST);
-
-            response.setContentType("application/json");
-
-            response.getWriter().write(
-                    "{\"error\":\"" + error + "\"}"
-            );
-
-            return;
-        }
-
-        alimentacionService.crearAlimentacion(alimentacion);
-
-        response.setContentType("application/json");
-
-        response.getWriter().write(
-                "{\"mensaje\":\"Alimentación guardada\"}"
-        );
-    }
-
-    // ==========================
-    // PUT
-    // ==========================
-    @Override
-    protected void doPut(HttpServletRequest request,
-            HttpServletResponse response)
             throws IOException {
 
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
-        Alimentacion alimentacion =
-                gson.fromJson(
-                        request.getReader(),
-                        Alimentacion.class
-                );
+        try {
+            Alimentacion a = gson.fromJson(request.getReader(), Alimentacion.class);
 
-        String error =
-                validarAlimentacion(alimentacion);
+            String errorValidacion = validarAlimentacion(a);
+            if (errorValidacion != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"" + errorValidacion + "\"}");
+                return;
+            }
 
-        if (error != null) {
+            HttpSession session = request.getSession(false);
+            Usuario user = (session != null) ? (Usuario) session.getAttribute("usuarioSesion") : null;
 
-            response.setStatus(
-                    HttpServletResponse.SC_BAD_REQUEST);
+            if (user == null || user.getEmpleado() == null) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\":\"Sin sesión\"}");
+                return;
+            }
 
-            response.getWriter().write(
-                    "{\"error\":\"" + error + "\"}"
-            );
+            Empleado emp = new Empleado();
+            emp.setId(user.getEmpleado().getId());
+            a.setCuidador(emp);
 
-            return;
+            alimentacionService.crearAlimentacion(a);
+            response.getWriter().write("{\"mensaje\":\"Registrado correctamente\"}");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"Error al guardar\"}");
         }
-
-        alimentacionService.editarAlimentacion(alimentacion);
-
-        response.getWriter().write(
-                "{\"mensaje\":\"Alimentación actualizada\"}"
-        );
     }
 
-    // ==========================
-    // DELETE
-    // ==========================
     @Override
-    protected void doDelete(HttpServletRequest request,
-            HttpServletResponse response)
+    protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        int id = Integer.parseInt(
-                request.getParameter("id"));
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
+        try {
+            Alimentacion a = gson.fromJson(request.getReader(), Alimentacion.class);
+
+            String errorValidacion = validarAlimentacion(a);
+            if (errorValidacion != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"" + errorValidacion + "\"}");
+                return;
+            }
+
+            alimentacionService.editarAlimentacion(a);
+            response.getWriter().write("{\"mensaje\":\"Actualizado\"}");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.getWriter().write("{\"error\":\"Error actualizar\"}");
+        }
+    }
+
+    @Override
+    protected void doDelete(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+
+        int id = Integer.parseInt(request.getParameter("id"));
         alimentacionService.eliminarAlimentacion(id);
 
-        response.setContentType("application/json");
-
-        response.getWriter().write(
-                "{\"mensaje\":\"Alimentación eliminada\"}"
-        );
+        response.getWriter().write("{\"mensaje\":\"Eliminado\"}");
     }
 
-    // ==========================
-    // VALIDAR
-    // ==========================
+    
     private String validarAlimentacion(Alimentacion a) {
-
-        if (a == null) {
-            return "Registro inválido";
-        }
-
-        if (a.getTipoAlimento() == null
-                || a.getTipoAlimento().trim().length() < 3) {
-
-            return "Tipo alimento mínimo 3 caracteres";
-        }
-
-        if (a.getHorario() == null
-                || a.getHorario().trim().length() < 3) {
-
-            return "Horario inválido";
-        }
-
-        if (a.getCantidad() <= 0) {
-            return "Cantidad inválida";
-        }
-
-        if (a.getAnimal() == null) {
-            return "Debe seleccionar un animal";
-        }
-
-        return null;
+    if (a == null) {
+        return "Registro inválido";
     }
 
+    if (a.getTipoAlimento() == null || a.getTipoAlimento().trim().length() < 3) {
+        return "El tipo de alimento debe tener mínimo 3 caracteres";
+    }
+    
+    if (a.getHorario() == null || !a.getHorario().trim().toUpperCase().matches("^[0-9\\s\\:]*(AM|PM)$")) {
+        return "El horario debe contener una hora válida acompañada de AM o PM.";
+    }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    if (a.getCantidad() <= 0) {
+        return "La cantidad debe ser un número mayor a 0";
+    }
 
+    if (a.getAnimal() == null || a.getAnimal().getId() == null) {
+        return "Debe seleccionar un animal válido";
+    }
+
+    return null;
+}
 }

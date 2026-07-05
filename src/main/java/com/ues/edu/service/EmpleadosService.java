@@ -16,17 +16,19 @@ public class EmpleadosService {
     
    private EmpleadoDao dao = new EmpleadoDao();
 
-    // CREAR
-    public void crearEmpleado(Empleado e) {
+   public void crearEmpleado(Empleado e) {
 
     if (dao.existeDui(e.getDui())) {
         throw new RuntimeException("Ya existe un empleado con ese DUI");
     }
 
+    if (dao.existeCorreo(e.getCorreo())) {
+        throw new RuntimeException("Ya existe un empleado con ese correo");
+    }
+
     dao.guardar(e);
 }
 
-    // ACTUALIZAR
     public void editarEmpleado(Empleado e) {
         dao.actualizar(e);
     }
@@ -36,12 +38,11 @@ public class EmpleadosService {
         dao.eliminar(id);
     }
 
-    // LISTAR TODOS
+   
     public List<Empleado> obtenerEmpleados() {
         return dao.listar();
     }
 
-    // BUSCAR POR ID
     public Empleado buscarEmpleado(int id) {
         return dao.buscarPorId(id);
     }
@@ -49,4 +50,8 @@ public class EmpleadosService {
     public List<Empleado> obtenerSoloVeterinarios() {
         return dao.obtenerSoloVeterinarios(); 
     }
+    
+    public List<Empleado> obtenerSoloCuidadores() {
+    return dao.obtenerSoloCuidadores();
+}
 }

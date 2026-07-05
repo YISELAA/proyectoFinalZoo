@@ -1,5 +1,6 @@
 package com.ues.edu.entidades;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -42,5 +43,10 @@ public class Alimentacion {
     @ManyToOne
     @JoinColumn(name = "idanimal")
     private Animal animal;
+    
+     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "idCuidador")
+    private Empleado cuidador;
+
 
 }

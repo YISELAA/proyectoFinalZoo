@@ -3,6 +3,7 @@ package com.ues.edu.entidades;
 import com.google.gson.annotations.Expose;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,19 +12,21 @@ import lombok.Setter;
 
 import java.util.List;
 
-@Setter
 @Getter
+@Setter
 @Entity
 @Table(name = "empleado")
 @AllArgsConstructor
 @NoArgsConstructor
 public class Empleado {
 
+  
     @Id
-    @Expose
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Expose
     private Integer id;
 
+  
     @NotBlank
     @Expose
     @Column(name = "nombre_empleado", nullable = false, length = 70)
@@ -43,11 +46,39 @@ public class Empleado {
     private String dui;
 
     @NotBlank
-    @Column(name = "rol", nullable = false, length = 70)
-    private String rol;
+    @Pattern(
+            regexp = "^[A-Za-z0-9+_.-]+@(gmail|hotmail|outlook|yahoo)\\.com$",
+            message = "El correo debe ser un correo válido (.com)"
+    )
+    @Expose
+    @Column(name = "correo", nullable = false, unique = true, length = 100)
+    private String correo;
+
+    @NotBlank
+    @Pattern(
+            regexp = "^\\d{8}$",
+            message = "EL TELÉFONO DEBE TENER EXACTAMENTE 8 DÍGITOS"
+    )
+    @Expose
+    @Column(name = "telefono", nullable = false, length = 8)
+    private String telefono;
+
+    // ==========================
+    // DATOS LABORALES
+    // ==========================
+    @NotNull
+    @Expose
+    @Column(name = "salario", nullable = false)
+    private Double salario;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idcargo", nullable = false)
+    @Expose
+    private Cargo cargo;
 
     @OneToOne(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Usuario usuario;
+    @Expose
+    private transient Usuario usuario;
 
     @ManyToMany(mappedBy = "cuidadores")
     private List<Habitat> habitatsAsignados;

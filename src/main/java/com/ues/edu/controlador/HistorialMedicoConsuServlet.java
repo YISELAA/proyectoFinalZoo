@@ -73,7 +73,7 @@ public class HistorialMedicoConsuServlet extends HttpServlet {
 
             String filtro = request.getParameter("filtro");
 
-            List<Object[]> historial = (List<Object[]>) dao.buscarFiltro(filtro);
+            List<Object[]> historial = (List<Object[]>) dao.buscarFiltro();
 
             JSONArray jsonArray = new JSONArray();
 
@@ -84,11 +84,12 @@ public class HistorialMedicoConsuServlet extends HttpServlet {
                     JSONObject obj = new JSONObject();
 
                     obj.put("nombre_animal", h[0] != null ? h[0].toString() : "");
-                    obj.put("diagnostico", h[1] != null ? h[1].toString() : "");
-                    obj.put("tratamiento", h[2] != null ? h[2].toString() : "");
-                    obj.put("fecha", h[3] != null ? h[3].toString() : "");
-                    obj.put("veterinario", h[4] != null ? h[4].toString() : "");
-                    obj.put("apellido", h[5] != null ? h[5].toString() : "");
+                    obj.put("especie", h[1] != null ? h[1].toString() : "");
+                    obj.put("diagnostico", h[2] != null ? h[2].toString() : "");
+                    obj.put("tratamiento", h[3] != null ? h[3].toString() : "");
+                    obj.put("fecha", h[4] != null ? h[4].toString() : "");
+                    obj.put("veterinario", h[5] != null ? h[5].toString() : "");
+                    obj.put("apellido", h[6] != null ? h[6].toString() : "");
 
                     jsonArray.put(obj);
                 }

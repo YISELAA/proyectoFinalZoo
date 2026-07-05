@@ -1,29 +1,17 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.ues.edu.daos;
 
 import com.ues.edu.entidades.Animal;
 import jakarta.persistence.EntityManager;
 import com.ues.edu.entidades.Habitat;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
-/**
- *
- * @author coc44
- */
 public class AnimalDao {
     
-    private EntityManagerFactory emf =
-            Persistence.createEntityManagerFactory("profinalPU");
+      private EntityManagerFactory emf = JPAUtil.getEMF();
 
-    // ==========================
-    // GUARDAR
-    // ==========================
+
     public void guardar(Animal animal) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -37,9 +25,6 @@ public class AnimalDao {
         em.close();
     }
 
-    // ==========================
-    // ACTUALIZAR
-    // ==========================
     public void actualizar(Animal animal) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -53,9 +38,6 @@ public class AnimalDao {
         em.close();
     }
 
-    // ==========================
-    // ELIMINAR
-    // ==========================
     public void eliminar(int id) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -67,21 +49,15 @@ public class AnimalDao {
         em.close();
     }
 
-    // ==========================
-    // LISTAR TODOS (con hábitat)
-    // ==========================
     public List<Animal> listar() {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Animal> query =
-                em.createQuery("SELECT a FROM Animal a JOIN FETCH a.habitat", Animal.class);
+                em.createQuery("SELECT a FROM Animal a JOIN FETCH a.habitat ORDER BY a.id ASC", Animal.class);
         List<Animal> lista = query.getResultList();
         em.close();
         return lista;
     }
 
-    // ==========================
-    // BUSCAR POR ID (con hábitat)
-    // ==========================
     public Animal buscarPorId(int id) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Animal> query =
@@ -91,20 +67,16 @@ public class AnimalDao {
         try {
             a = query.getSingleResult();
         } catch (Exception e) {
-            // si no existe, devuelve null
         }
         em.close();
         return a;
     }
 
-    // ==========================
-    // BUSCAR POR NOMBRE (con hábitat)
-    // ==========================
     public List<Animal> buscarPorNombre(String nombre) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Animal> query =
                 em.createQuery(
-                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE LOWER(a.nombre) LIKE LOWER(:nombre)",
+                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE LOWER(a.nombre) LIKE LOWER(:nombre) ORDER BY a.id ASC",
                         Animal.class
                 );
         query.setParameter("nombre", "%" + nombre + "%");
@@ -113,14 +85,11 @@ public class AnimalDao {
         return lista;
     }
 
-    // ==========================
-    // FILTRAR POR HÁBITAT
-    // ==========================
     public List<Animal> filtrarPorHabitat(int idHabitat) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Animal> query =
                 em.createQuery(
-                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE a.habitat.id = :idHabitat",
+                        "SELECT a FROM Animal a JOIN FETCH a.habitat WHERE a.habitat.id = :idHabitat ORDER BY a.id ASC",
                         Animal.class
                 );
         query.setParameter("idHabitat", idHabitat);
@@ -129,13 +98,10 @@ public class AnimalDao {
         return lista;
     }
 
-    // ==========================
-    // PAGINACIÓN (con hábitat)
-    // ==========================
     public List<Animal> listarPaginado(int pagina, int size) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<Animal> query =
-                em.createQuery("SELECT a FROM Animal a JOIN FETCH a.habitat", Animal.class);
+                em.createQuery("SELECT a FROM Animal a JOIN FETCH a.habitat ORDER BY a.id ASC", Animal.class);
         query.setFirstResult((pagina - 1) * size);
         query.setMaxResults(size);
         List<Animal> lista = query.getResultList();

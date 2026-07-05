@@ -1,3 +1,6 @@
+<%@page import="com.ues.edu.daos.CargoDao"%>
+<%@page import="com.ues.edu.entidades.Cargo"%>
+<%@page import="java.util.List"%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="es">
@@ -6,6 +9,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>WILD ZOO MK - Gestión de Empleados</title>
+
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/Crud.css">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css">
         <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -30,12 +34,12 @@
                     <div class="formulario">
 
                         <div class="campo">
-                            <label for="nombreEmpleado">Nombre</label>
+                            <label for="nombreEmpleado">Nombres</label>
                             <input type="text" id="nombreEmpleado" placeholder="Ingrese nombre" required>
                         </div>
 
                         <div class="campo">
-                            <label for="apellido">Apellido</label>
+                            <label for="apellido">Apellidos</label>
                             <input type="text" id="apellido" placeholder="Ingrese apellido" required>
                         </div>
 
@@ -45,12 +49,48 @@
                         </div>
 
                         <div class="campo">
-                            <label for="rol">Rol</label>
-                            <select id="rol" required>
-                                <option value="">Seleccione rol</option>
-                                <option value="ADMIN">ADMIN</option>
-                                <option value="CUIDADOR">CUIDADOR</option>
-                                <option value="VETERINARIO">VETERINARIO</option>
+                            <label for="telefono">Teléfono</label>
+                            <input type="text" id="telefono" placeholder="Ingrese teléfono" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="correo">Correo</label>
+                            <input type="email" id="correo" placeholder="Ingrese correo" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="salario">Salario</label>
+                            <input type="number" id="salario" placeholder="Ingrese salario" step="0.01" min="0" required>
+                        </div>
+
+                        <div class="campo">
+                            <label for="cargo">Cargo</label>
+                            <select id="cargo" name="cargo" required>
+                                <option value="">Seleccione cargo</option>
+
+                                <%
+                                    try {
+                                        CargoDao dao = new CargoDao();
+                                        List<Cargo> cargos = dao.listar();
+
+                                        for (Cargo c : cargos) {
+                                %>
+
+                                <option value="<%= c.getId()%>">
+                                    <%= c.getNombreCargo()%>
+                                </option>
+
+                                <%
+                                    }
+                                } catch (Exception e) {
+                                %>
+
+                                <option value="">Error al cargar cargos</option>
+
+                                <%
+                                    }
+                                %>
+
                             </select>
                         </div>
 
@@ -72,30 +112,34 @@
                     <thead>
                         <tr>
                             <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Apellido</th>
+                            <th>Nombres</th>
+                            <th>Apellidos</th>
                             <th>DUI</th>
-                            <th>Rol</th>
+                            <th>Teléfono</th>
+                            <th>Correo</th>
+                            <th>Salario</th>
+                            <th>Cargo</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
+
                     <tbody id="tbodyEmpleados">
                     </tbody>
                 </table>
 
-                <div id="paginacion" class="paginacion"></div>   
+                <div id="paginacion" class="paginacion"></div>
 
-                <div style="margin-top: 24px; text-align: right;">
-                    <a href="index.html" class="btn-back">
-                        <i class="ti ti-arrow-left"></i> 
+                <div style="margin-top:24px; text-align:right;">
+                    <a href="index.jsp" class="btn-back">
+                        <i class="ti ti-arrow-left"></i>
                     </a>
                 </div>
 
             </div>
 
         </div>
+
         <script src="${pageContext.request.contextPath}/js/Empleado.js"></script>
 
     </body>
-
 </html>

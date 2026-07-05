@@ -40,15 +40,16 @@ public class Habitat {
     private Integer id;
 
     @NotBlank
-    @Column(name = "tipo_terreno", nullable = false, length = 70)
+    @Column(name = "tipo_terreno", unique = true,nullable = false, length = 70)
     private String tipoTerreno;
 
     @NotNull
     @Column(name = "capacidad", nullable = false)
     private Integer capacidad;
 
-    @OneToMany(mappedBy = "habitat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Animal> listaAnimales;
+    // Quitamos ALL y orphanRemoval para proteger a los animales
+@OneToMany(mappedBy = "habitat", cascade = {CascadeType.MERGE, CascadeType.REFRESH})
+private List<Animal> listaAnimales;
 
     @ManyToMany
     @JoinTable(

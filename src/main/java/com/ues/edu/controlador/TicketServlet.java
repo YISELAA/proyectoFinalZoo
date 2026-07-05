@@ -25,7 +25,6 @@ public class TicketServlet extends HttpServlet {
 
         String idParam = request.getParameter("id");
 
-        // BUSCAR POR ID
         if (idParam != null && !idParam.isEmpty()) {
 
             Integer id = Integer.valueOf(idParam);
@@ -43,7 +42,6 @@ public class TicketServlet extends HttpServlet {
             return;
         }
 
-        // LISTAR TODOS
         List<Ticket> tickets = ticketService.obtenerTickets();
 
         response.setContentType("application/json");
@@ -54,7 +52,6 @@ public class TicketServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // 1. Forzamos a que la respuesta sea SIEMPRE JSON desde el inicio
         response.setContentType("application/json;charset=UTF-8");
 
         try {
@@ -67,19 +64,16 @@ public class TicketServlet extends HttpServlet {
                 return;
             }
 
-            // Aquí se ejecuta tu servicio (el cual puede lanzar el RuntimeException)
             ticketService.registrarTicket(ticket);
 
             response.getWriter().write("{\"mensaje\":\"Ticket guardado\"}");
 
         } catch (RuntimeException e) {
-            // 🔥 ESTE CATCH ES EL QUE SALVA EL DÍA:
-            // Capta la frase "Ya existe un ticket registrado con ese nombre" del servicio
+            
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
 
         } catch (Exception e) {
-            // Para cualquier otro error inesperado de base de datos
             e.printStackTrace();
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Error interno del servidor\"}");
@@ -132,6 +126,10 @@ public class TicketServlet extends HttpServlet {
 
         if (t.getTipo() == null || t.getTipo().trim().length() < 4) {
             return "El tipo debe tener mínimo 4 caracteres";
+        }
+        
+         if (!t.getTipo().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
+            return "El tipo de ticket no debe contener números ni caracteres especiales";
         }
 
         if (t.getPrecio() <= 0) {

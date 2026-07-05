@@ -2,7 +2,6 @@ package com.ues.edu.service;
 
 import com.ues.edu.daos.DetalleVisitaDao;
 import com.ues.edu.entidades.DetalleVisita;
-import com.ues.edu.entidades.Ticket;
 import java.util.List;
 
 public class DetalleVisitaService {
@@ -17,12 +16,9 @@ public class DetalleVisitaService {
         return dao.buscarPorId(id);
     }
 
-    public void EliminarDetalleVisita(int id) {
-        dao.eliminar(id);
-    }
-
+  
     public void guardarDetalleVisita(DetalleVisita detalle) {
-        // @PrePersist en la entidad ya asigna la fecha automáticamente
+       
         dao.guardar(detalle);
     }
 

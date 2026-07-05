@@ -22,7 +22,7 @@ public class LocalDateAdapter extends TypeAdapter<LocalDate> {
         if (value == null) {
             out.nullValue();
         } else {
-            out.value(value.toString()); // formato YYYY-MM-DD
+            out.value(value.toString()); 
         }
     }
 

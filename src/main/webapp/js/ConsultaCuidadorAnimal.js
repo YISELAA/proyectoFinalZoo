@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${a.id}</td>
             <td>${a.nombre_animal}</td>
             <td>${a.especie}</td>
+            <td>${a.sexo}</td>
             <td>${a.nombre_empleado}</td>
             <td>${a.apellido}</td>
             <td>${a.numero_dui}</td>

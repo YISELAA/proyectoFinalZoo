@@ -54,13 +54,34 @@
                                         if (empleados != null) {
                                             for (Empleado e : empleados) {
                                 %>
-                                <option value="<%= e.getId() %>"><%= e.getNombre() %></option>
-                                <%
+                                <option value="<%= e.getId()%>"><%= e.getNombre()%> <%= e.getApellido()%></option>                                <%
                                             }
                                         }
                                     } catch (Exception e) {
                                         // Evita que un error de BD rompa toda la página visualmente
                                         out.println("<option value=''>Error al cargar empleados</option>");
+                                    }
+                                %>
+                            </select>
+                        </div>
+
+                        <div class="campo">
+                            <label for="idRol">Rol</label>
+                            <select id="idRol" required>
+                                <option value="">Seleccione rol</option>
+                                <%
+                                    try {
+                                        com.ues.edu.service.RolService rolService = new com.ues.edu.service.RolService();
+                                        List<com.ues.edu.entidades.Rol> roles = rolService.obtenerRoles();
+                                        if (roles != null) {
+                                            for (com.ues.edu.entidades.Rol r : roles) {
+                                %>
+                                <option value="<%= r.getId()%>"><%= r.getNombreRol()%></option>
+                                <%
+                                            }
+                                        }
+                                    } catch (Exception ex) {
+                                        out.println("<option value=''>Error al cargar roles</option>");
                                     }
                                 %>
                             </select>
@@ -89,6 +110,7 @@
                             <th>Usuario</th>
                             <th>Contraseña</th>
                             <th>Empleado</th>
+                            <th>Rol</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -100,7 +122,7 @@
 
 
                 <div style="margin-top: 24px; text-align: right;">
-                    <a href="${pageContext.request.contextPath}/index.html" class="btn-back">
+                    <a href="${pageContext.request.contextPath}/index.jsp" class="btn-back">
                         <i class="ti ti-arrow-left"></i>
                     </a>
                 </div>

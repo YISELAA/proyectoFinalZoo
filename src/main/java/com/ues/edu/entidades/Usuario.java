@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Setter
 @Getter
@@ -31,8 +33,14 @@ public class Usuario {
     @Column(name = "contrasena", nullable = false, length = 70)
     private String contrasena;
 
-    @Expose
     @OneToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "idempleado")
+    @JoinColumn(name = "id_empleado", unique = true, nullable = false)
+    @OnDelete(action = OnDeleteAction.CASCADE)
+    @Expose
     private Empleado empleado;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "idrol", nullable = false)
+    @Expose
+    private Rol rol;
 }

@@ -1,3 +1,5 @@
+
+//INICIO
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("formLogin")
         .addEventListener("submit", iniciarSesion);
@@ -30,8 +32,21 @@ function iniciarSesion(event) {
         body: JSON.stringify(login)
     })
     .then(async response => {
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error);
+        const textoRespuesta = await response.text();
+        let data = {};
+        
+        if (textoRespuesta) {
+            try {
+                data = JSON.parse(textoRespuesta);
+            } catch (e) {
+                data = { error: "Formato de respuesta del servidor no válido." };
+            }
+        }
+
+        if (!response.ok) {
+            throw new Error(data.error || "Ocurrió un error inesperado al autenticar.");
+        }
+        
         return data;
     })
     .then(data => {
@@ -46,7 +61,7 @@ function iniciarSesion(event) {
             width: 280,
             padding: '18px 20px',
             confirmButtonText: 'Reintentar',
-            confirmButtonColor: '#A32D2D',
+            confirmButtonColor: '#b05d4d', // Color terracota corporativo de advertencia
             backdrop: 'rgba(0,0,0,0.15)',
             customClass: {
                 popup: 'swal-mini-popup',
@@ -55,4 +70,3 @@ function iniciarSesion(event) {
         });
     });
 }
-

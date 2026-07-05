@@ -35,11 +35,11 @@ public class HistorialMedico {
     private Date fecha;
 
     @NotBlank
-    @Column(name = "diagnostico", nullable = false, length = 70)
+    @Column(name = "diagnostico", nullable = false, length = 200)
     private String diagnostico;
 
     @NotBlank
-    @Column(name = "tratamiento", nullable = false, length = 70)
+    @Column(name = "tratamiento", nullable = false, length = 200)
     private String tratamiento;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})

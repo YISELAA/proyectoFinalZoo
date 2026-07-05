@@ -1,10 +1,9 @@
 package com.ues.edu.entidades;
 
+import com.ues.edu.modelo.EncriptarContrasenia;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TestBase {
 
@@ -17,38 +16,86 @@ public class TestBase {
 
             em.getTransaction().begin();
 
-            // Crear empleados
-            Empleado e1 = new Empleado();
-            e1.setNombre("Juan");
-            e1.setApellido("Pérez");
-            e1.setDui("12345678-9");
-            e1.setRol("Cuidador");
 
-            Empleado e2 = new Empleado();
-            e2.setNombre("María");
-            e2.setApellido("López");
-            e2.setDui("98765432-1");
-            e2.setRol("Cuidador");
+            Cargo administrador = new Cargo();
+            administrador.setNombreCargo("Administrador");
+            administrador.setDescripcion("Administrador del zoológico");
+            em.persist(administrador);
 
-            em.persist(e1);
-            em.persist(e2);
+            Cargo veterinarioCargo = new Cargo();
+            veterinarioCargo.setNombreCargo("Veterinario");
+            veterinarioCargo.setDescripcion("Atiende a los animales");
+            em.persist(veterinarioCargo);
 
-            // Crear hábitat
-            Habitat habitat = new Habitat();
-            habitat.setTipoTerreno("Selva");
-            habitat.setCapacidad(20);
+            Cargo cuidadorCargo = new Cargo();
+            cuidadorCargo.setNombreCargo("Cuidador");
+            cuidadorCargo.setDescripcion("Cuida y alimenta a los animales");
+            em.persist(cuidadorCargo);
 
-            List<Empleado> cuidadores = new ArrayList<>();
-            cuidadores.add(e1);
-            cuidadores.add(e2);
+  
+            Cargo limpiezaHabitats = new Cargo();
+            limpiezaHabitats.setNombreCargo("Auxiliar de Limpieza de Hábitats");
+            limpiezaHabitats.setDescripcion("Limpieza y desinfección de recintos de animales y manejo de desechos");
+            em.persist(limpiezaHabitats);
 
-            habitat.setCuidadores(cuidadores);
+            Cargo conserjeAreas = new Cargo();
+            conserjeAreas.setNombreCargo("Conserje de Áreas Comunes");
+            conserjeAreas.setDescripcion("Mantenimiento de la limpieza en pasillos, plazas, baños y oficinas");
+            em.persist(conserjeAreas);
 
-            em.persist(habitat);
+
+            // ===========================
+            // ROLES DEL SISTEMA
+            // ===========================
+
+            Rol admin = new Rol();
+            admin.setNombreRol("ADMINISTRADOR");
+            em.persist(admin);
+
+            Rol veterinario = new Rol();
+            veterinario.setNombreRol("VETERINARIO");
+            em.persist(veterinario);
+
+            Rol cuidador = new Rol();
+            cuidador.setNombreRol("CUIDADOR");
+            em.persist(cuidador);
+
+
+            // ===========================
+            // EMPLEADO ADMINISTRADOR
+            // ===========================
+
+            Empleado empleado = new Empleado();
+            empleado.setNombre("Karla");
+            empleado.setApellido("Ruiz");
+            empleado.setDui("00000000-0");
+            empleado.setTelefono("71234567");
+            empleado.setCorreo("karla@gmail.com");
+            empleado.setSalario(800.00);
+            empleado.setCargo(administrador);
+
+            em.persist(empleado);
+
+
+            // ===========================
+            // USUARIO ADMINISTRADOR
+            // ===========================
+
+            EncriptarContrasenia enc = new EncriptarContrasenia();
+
+            Usuario usuario = new Usuario();
+            usuario.setNombreUsuario("karla123");
+            usuario.setContrasena(enc.contraseniaencriptar("karla123"));
+            usuario.setEmpleado(empleado);
+            usuario.setRol(admin);
+
+            em.persist(usuario);
 
             em.getTransaction().commit();
 
-            System.out.println("Datos guardados correctamente");
+            System.out.println("==================================");
+            System.out.println("BASE INICIAL CREADA CON NUEVOS CARGOS");
+            System.out.println("==================================");
 
         } catch (Exception e) {
 
@@ -59,7 +106,6 @@ public class TestBase {
             e.printStackTrace();
 
         } finally {
-
             em.close();
             emf.close();
         }

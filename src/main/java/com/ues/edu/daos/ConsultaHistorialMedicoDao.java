@@ -14,11 +14,10 @@ import java.util.List;
  * @author coc44
  */
 public class ConsultaHistorialMedicoDao {
- 
-private EntityManagerFactory emf = JPAUtil.getEMF();
 
+    private EntityManagerFactory emf = JPAUtil.getEMF();
 
-    public List<Object[]> buscarFiltro(String filtro) {
+    public List<Object[]> buscarFiltro() {
 
         EntityManager em = null;
 
@@ -26,34 +25,21 @@ private EntityManagerFactory emf = JPAUtil.getEMF();
 
             em = emf.createEntityManager();
 
-            String sql =
-                    "SELECT " +
-                    "a.nombre_animal AS col0, " +
-                    "h.diagnostico AS col1, " +
-                    "h.tratamiento AS col2, " +
-                    "h.fecha AS col3, " +
-                    "e.nombre_empleado AS col4, " +
-                    "e.apellido AS col5 " +
-                    "FROM historial_medico h " +
-                    "INNER JOIN animal a ON h.idanimal = a.id " +
-                    "INNER JOIN empleado e ON h.idveterinario = e.id " +
-                    "WHERE 1=1 ";
-
-            if (filtro != null && !filtro.trim().isEmpty()) {
-
-                sql += " AND (LOWER(a.nombre_animal) LIKE LOWER(:filtro) " +
-                       " OR LOWER(h.diagnostico) LIKE LOWER(:filtro) " +
-                       " OR LOWER(e.nombre_empleado) LIKE LOWER(:filtro)) ";
-            }
-
-            sql += " ORDER BY h.fecha DESC ";
+            String sql
+                    = "SELECT "
+                    + "a.nombre_animal AS col0, "
+                    + "a.especie AS col1, "
+                    + "h.diagnostico AS col2, "
+                    + "h.tratamiento AS col3, "
+                    + "h.fecha AS col4, "
+                    + "e.nombre_empleado AS col5, "
+                    + "e.apellido AS col6 "
+                    + "FROM historial_medico h "
+                    + "INNER JOIN animal a ON h.idanimal = a.id "
+                    + "INNER JOIN empleado e ON h.idveterinario = e.id "
+                    + "ORDER BY h.fecha DESC ";
 
             Query query = em.createNativeQuery(sql);
-
-            if (filtro != null && !filtro.trim().isEmpty()) {
-
-                query.setParameter("filtro", "%" + filtro + "%");
-            }
 
             return query.getResultList();
 

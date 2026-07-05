@@ -47,7 +47,7 @@ public class CategoriaAnimalConsuServlet extends HttpServlet {
                     obj.put("id", a.getId());
                     obj.put("nombre", a.getNombre());
                     obj.put("especie", a.getEspecie());
-
+                    obj.put("sexo", a.getSexo());
                     obj.put("fecha_ingreso",
                             a.getFechaIngreso() != null
                             ? sdf.format(a.getFechaIngreso())

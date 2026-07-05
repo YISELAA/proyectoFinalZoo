@@ -92,7 +92,7 @@
                 <div id="paginacion" class="paginacion"></div>    
 
                 <div style="margin-top: 24px; text-align: right;">
-                    <a href="index.html" class="btn-back">
+                    <a href="index.jsp" class="btn-back">
                         <i class="ti ti-arrow-left"></i> 
                     </a>
                 </div>
@@ -100,7 +100,6 @@
             </div>
 
         </div>
-        <!-- SweetAlert2 -->
 
         <script src="${pageContext.request.contextPath}/js/Ticket.js"></script>
     </body>

@@ -38,10 +38,7 @@
 
                         <div class="campo">
                             <label>Teléfono</label>
-                            <input type="text" id="telefono"
-                                   maxlength="8"
-                                   pattern="[0-9]{8}"
-                                   required>
+                            <input type="number" id="telefono" required>
                         </div>
 
                         <div class="campo">
@@ -125,7 +122,7 @@
                 <div id="paginacion" class="paginacion"></div>   
 
                 <div style="margin-top: 24px; text-align: right;">
-                    <a href="${pageContext.request.contextPath}/index.html" class="btn-back">
+                    <a href="${pageContext.request.contextPath}/index.jsp" class="btn-back">
                         <i class="ti ti-arrow-left"></i>
                     </a>
                 </div>

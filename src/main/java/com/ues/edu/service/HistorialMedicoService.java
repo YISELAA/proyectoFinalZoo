@@ -12,60 +12,51 @@ import java.util.List;
  *
  * @author coc44
  */
-    
-    public class HistorialMedicoService {
+public class HistorialMedicoService {
 
     private HistorialMedicoDao dao = new HistorialMedicoDao();
 
-    // 🔥 CREAR
     public void crearHistorial(HistorialMedico h) {
         dao.guardar(h);
     }
 
-    // 🔥 ACTUALIZAR
     public void editarHistorial(HistorialMedico h) {
         dao.actualizar(h);
     }
 
-    // 🔥 ELIMINAR
+   
     public void eliminarHistorial(int id) {
-        dao.eliminar(id);
+        throw new UnsupportedOperationException("La eliminación de registros médicos está deshabilitada por auditoría clínica.");
+        
+        /* dao.eliminar(id);
+        */
     }
 
-    // 🔥 LISTAR TODOS
     public List<HistorialMedico> obtenerHistoriales() {
         return dao.listar();
     }
 
-    // 🔥 BUSCAR POR ID
     public HistorialMedico buscarHistorial(int id) {
         return dao.buscarPorId(id);
     }
 
-    // 🔥 BUSCAR POR DIAGNÓSTICO
     public List<HistorialMedico> buscarPorDiagnostico(String diagnostico) {
         return dao.buscarPorDiagnostico(diagnostico);
     }
 
-    // 🔥 FILTRAR POR FECHA
     public List<HistorialMedico> filtrarPorFecha(java.util.Date fecha) {
         return dao.filtrarPorFecha(fecha);
     }
 
-    // 🔥 FILTRAR POR VETERINARIO
     public List<HistorialMedico> filtrarPorVeterinario(int idVeterinario) {
         return dao.filtrarPorVeterinario(idVeterinario);
     }
 
-    // 🔥 FILTRAR POR ANIMAL
     public List<HistorialMedico> filtrarPorAnimal(int idAnimal) {
         return dao.filtrarPorAnimal(idAnimal);
     }
 
-    // 🔥 PAGINACIÓN
     public List<HistorialMedico> listarPaginado(int pagina, int size) {
         return dao.listarPaginado(pagina, size);
     }
 }
-    
-

@@ -30,7 +30,7 @@ public class TicketService {
             throw new RuntimeException("Ya existe un ticket registrado con ese nombre");
         }
 
-        p.setTipo(tipoNormalizado); // guardas todo normalizado
+        p.setTipo(tipoNormalizado); 
         dao.guardar(p);
     }
 

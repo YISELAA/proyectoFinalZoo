@@ -84,7 +84,6 @@ public class HabitatServlet extends HttpServlet {
         
    String idParam = request.getParameter("id");
 
-        // 🔥 BUSCAR POR ID
         if (idParam != null && !idParam.isEmpty()) {
             long id = Long.parseLong(idParam);
             Habitat habitat = habitatService.buscarHabitat(id);
@@ -100,7 +99,6 @@ public class HabitatServlet extends HttpServlet {
             return;
         }
 
-        // 🔥 LISTAR TODOS
         List<Habitat> habitats = habitatService.obtenerHabitats();
         response.setContentType("application/json");
         response.getWriter().write(gson.toJson(habitats));
@@ -115,72 +113,79 @@ public class HabitatServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-  @Override
-    protected void doPost(HttpServletRequest request,
-            HttpServletResponse response)
-            throws IOException {
+ @Override
+protected void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
 
-    response.setContentType("application/json");
+    response.setContentType("application/json;charset=UTF-8");
+
     try {
-        Habitat habitat = gson.fromJson(request.getReader(), Habitat.class);
-        habitatService.crearHabitat(habitat);
-        response.getWriter().write("{\"mensaje\":\"Hábitat guardado correctamente\"}");
-    } catch (Exception e) {
-        e.printStackTrace(); // ver en consola
-        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-        response.getWriter().write("{\"error\":\"Error al guardar hábitat: " + e.getMessage() + "\"}");
-    }
-}
+        Habitat h = gson.fromJson(request.getReader(), Habitat.class);
 
-
-    @Override
-    protected void doPut(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-
-        Habitat habitat = gson.fromJson(request.getReader(), Habitat.class);
-
-        String error = validarHabitat(habitat);
-
+        String error = validarHabitat(h);
         if (error != null) {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            response.setContentType("application/json");
             response.getWriter().write("{\"error\":\"" + error + "\"}");
             return;
         }
 
-        habitatService.editarHabitat(habitat);
+        habitatService.crearHabitat(h);
 
-        response.setContentType("application/json");
-        response.getWriter().write("{\"mensaje\":\"Habitat actualizado\"}");
+        response.getWriter().write("{\"mensaje\":\"Hábitat guardado correctamente\"}");
+
+    } catch (RuntimeException e) {
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"error\":\"Error interno del servidor\"}");
     }
+}
+@Override
+protected void doPut(HttpServletRequest request, HttpServletResponse response)
+        throws IOException {
 
+    response.setContentType("application/json;charset=UTF-8");
+
+    try {
+        Habitat h = gson.fromJson(request.getReader(), Habitat.class);
+
+        String error = validarHabitat(h);
+        if (error != null) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"" + error + "\"}");
+            return;
+        }
+
+        habitatService.editarHabitat(h);
+
+        response.getWriter().write("{\"mensaje\":\"Hábitat actualizado\"}");
+
+    } catch (RuntimeException e) {
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+        response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
+
+    } catch (Exception e) {
+        e.printStackTrace();
+        response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        response.getWriter().write("{\"error\":\"Error interno del servidor\"}");
+    }
+}
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
         long id = Long.parseLong(request.getParameter("id"));
-        habitatService.eliminarHabitat(id);
+        habitatService.eliminarHabitat((int) id);
 
         response.setContentType("application/json");
         response.getWriter().write("{\"mensaje\":\"Habitat eliminado\"}");
     }
 
-    // VALIDACIÓN
-    private String validarHabitat(Habitat h) {
-        if (h == null) {
-            return "Habitat inválido";
-        }
-
-        if (h.getTipoTerreno() == null || h.getTipoTerreno().trim().length() < 3) {
-            return "Tipo de terreno mínimo 3 caracteres";
-        }
-
-        if (h.getCapacidad() == null || h.getCapacidad() <= 0) {
-            return "Capacidad debe ser mayor a 0";
-        }
-
-        return null;
-    }
 
     /**
      * Returns a short description of the servlet.
@@ -191,5 +196,26 @@ public class HabitatServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    
+    private String validarHabitat(Habitat h) {
+
+    if (h == null) {
+        return "Hábitat inválido";
+    }
+
+    if (h.getTipoTerreno() == null || h.getTipoTerreno().trim().length() < 5) {
+        return "Tipo de terreno mínimo 5 caracteres";
+    }
+
+    if (!h.getTipoTerreno().matches("^[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+$")) {
+        return "El tipo de terreno solo debe contener letras";
+    }
+
+    if (h.getCapacidad() == null || h.getCapacidad() <= 0) {
+        return "Capacidad debe ser mayor a 0";
+    }
+
+    return null;
+}
 
 }

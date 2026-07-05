@@ -49,6 +49,10 @@ public class Animal {
     @Column(name = "nombre_animal", nullable = false, length = 70)
     private String nombre;
 
+    @NotBlank
+    @Column(name = "sexo", nullable = false, length = 15)
+    private String sexo;
+
     @NotNull
     @Temporal(TemporalType.DATE)
     @Column(name = "fecha_nacimiento")
@@ -61,34 +65,33 @@ public class Animal {
     @JoinColumn(name = "idhabitat")
     private Habitat habitat;
 
-   @Transient
-public String getEdad() {
+    @Transient
+    public String getEdad() {
 
-    if (fechaNacimiento == null) {
-        return "";
+        if (fechaNacimiento == null) {
+            return "";
+        }
+
+        LocalDate nacimiento = new java.sql.Date(
+                fechaNacimiento.getTime()
+        ).toLocalDate();
+
+        Period edad = Period.between(nacimiento, LocalDate.now());
+
+        if (edad.getYears() > 0) {
+            return edad.getYears() == 1
+                    ? "1 año"
+                    : edad.getYears() + " años";
+        }
+
+        if (edad.getMonths() > 0) {
+            return edad.getMonths() == 1
+                    ? "1 mes"
+                    : edad.getMonths() + " meses";
+        }
+
+        return edad.getDays() == 1
+                ? "1 día"
+                : edad.getDays() + " días";
     }
-
-    LocalDate nacimiento = new java.sql.Date(
-            fechaNacimiento.getTime()
-    ).toLocalDate();
-
-    Period edad = Period.between(nacimiento, LocalDate.now());
-
-    if (edad.getYears() > 0) {
-        return edad.getYears() == 1
-                ? "1 año"
-                : edad.getYears() + " años";
-    }
-
-    if (edad.getMonths() > 0) {
-        return edad.getMonths() == 1
-                ? "1 mes"
-                : edad.getMonths() + " meses";
-    }
-
-    return edad.getDays() == 1
-            ? "1 día"
-            : edad.getDays() + " días";
-}
-
 }
