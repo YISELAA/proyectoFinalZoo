@@ -14,7 +14,7 @@ import java.util.List;
 
 /**
  *
- * @author MINED
+ * @author yiss
  */
 public class UsuarioDao {
 
@@ -28,7 +28,6 @@ public class UsuarioDao {
         return lista;
     }
 
-    // ← SOLO este, borra el de long
     public Usuario buscarPorId(int id) {
         EntityManager em = emf.createEntityManager();
         Usuario u = em.find(Usuario.class, id);
@@ -45,13 +44,11 @@ public class UsuarioDao {
             System.out.println(">>> ROL ID: " + (usuario.getRol() != null ? usuario.getRol().getId() : "NULL"));
             System.out.println(">>> EMPLEADO: " + usuario.getEmpleado());
             System.out.println(">>> EMPLEADO ID: " + (usuario.getEmpleado() != null ? usuario.getEmpleado().getId() : "NULL"));
-            // Resolver Empleado (ya lo tenías)
             if (usuario.getEmpleado() != null && usuario.getEmpleado().getId() != null) {
                 Empleado emp = em.find(Empleado.class, usuario.getEmpleado().getId());
                 usuario.setEmpleado(emp);
             }
 
-            // ✅ AGREGAR ESTO - Resolver Rol desde la BD
             if (usuario.getRol() != null && usuario.getRol().getId() != null) {
                 Rol rol = em.find(Rol.class, usuario.getRol().getId());
                 usuario.setRol(rol);
@@ -71,13 +68,11 @@ public class UsuarioDao {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
         try {
-            // Resolver Empleado (ya lo tenías)
             if (usuario.getEmpleado() != null && usuario.getEmpleado().getId() != null) {
                 Empleado emp = em.find(Empleado.class, usuario.getEmpleado().getId());
                 usuario.setEmpleado(emp);
             }
 
-            // ✅ AGREGAR ESTO también aquí
             if (usuario.getRol() != null && usuario.getRol().getId() != null) {
                 Rol rol = em.find(Rol.class, usuario.getRol().getId());
                 usuario.setRol(rol);
@@ -115,7 +110,6 @@ public class UsuarioDao {
    public boolean existeNombreUsuario(String nombreUsuario) {
     EntityManager em = emf.createEntityManager();
     try {
-        // 🌟 CORREGIDO: Se cambia u.nombre_usuario por u.nombreUsuario
         Long cantidad = em.createQuery(
                 "SELECT COUNT(u) FROM Usuario u WHERE u.nombreUsuario = :nombre",
                 Long.class)

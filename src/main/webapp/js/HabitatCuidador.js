@@ -3,17 +3,17 @@
  */
 
 let paginaActual = 1;
-const size = 5; // 🌟 Límite estricto de 5 registros por página
-let datosCompletos = []; // Almacén global para segmentar las asignaciones de la BD
+const size = 5; 
+let datosCompletos = [];
 
-// Asegurar que todo cargue al iniciar la página
+
 document.addEventListener("DOMContentLoaded", function () {
     cargarComponentes();
     listarAsignaciones();
 
 
 
-    // Escuchar el evento del formulario para Guardar/Editar
+//GUARDAR Y EDITAR
     document.getElementById("formCategoriaCuidador").addEventListener("submit", guardarOEditar);
 
     $('#idEmpleadoSelect').select2({
@@ -23,9 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-// ==========================================
-// CARGAR SELECTORES DESDE LA BD
-// ==========================================
+
 function cargarComponentes() {
     fetch("EmpleadoServlet?tipo=cuidadores")
             .then(res => res.json())
@@ -67,9 +65,7 @@ function cargarComponentes() {
             .catch(err => console.error("Error cargando hábitats:", err));
 }
 
-// ==========================================
-// TRAER DATOS DEL SERVLET (CORREGIDO)
-// ==========================================
+
 function listarAsignaciones(pagina = 1) {
     paginaActual = pagina;
 
@@ -94,9 +90,7 @@ function listarAsignaciones(pagina = 1) {
             });
 }
 
-// ==========================================
-// MOSTRAR ASIGNACIONES EN TABLA
-// ==========================================
+
 function mostrarAsignacionesEnTabla(lista) {
     let html = "";
     lista.forEach(h => {
@@ -126,9 +120,7 @@ function mostrarAsignacionesEnTabla(lista) {
     document.getElementById("tbodyCategoriaCuidador").innerHTML = html;
 }
 
-// ==========================================
-// RENDERIZAR CONTROLES DE PAGINACIÓN (UNIFICADO)
-// ==========================================
+
 function renderPaginacion(totalRegistros) {
     const pagContenedor = document.getElementById("paginacion");
     if (!pagContenedor)
@@ -147,9 +139,7 @@ function renderPaginacion(totalRegistros) {
     `;
 }
 
-// ==========================================
-// LÓGICAS DE NAVEGACIÓN LOCAL (EL MOTOR DEL RECORTE)
-// ==========================================
+
 function anterior() {
     if (paginaActual > 1) {
         paginaActual--;
@@ -179,9 +169,7 @@ function cambiarPagina(nuevaPagina) {
     listarAsignaciones(nuevaPagina);
 }
 
-// ==========================================
 // ACCIÓN: GUARDAR O MODIFICAR ASIGNACIÓN
-// ==========================================
 function guardarOEditar(e) {
     e.preventDefault();
 
@@ -247,9 +235,7 @@ function guardarOEditar(e) {
             });
 }
 
-// ==========================================
-// ACCIÓN: CARGAR DATOS EN EL FORMULARIO (EDITAR)
-// ==========================================
+
 function cargarParaEditar(idHabitat) {
     fetch(`HabitatCuidadorServlet?id=${idHabitat}`)
             .then(res => {
@@ -285,9 +271,7 @@ function cargarParaEditar(idHabitat) {
             });
 }
 
-// ==========================================
-// ACCIÓN: ELIMINAR ASIGNACIÓN
-// ==========================================
+
 function eliminarAsignacion(idHabitat) {
     Swal.fire({
         title: "¿Está seguro de eliminar los cuidadores de este hábitat?",
@@ -339,9 +323,7 @@ function eliminarAsignacion(idHabitat) {
     });
 }
 
-// ==========================================
-// LIMPIAR FORMULARIO
-// ==========================================
+
 function limpiarFormulario() {
     document.getElementById("formCategoriaCuidador").reset();
     document.getElementById("idAsignacionOculta").value = "";

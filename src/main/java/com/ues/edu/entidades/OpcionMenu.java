@@ -33,5 +33,5 @@ public class OpcionMenu {
 
     @Expose
     @Column(name = "icono", length = 50)
-    private String icono; // Para clases de FontAwesome o Bootstrap Icons
+    private String icono; 
 }

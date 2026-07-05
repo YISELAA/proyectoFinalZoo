@@ -11,14 +11,12 @@ public class DetalleVisitaDao {
 
     private EntityManagerFactory emf = JPAUtil.getEMF();
 
-    // =========================
-    // LISTAR — trae el ticket para que el JS acceda a d.ticket.tipo
-    // =========================
+    
     public List<DetalleVisita> listar() {
 
         EntityManager em = emf.createEntityManager();
 
-        // Cambia a LEFT JOIN FETCH si la relación a empleado o ticket puede ser nula
+        
         TypedQuery<DetalleVisita> query = em.createQuery(
                 "SELECT d FROM DetalleVisita d JOIN FETCH d.ticket LEFT JOIN FETCH d.empleado ORDER BY d.id ASC",
                 DetalleVisita.class
@@ -30,9 +28,7 @@ public class DetalleVisitaDao {
         return lista;
     }
 
-    // =========================
-    // GUARDAR
-    // =========================
+   
     public void guardar(DetalleVisita detalleVisita) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -48,9 +44,7 @@ public class DetalleVisitaDao {
         em.close();
     }
 
-    // =========================
-    // ACTUALIZAR
-    // =========================
+   
     public void actualizar(DetalleVisita detalleVisita) {
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
@@ -78,13 +72,7 @@ public class DetalleVisitaDao {
             em.close();
         }
     }
-    // =========================
-    // ELIMINAR
-    // =========================
-
-    // =========================
-    // BUSCAR POR ID
-    // =========================
+  
     public DetalleVisita buscarPorId(int id) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<DetalleVisita> query = em.createQuery(

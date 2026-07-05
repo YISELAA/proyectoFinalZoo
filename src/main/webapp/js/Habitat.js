@@ -8,19 +8,15 @@
 console.log("JS HABITATS CARGADO");
 
 let paginaActual = 1;
-const size = 5; // 🌟 Límite estricto de 5 registros por página
-let datosCompletos = []; // Almacén global para segmentar los datos de la BD
+const size = 5; 
+let datosCompletos = []; 
 
-// ===============================
 // INICIO
-// ===============================
 document.addEventListener("DOMContentLoaded", function () {
     buscarHabitats();
 });
 
-// ===============================
-// BUSCAR HABITATS (UNIFICADO)
-// ===============================
+
 function buscarHabitats(pagina = 1) {
     paginaActual = pagina;
 
@@ -44,7 +40,6 @@ function buscarHabitats(pagina = 1) {
                     return;
                 }
 
-                // Aplicamos el motor de recorte local
                 redibujarTablaLocal();
             })
             .catch(error => {
@@ -53,9 +48,7 @@ function buscarHabitats(pagina = 1) {
             });
 }
 
-// ===============================
-// MOSTRAR HABITATS EN TABLA
-// ===============================
+
 function mostrarHabitats(lista) {
     if (!Array.isArray(lista)) {
         console.error("Respuesta inválida:", lista);
@@ -85,9 +78,7 @@ function mostrarHabitats(lista) {
     document.getElementById("tbodyHabitats").innerHTML = html;
 }
 
-// ==========================================================
-// RENDERIZAR CONTROLES DE PAGINACIÓN (UNIFICADO CON DOM)
-// ==========================================================
+
 function renderPaginacion(totalRegistros) {
     const pagContenedor = document.getElementById("paginacionHabitats");
     if (!pagContenedor)
@@ -106,9 +97,7 @@ function renderPaginacion(totalRegistros) {
     `;
 }
 
-// ==========================================================
-// LÓGICAS DE NAVEGACIÓN LOCAL (EL MOTOR DEL RECORTE)
-// ==========================================================
+
 function anterior() {
     if (paginaActual > 1) {
         paginaActual--;
@@ -125,7 +114,6 @@ function siguiente() {
 }
 
 function redibujarTablaLocal() {
-    // 🧠 Matemática para recortar en bloques de 5
     const inicio = (paginaActual - 1) * size;
     const fin = inicio + size;
     const registrosSegmentados = datosCompletos.slice(inicio, fin);
@@ -138,9 +126,7 @@ function cambiarPagina(nuevaPagina) {
     buscarHabitats(nuevaPagina);
 }
 
-// ===============================
-// EDITAR HABITAT
-// ===============================
+
 function editarHabitat(id) {
     fetch(`HabitatServlet?id=${id}`)
             .then(response => {
@@ -171,13 +157,7 @@ function editarHabitat(id) {
             });
 }
 
-// ===============================
 // GUARDAR O ACTUALIZAR
-// ===============================
-
-// ===============================
-// GUARDAR O ACTUALIZAR (CORREGIDO)
-// ===============================
 document.getElementById("formHabitat").addEventListener("submit", function (event) {
     event.preventDefault();
 
@@ -247,9 +227,7 @@ document.getElementById("formHabitat").addEventListener("submit", function (even
             });
 });
 
-// ===============================
-// ELIMINAR HABITAT
-// ===============================
+
 function eliminarHabitat(id) {
     Swal.fire({
         title: "¿Eliminar hábitat?",
@@ -297,9 +275,7 @@ function eliminarHabitat(id) {
     });
 }
 
-// ===============================
-// LIMPIAR FORMULARIO
-// ===============================
+
 function limpiarFormularioHabitat() {
     if (document.getElementById("idHabitat"))
         document.getElementById("idHabitat").value = "";
@@ -321,9 +297,7 @@ function limpiarFormularioHabitat() {
     }
 }
 
-// ===============================
-// ALERTAS DE ERROR INTERNAS
-// ===============================
+
 function mostrarAlertaError(mensaje) {
     if (typeof Swal !== 'undefined') {
         Swal.fire({

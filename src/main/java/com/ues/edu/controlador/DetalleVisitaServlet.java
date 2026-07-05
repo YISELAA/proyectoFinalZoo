@@ -49,9 +49,7 @@ public class DetalleVisitaServlet extends HttpServlet {
             })
             .create();
 
-    // =========================
-    // GET
-    // =========================
+    
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -85,9 +83,7 @@ public class DetalleVisitaServlet extends HttpServlet {
         response.getWriter().write(json);
     }
 
-    // =========================
-    // POST
-    // =========================
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -112,7 +108,7 @@ public class DetalleVisitaServlet extends HttpServlet {
 
             detalleVisita.setTicket(ticketReal);
 
-            // Recalcular subtotal con precio real
+        
             detalleVisita.setSubtotal(
                     detalleVisita.getCantidad() * ticketReal.getPrecio()
             );
@@ -126,33 +122,30 @@ public class DetalleVisitaServlet extends HttpServlet {
             return;
         }
         // Usuario que inició sesión
-        // 1. Recuperamos la sesión activa (usando false para no crear una vacía artificialmente)
+      
         jakarta.servlet.http.HttpSession session = request.getSession(false);
         Usuario usuarioLogueado = null;
 
         if (session != null) {
-            // 🌟 CORRECCIÓN: Buscamos "usuarioSesion" que es el nombre real en tu Login
+            
             usuarioLogueado = (Usuario) session.getAttribute("usuarioSesion");
         }
 
-        // 2. Escudo de seguridad: Si no hay usuario en sesión, respondemos con error JSON en lugar de un 500 HTML
+        // Escudo de seguridad: Si no hay usuario en sesión, respondemos con error JSON en lugar de un 500 HTML
         if (usuarioLogueado == null) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Error 401
             response.getWriter().write("{\"error\":\"Sesión inválida o expirada. Por favor, vuelva a iniciar sesión.\"}");
             return;
         }
 
-        // 3. El empleado se asigna directo desde el objeto recuperado
+        // El empleado se asigna directo desde el objeto recuperado
         detalleVisita.setEmpleado(usuarioLogueado.getEmpleado());
         
-        // 4. Guardamos el registro con éxito
         service.guardarDetalleVisita(detalleVisita);
         response.getWriter().write("{\"mensaje\":\"Visita guardada\"}");
     }
 
-    // =========================
-    // PUT
-    // =========================
+    
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -192,49 +185,41 @@ public class DetalleVisitaServlet extends HttpServlet {
             response.getWriter().write("{\"mensaje\":\"Visita actualizada\"}");
 
         } catch (Exception e) {
-            // ✅ Devuelve JSON en lugar de HTML cuando hay error
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
             e.printStackTrace();
         }
     }
 
-    // =========================
-    // VALIDAR
-    // =========================
+   
     private String validarDetalleVisita(DetalleVisita d) {
 
         if (d == null) {
             return "Datos inválidos";
         }
 
-        // 1. Validar longitud del nombre
         if (d.getNombreVisitante() == null
                 || d.getNombreVisitante().trim().length() < 3) {
             return "Nombre mínimo 3 caracteres";
         }
 
-        // 🔥 VALIDACIÓN NUEVA: Bloquear números y caracteres especiales (Solo letras y espacios)
         if (!d.getNombreVisitante().matches("^[a-zA-ZñÑáéíóúÁÉÍÓÚ\\s]+$")) {
             return "El nombre del visitante solo debe contener letras, sin números";
         }
 
-        // 2. Validar teléfono (8 dígitos)
         if (d.getTelefono() == null
                 || !d.getTelefono().matches("\\d{8}")) {
             return "Teléfono debe tener 8 dígitos";
         }
 
-        // 3. Validar cantidad mayor a 0
         if (d.getCantidad() == null || d.getCantidad() <= 0) {
             return "Cantidad debe ser mayor que 0";
         }
 
-        // 4. Validar que seleccionó un ticket
         if (d.getTicket() == null) {
             return "Debe seleccionar un ticket";
         }
 
-        return null; // Todo está perfecto
+        return null; 
     }
 }

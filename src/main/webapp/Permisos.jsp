@@ -8,8 +8,8 @@
 <%@ page import="com.ues.edu.service.RolService" %>
 
 <%
-    // 🔒 ESCUDO DE SEGURIDAD EN EL SERVIDOR:
-    // Evita que intrusos adivinen la URL escribiéndola en el navegador.
+    // ESCUDO DE SEGURIDAD EN EL SERVIDOR:
+    //es para evitar que intrusos adivinen la URL escribiéndola en el navegador.
     Usuario usr = (Usuario) session.getAttribute("usuarioSesion");
     if (usr == null || usr.getRol() == null || usr.getRol().getId() != 1) {
         response.sendRedirect("login.jsp");

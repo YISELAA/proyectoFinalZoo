@@ -6,13 +6,13 @@ let usuarios = [];
 let paginaActual = 1;
 const size = 5;
 
-// ==========================================
-// INICIO Y LOGICA DEL FORMULARIO
-// ==========================================
+
+//inicioi
 document.addEventListener("DOMContentLoaded", function () {
 
     buscarUsuarios();
 
+ //Guardar y actualizar
     document.getElementById("formUsuario").addEventListener("submit", function (event) {
         event.preventDefault();
 
@@ -79,12 +79,10 @@ document.addEventListener("DOMContentLoaded", function () {
             });
             console.error(error);
         });
-    }); // 👈 Aquí se cierra correctamente el EventListener del submit
-}); // 👈 Aquí se cierra correctamente el DOMContentLoaded
+    }); 
+});
 
-// ==========================================
-// FUNCIONES DE CONTROL (GLOBALES)
-// ==========================================
+
 function buscarUsuarios() {
     fetch("UssuarioServlet")
         .then(res => res.json())
@@ -124,7 +122,7 @@ function mostrarUsuarios() {
         html += "<tr>" +
             "<td>" + idUsr + "</td>" +
             "<td>" + nombreUsr + "</td>" +
-            "<td>***</td>" +
+            "<td>******</td>" +
             "<td>" + nombreEmp + "</td>" +
             "<td>" + nombreRol + "</td>" +
             "<td>" +

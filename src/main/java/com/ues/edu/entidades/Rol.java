@@ -31,7 +31,7 @@ public class Rol {
     @Expose
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "permiso", // Nombre de la tabla intermedia en la BD
+        name = "permiso", 
         joinColumns = @JoinColumn(name = "idrol"),
         inverseJoinColumns = @JoinColumn(name = "idopcion")
     )

@@ -73,7 +73,7 @@ public class HistorialMedicoConsuServlet extends HttpServlet {
 
             String filtro = request.getParameter("filtro");
 
-            List<Object[]> historial = (List<Object[]>) dao.buscarFiltro(filtro);
+            List<Object[]> historial = (List<Object[]>) dao.buscarFiltro();
 
             JSONArray jsonArray = new JSONArray();
 

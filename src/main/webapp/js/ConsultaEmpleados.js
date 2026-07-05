@@ -3,7 +3,7 @@
  */
 
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("¡JS de Consulta de Empleados detectado y cargado correctamente!"); 
+    console.log("JS de Consulta de Empleados detectado y cargado correctamente"); 
 
     const tbody = document.querySelector("#tablaCuerpoEmpleados");
     let table = null;
@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
     function cargar() {
         console.log("Iniciando petición fetch al Servlet de Empleados..."); 
         
-        // El path relativo de tu servlet mapeado
         fetch("EmpleadosConsultaServlet")
                 .then(res => {
                     if (!res.ok) throw new Error("Error en la respuesta del servidor");
@@ -60,7 +59,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
                     tbody.innerHTML = html;
                     
-                    // Inicializar y ajustar tal cual tu ejemplo
                     initDataTable();
                     $('#tablaAnimales').DataTable().columns.adjust().draw();
                 })
@@ -92,9 +90,7 @@ function initDataTable() {
     });
 }
 
-/**
- * Función global encargada de estructurar el modal detallado e invocarlo
- */
+
 function verPerfilCompleto(nombreCompleto, rol, usuario, dui, id) {
     let contenido = `
         <div class="text-center mb-4">

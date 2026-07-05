@@ -227,7 +227,6 @@ function cargarTabla() {
 }
 
 
-// MOSTRAR TABLA
 function mostrarTabla(lista) {
 
     if (!Array.isArray(lista)) {
@@ -260,7 +259,6 @@ function mostrarTabla(lista) {
         grupos[clave].total += d.subtotal;
     });
 
-    // 🛠️ AQUÍ SE RE-ASIGNAN LOS IDS CORRELATIVOS EN LA PANTALLA:
     gruposVisita = Object.values(grupos).map((grupo, index) => {
         grupo.id = index + 1; // Genera de forma limpia 1, 2, 3... correlativamente
         return grupo;

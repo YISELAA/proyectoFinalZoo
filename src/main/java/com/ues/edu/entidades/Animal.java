@@ -20,7 +20,6 @@ import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Date;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

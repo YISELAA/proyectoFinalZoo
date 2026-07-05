@@ -43,9 +43,6 @@ public class HistorialMedicoServlet extends HttpServlet {
             .setDateFormat("yyyy-MM-dd")
             .create();
 
-    // ==========================
-    // GET
-    // ==========================
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -61,9 +58,7 @@ public class HistorialMedicoServlet extends HttpServlet {
                 ? (Usuario) session.getAttribute("usuarioSesion")
                 : null;
 
-        // ==========================
-        // OBTENER SESIÓN
-        // ==========================
+       
         if ("obtenerSesion".equals(accion)) {
 
             if (user == null || user.getEmpleado() == null) {
@@ -77,9 +72,7 @@ public class HistorialMedicoServlet extends HttpServlet {
             return;
         }
 
-        // ==========================
-        // BUSCAR POR ID
-        // ==========================
+       
         String idParam = request.getParameter("id");
 
         if (idParam != null && !idParam.isEmpty()) {
@@ -98,16 +91,11 @@ public class HistorialMedicoServlet extends HttpServlet {
             return;
         }
 
-        // ==========================
-        // LISTAR TODOS
-        // ==========================
+       
         List<HistorialMedico> lista = historialService.obtenerHistoriales();
         response.getWriter().write(gson.toJson(lista));
     }
 
-    // ==========================
-    // POST
-    // ==========================
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -136,10 +124,8 @@ public class HistorialMedicoServlet extends HttpServlet {
             System.out.println("Animal: " + (historial.getAnimal() != null ? historial.getAnimal().getId() : "NULL"));
             System.out.println("Veterinario sesión: " + user.getEmpleado().getId());
 
-            // 🔥 AQUÍ SE ASIGNA EL VETERINARIO AUTOMÁTICO
             historial.setVeterinario(user.getEmpleado());
 
-            // ✔ ahora sí validas
             String error = validarHistorial(historial);
             if (error != null) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
@@ -174,9 +160,6 @@ public class HistorialMedicoServlet extends HttpServlet {
         }
     }
 
-    // ==========================
-    // PUT
-    // ==========================
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -198,9 +181,7 @@ public class HistorialMedicoServlet extends HttpServlet {
         }
     }
 
-    // ==========================
-    // DELETE (bloqueado)
-    // ==========================
+    
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -210,23 +191,42 @@ public class HistorialMedicoServlet extends HttpServlet {
         response.getWriter().write("{\"error\":\"No se permite eliminar historiales médicos\"}");
     }
 
-    // ==========================
-    // VALIDACIÓN
-    // ==========================
+  
     private String validarHistorial(HistorialMedico h) {
 
         if (h == null) {
             return "Historial inválido";
         }
+
+        String regexTexto = "^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s.,\\-]+$";
+
         if (h.getDiagnostico() == null || h.getDiagnostico().trim().length() < 5) {
             return "Diagnóstico mínimo 5 caracteres";
         }
+        if (!h.getDiagnostico().matches(regexTexto)) {
+            return "El diagnóstico solo debe contener letras";
+        }
+
         if (h.getTratamiento() == null || h.getTratamiento().trim().length() < 5) {
             return "Tratamiento mínimo 5 caracteres";
         }
+        if (!h.getTratamiento().matches(regexTexto)) {
+            return "El tratamiento solo debe contener letras";
+        }
+
         if (h.getFecha() == null) {
             return "Fecha requerida";
         }
+
+        java.time.LocalDate fechaHistorial = h.getFecha()
+                .toInstant()
+                .atZone(java.time.ZoneId.systemDefault())
+                .toLocalDate();
+
+        if (fechaHistorial.isAfter(java.time.LocalDate.now())) {
+            return "¡La fecha del historial clínico no puede ser una fecha futura!";
+        }
+
         if (h.getAnimal() == null) {
             return "Debe asociar un animal";
         }

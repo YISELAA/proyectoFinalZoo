@@ -12,7 +12,7 @@ public class ConsultaAlimentacionAnimalDao {
 
     private EntityManagerFactory emf = JPAUtil.getEMF();
 
-    public List<Object[]> buscarFiltro(String filtro) {
+    public List<Object[]> buscarFiltro() {
 
         EntityManager em = null;
 
@@ -25,25 +25,12 @@ public class ConsultaAlimentacionAnimalDao {
                     + "al.tipo_alimento AS col1, "
                     + "al.cantidad AS col2, "
                     + "al.horario AS col3, "
-                    + "CONCAT(COALESCE(c.nombre_empleado, 'Sin Cuidador'), ' ', COALESCE(c.apellido, '')) AS col4 " // 👈 Corregido a c.apellido
+                    + "CONCAT(COALESCE(c.nombre_empleado, 'Sin Cuidador'), ' ', COALESCE(c.apellido, '')) AS col4 " 
                     + "FROM alimentacion al "
                     + "LEFT JOIN animal a ON al.idanimal = a.id "
-                    + "LEFT JOIN empleado c ON al.idcuidador = c.id " // 👈 Ya funcionará cuando crees la columna
-                    + "WHERE 1=1 ";
-
-            // Corregido por completo para usar los nombres reales de Postgres
-            if (filtro != null && !filtro.trim().isEmpty() && !filtro.equalsIgnoreCase("null")) {
-                sql += " AND (LOWER(a.especie) LIKE LOWER(:filtro) "
-                        + " OR LOWER(al.tipo_alimento) LIKE LOWER(:filtro) "
-                        + " OR LOWER(c.nombre_empleado) LIKE LOWER(:filtro) "
-                        + " OR LOWER(c.apellido_empleado) LIKE LOWER(:filtro)) "; // 🌟 CORREGIDO: c.apellido_empleado
-            }
+                    + "LEFT JOIN empleado c ON al.idcuidador = c.id ";
 
             Query query = em.createNativeQuery(sql);
-
-            if (filtro != null && !filtro.trim().isEmpty() && !filtro.equalsIgnoreCase("null")) {
-                query.setParameter("filtro", "%" + filtro + "%");
-            }
 
             return query.getResultList();
 

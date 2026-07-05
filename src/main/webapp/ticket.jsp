@@ -100,7 +100,6 @@
             </div>
 
         </div>
-        <!-- SweetAlert2 -->
 
         <script src="${pageContext.request.contextPath}/js/Ticket.js"></script>
     </body>

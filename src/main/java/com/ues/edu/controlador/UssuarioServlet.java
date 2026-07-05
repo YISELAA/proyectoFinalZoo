@@ -28,7 +28,7 @@ public class UssuarioServlet extends HttpServlet {
 
     private final UsuariosService usuarioService = new UsuariosService();
 
-    // 🌟 Instancia global de Gson configurada con estrategia de exclusión segura
+    // Instancia global de Gson configurada con estrategia de exclusión segura
     private final Gson gson = new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
         .setExclusionStrategies(new com.google.gson.ExclusionStrategy() {
@@ -74,7 +74,6 @@ public class UssuarioServlet extends HttpServlet {
         try {
             String idParam = request.getParameter("id");
 
-            // BUSCAR POR ID (Cuando das clic en Editar)
             if (idParam != null && !idParam.isEmpty()) {
                 int id = Integer.parseInt(idParam);
                 Usuario usuario = usuarioService.buscarUsuario(id);
@@ -89,7 +88,6 @@ public class UssuarioServlet extends HttpServlet {
                 return;
             }
 
-            // LISTAR TODOS (Cuando carga la tabla)
             List<Usuario> usuarios = usuarioService.mostrarUsuarios();
             response.getWriter().write(this.gson.toJson(usuarios));
 
@@ -113,7 +111,6 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
 
     try {
 
-        // Leer el JSON recibido
         StringBuilder sb = new StringBuilder();
         BufferedReader reader = request.getReader();
         String linea;
@@ -142,7 +139,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
             return;
         }
 
-        // Guardar
+        
         usuarioService.crearUsuario(usuario);
 
         response.setStatus(HttpServletResponse.SC_OK);
@@ -151,7 +148,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     } catch (RuntimeException e) {
 
         System.out.println("========== ERROR DE NEGOCIO ==========");
-        e.printStackTrace();   // <-- MUY IMPORTANTE
+        e.printStackTrace(); 
 
         response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
         response.getWriter().write("{\"error\":\"" + e.getMessage() + "\"}");
@@ -199,9 +196,8 @@ protected void doPut(HttpServletRequest request, HttpServletResponse response)
     } catch (RuntimeException e) {
 
         System.out.println("========== ERROR DE NEGOCIO EN PUT ==========");
-        e.printStackTrace();   // <-- IMPORTANTE: imprime la causa completa
+        e.printStackTrace();   
 
-        // Si existe una causa interna (Hibernate/SQL), también la imprime
         if (e.getCause() != null) {
             System.out.println("========== CAUSA ==========");
             e.getCause().printStackTrace();

@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const tbody = document.querySelector("#tablaAnimales tbody");
     let table = null;
 
-    // 🛠️ CORRECCIÓN: Se cambió '#tablaAC' por '#tablaAnimales'
     function initDataTable() {
         table = $('#tablaAnimales').DataTable({
             autoWidth: false,
@@ -28,7 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
     function cargar() {
         fetch("/ProyectoFinalZoo/CategoriaAnimalConsuServlet")
                 .then(res => {
-                    if (!res.ok) throw new Error("Error en la respuesta del servidor");
+                    if (!res.ok)
+                        throw new Error("Error en la respuesta del servidor");
                     return res.json();
                 })
                 .then(data => {
@@ -47,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
                                 <td>${a.id}</td>
                                 <td>${a.nombre}</td>
                                 <td>${a.especie}</td>
+                                <td>${a.sexo}</td>
                                 <td>${a.fecha_ingreso}</td>
                                 <td>${a.fecha_nacimiento}</td>
                                 <td>${a.edad}</td>
@@ -57,7 +58,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     });
 
                     tbody.innerHTML = html;
-                    
+
                     // Inicializa y reajusta la tabla correcta
                     initDataTable();
                     $('#tablaAnimales').DataTable().columns.adjust().draw();

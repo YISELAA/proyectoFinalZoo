@@ -9,7 +9,6 @@ import com.ues.edu.entidades.Empleado;
 import com.ues.edu.entidades.HistorialMedico;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import java.util.Date;
 import java.util.List;
@@ -23,9 +22,6 @@ public class HistorialMedicoDao {
       private EntityManagerFactory emf = JPAUtil.getEMF();
 
 
-    // ==========================
-    // GUARDAR
-    // ==========================
     public void guardar(HistorialMedico historial) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -48,9 +44,7 @@ public class HistorialMedicoDao {
         }
     }
 
-    // ==========================
-    // ACTUALIZAR
-    // ==========================
+
     public void actualizar(HistorialMedico historial) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -75,19 +69,14 @@ public class HistorialMedicoDao {
         }
     }
 
-    // ==========================
-    // ELIMINAR (DESHABILITADO)
-    // ==========================
+   
     public void eliminar(int id) {
         throw new UnsupportedOperationException("La eliminación de registros médicos está deshabilitada.");
     }
 
-    // ==========================================================
-    // LISTAR TODOS (Corregido: Igual a las demás tablas por ID)
-    // ==========================================================
+ 
     public List<HistorialMedico> listar() {
         EntityManager em = emf.createEntityManager();
-        // 🌟 Cambiado a h.id ASC para mantener la simetría con el resto del sistema
         TypedQuery<HistorialMedico> query =
                 em.createQuery("SELECT h FROM HistorialMedico h ORDER BY h.id ASC", HistorialMedico.class);
         List<HistorialMedico> lista = query.getResultList();
@@ -95,9 +84,7 @@ public class HistorialMedicoDao {
         return lista;
     }
 
-    // ==========================
-    // BUSCAR POR ID
-    // ==========================
+   
     public HistorialMedico buscarPorId(int id) {
         EntityManager em = emf.createEntityManager();
         HistorialMedico h = em.find(HistorialMedico.class, id);
@@ -105,9 +92,7 @@ public class HistorialMedicoDao {
         return h;
     }
 
-    // ==========================================================
-    // BUSCAR POR DIAGNÓSTICO (Corregido con orden)
-    // ==========================================================
+   
     public List<HistorialMedico> buscarPorDiagnostico(String diagnostico) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<HistorialMedico> query =
@@ -121,9 +106,7 @@ public class HistorialMedicoDao {
         return lista;
     }
 
-    // ==========================================================
-    // FILTRAR POR FECHA (Corregido con orden)
-    // ==========================================================
+ 
     public List<HistorialMedico> filtrarPorFecha(Date fecha) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<HistorialMedico> query =
@@ -137,9 +120,7 @@ public class HistorialMedicoDao {
         return lista;
     }
 
-    // ==========================================================
-    // FILTRAR POR VETERINARIO (Corregido con orden)
-    // ==========================================================
+    
     public List<HistorialMedico> filtrarPorVeterinario(int idVeterinario) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<HistorialMedico> query =
@@ -153,9 +134,7 @@ public class HistorialMedicoDao {
         return lista;
     }
 
-    // ==========================================================
-    // FILTRAR POR ANIMAL (Corregido con orden)
-    // ==========================================================
+   
     public List<HistorialMedico> filtrarPorAnimal(int idAnimal) {
         EntityManager em = emf.createEntityManager();
         TypedQuery<HistorialMedico> query =
@@ -169,12 +148,9 @@ public class HistorialMedicoDao {
         return lista;
     }
 
-    // ==========================================================
-    // PAGINACIÓN (Corregido con orden)
-    // ==========================================================
+
     public List<HistorialMedico> listarPaginado(int pagina, int size) {
         EntityManager em = emf.createEntityManager();
-        // 🌟 Se alinea estrictamente al ordenamiento ascendente por ID
         TypedQuery<HistorialMedico> query =
                 em.createQuery("SELECT h FROM HistorialMedico h ORDER BY h.id ASC", HistorialMedico.class);
         query.setFirstResult((pagina - 1) * size);

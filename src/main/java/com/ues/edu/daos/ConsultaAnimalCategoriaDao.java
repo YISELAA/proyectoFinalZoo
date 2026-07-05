@@ -1,5 +1,6 @@
 package com.ues.edu.daos;
 
+import com.ues.edu.daos.JPAUtil;
 import com.ues.edu.entidades.Animal;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;

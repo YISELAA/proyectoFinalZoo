@@ -24,8 +24,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
 
                 paginate: {
-                    next: "Siguiente",
-                    previous: "Anterior"
+                    next: "→",
+                    previous: "←"
                 }
             }
         });

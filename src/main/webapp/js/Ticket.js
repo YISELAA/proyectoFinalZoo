@@ -7,7 +7,8 @@ const size = 5;
 document.addEventListener("DOMContentLoaded", function () {
 
     cargarTickets();
-
+    
+    //guardar y actualizar
     document.getElementById("formTicket")
         .addEventListener("submit", function (e) {
 
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             let metodo = id === "" ? "POST" : "PUT";
 
-            const scrollPos = window.scrollY; // 🔥 evita salto
+            const scrollPos = window.scrollY; // es para evitar saltos
 
             fetch("/ProyectoFinalZoo/TicketServlet", {
                 method: metodo,
@@ -100,7 +101,7 @@ function cargarTickets() {
 
             tickets = data;
 
-            paginaActual = 1; // 🔥 evita páginas vacías
+            paginaActual = 1; // evita páginas vacías
             renderTabla();
             renderPaginacion();
         })

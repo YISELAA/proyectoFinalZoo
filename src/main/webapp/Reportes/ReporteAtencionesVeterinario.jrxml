@@ -1,243 +1,216 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
-              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
-              name="ReporteAtencionesVeterinario"
-              pageWidth="842" pageHeight="595"
-              orientation="Landscape"
-              columnWidth="802"
-              leftMargin="20" rightMargin="20"
-              topMargin="20" bottomMargin="20"
-              uuid="e73f1c28-4d9b-5a2c-c7f1-23456789bcde">
-
-    <property name="com.jaspersoft.studio.data.sql.tables" value=""/>
-    <property name="com.jaspersoft.studio.data.defaultdataadapter" value="BaseZoo"/>
-
-    <style name="encabezado_col" fontName="DejaVu Sans" fontSize="11" isBold="true" forecolor="#FFFFFF"/>
-    <style name="dato_texto"     fontName="DejaVu Sans" fontSize="11"               forecolor="#2D3A2E"/>
-    <style name="dato_numero"    fontName="DejaVu Sans" fontSize="11" isBold="true" forecolor="#880E4F"/>
-    <style name="footer_texto"   fontName="DejaVu Sans" fontSize="9"                forecolor="#74857A"/>
-
-    <queryString language="SQL">
-        <![CDATA[SELECT
+<!-- Created with Jaspersoft Studio version 6.21.5.final using JasperReports Library version 6.21.5-74d586df47b25dbd05bd0957999819196e59934a  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ReporteAtencionesVeterinario" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e73f1c28-4d9b-5a2c-c7f1-23456789bcde">
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="BaseZoo"/>
+	<style name="encabezado_col" forecolor="#FFFFFF" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="dato_texto" forecolor="#2D3A2E" fontName="DejaVu Sans" fontSize="11"/>
+	<style name="dato_numero" forecolor="#1B4332" fontName="DejaVu Sans" fontSize="11" isBold="true"/>
+	<style name="footer_texto" forecolor="#74857A" fontName="DejaVu Sans" fontSize="9"/>
+	<queryString language="SQL">
+		<![CDATA[SELECT
     e.nombre_empleado || ' ' || e.apellido AS veterinario,
     COUNT(hm.id) AS total_atenciones
 FROM public.historial_medico hm
 JOIN public.empleado e ON hm.idveterinario = e.id
 GROUP BY e.id, e.nombre_empleado, e.apellido
 ORDER BY total_atenciones DESC]]>
-    </queryString>
-
-    <field name="veterinario"       class="java.lang.String"/>
-    <field name="total_atenciones"  class="java.lang.Long"/>
-
-    <variable name="GRAND_TOTAL" class="java.lang.Long" calculation="Sum">
-        <variableExpression><![CDATA[$F{total_atenciones}]]></variableExpression>
-    </variable>
-
-    <background>
-        <band splitType="Stretch"/>
-    </background>
-
-    <!-- ══════════════ TITLE ══════════════ -->
-    <title>
-        <band height="90" splitType="Stretch">
-            <!-- Fondo morado oscuro -->
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="90" backcolor="#6D0030" forecolor="#6D0030" uuid="bb000001-0000-0000-0000-000000000001"/>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <!-- Acento lateral morado claro -->
-            <rectangle>
-                <reportElement x="0" y="0" width="5" height="90" backcolor="#E91E8C" forecolor="#F06292" uuid="bb000001-0000-0000-0000-000000000002"/>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <!-- Título -->
-            <staticText>
-                <reportElement x="18" y="10" width="600" height="38" forecolor="#FFFFFF" uuid="bb000001-0000-0000-0000-000000000003"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="26" isBold="true"/>
-                </textElement>
-                <text><![CDATA[WILD ZOO MK]]></text>
-            </staticText>
-            <!-- Subtítulo -->
-            <staticText>
-                <reportElement x="18" y="52" width="600" height="22" forecolor="#F48FB1" uuid="bb000001-0000-0000-0000-000000000004"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="12"/>
-                </textElement>
-                <text><![CDATA[Reporte de atenciones por veterinario]]></text>
-            </staticText>
-            <!-- Fecha -->
-            <textField>
-                <reportElement x="560" y="36" width="240" height="18" forecolor="#F48FB1" uuid="bb000001-0000-0000-0000-000000000005"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Generado: " + new java.text.SimpleDateFormat("dd/MM/yyyy h:mma", java.util.Locale.ENGLISH).format(new java.util.Date())]]></textFieldExpression>
-            </textField>
-        </band>
-    </title>
-
-    <pageHeader>
-        <band height="8" splitType="Stretch"/>
-    </pageHeader>
-
-    <!-- ══════════════ COLUMN HEADER ══════════════ -->
-    <columnHeader>
-        <band height="36" splitType="Stretch">
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="36" backcolor="#C2185B" forecolor="#C2185B" uuid="bb000001-0000-0000-0000-000000000006"/>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <staticText>
-                <reportElement x="10" y="0" width="500" height="36" style="encabezado_col" uuid="bb000001-0000-0000-0000-000000000007"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Veterinario]]></text>
-            </staticText>
-            <line>
-                <reportElement x="510" y="6" width="1" height="24" forecolor="#F06292" uuid="bb000001-0000-0000-0000-000000000008"/>
-            </line>
-            <staticText>
-                <reportElement x="520" y="0" width="272" height="36" style="encabezado_col" uuid="bb000001-0000-0000-0000-000000000009"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Total de atenciones]]></text>
-            </staticText>
-        </band>
-    </columnHeader>
-
-    <!-- ══════════════ DETAIL ══════════════ -->
-    <detail>
-        <band height="34" splitType="Stretch">
-            <!-- Fila par -->
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="34" backcolor="#FCE4EC" forecolor="#FCE4EC" uuid="bb000001-0000-0000-0000-000000000010">
-                    <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
-                </reportElement>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <!-- Fila impar -->
-            <rectangle>
-                <reportElement x="0" y="0" width="802" height="34" backcolor="#FFF0F5" forecolor="#FFF0F5" uuid="bb000001-0000-0000-0000-000000000011">
-                    <printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
-                </reportElement>
-                <graphicElement><pen lineWidth="0"/></graphicElement>
-            </rectangle>
-            <line>
-                <reportElement x="0" y="33" width="802" height="1" forecolor="#F48FB1" uuid="bb000001-0000-0000-0000-000000000012"/>
-            </line>
-            <!-- Veterinario -->
-            <textField>
-                <reportElement x="10" y="0" width="500" height="34" style="dato_texto" uuid="bb000001-0000-0000-0000-000000000013"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{veterinario}]]></textFieldExpression>
-            </textField>
-            <line>
-                <reportElement x="510" y="4" width="1" height="26" forecolor="#F48FB1" uuid="bb000001-0000-0000-0000-000000000014"/>
-            </line>
-            <!-- Total atenciones -->
-            <textField>
-                <reportElement x="520" y="0" width="272" height="34" style="dato_numero" uuid="bb000001-0000-0000-0000-000000000015"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$F{total_atenciones}]]></textFieldExpression>
-            </textField>
-        </band>
-    </detail>
-
-    <!-- ══════════════ COLUMN FOOTER ══════════════ -->
-    <columnFooter>
-        <band height="36" splitType="Stretch">
-            <line>
-                <reportElement x="0" y="0" width="802" height="1" forecolor="#C2185B" uuid="bb000001-0000-0000-0000-000000000016"/>
-            </line>
-            <staticText>
-                <reportElement x="10" y="6" width="500" height="24" forecolor="#6D0030" uuid="bb000001-0000-0000-0000-000000000017"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="11" isBold="true"/>
-                </textElement>
-                <text><![CDATA[TOTAL DE ATENCIONES]]></text>
-            </staticText>
-            <textField>
-                <reportElement x="520" y="6" width="272" height="24" forecolor="#6D0030" uuid="bb000001-0000-0000-0000-000000000018"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="13" isBold="true"/>
-                </textElement>
-                <textFieldExpression><![CDATA[$V{GRAND_TOTAL}]]></textFieldExpression>
-            </textField>
-        </band>
-    </columnFooter>
-
-    <!-- ══════════════ PAGE FOOTER ══════════════ -->
-    <pageFooter>
-        <band height="28" splitType="Stretch">
-            <line>
-                <reportElement x="0" y="0" width="802" height="1" forecolor="#F48FB1" uuid="bb000001-0000-0000-0000-000000000019"/>
-            </line>
-            <staticText>
-                <reportElement x="0" y="5" width="400" height="18" style="footer_texto" uuid="bb000001-0000-0000-0000-000000000020"/>
-                <textElement verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="9"/>
-                </textElement>
-                <text><![CDATA[© Wild Zoo MK — Reporte de atenciones por veterinario]]></text>
-            </staticText>
-            <textField>
-                <reportElement x="402" y="5" width="400" height="18" style="footer_texto" uuid="bb000001-0000-0000-0000-000000000021"/>
-                <textElement textAlignment="Right" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="9"/>
-                </textElement>
-                <textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
-            </textField>
-        </band>
-    </pageFooter>
-
-    <!-- ══════════════ SUMMARY: GRÁFICO DE PASTEL ══════════════ -->
-    <summary>
-        <band height="240" splitType="Stretch">
-            <staticText>
-                <reportElement x="0" y="8" width="802" height="22" forecolor="#6D0030" uuid="bb000001-0000-0000-0000-000000000022"/>
-                <textElement textAlignment="Center" verticalAlignment="Middle">
-                    <font fontName="DejaVu Sans" size="13" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Distribución de atenciones por veterinario]]></text>
-            </staticText>
-            <pieChart>
-                <chart evaluationTime="Report" theme="default">
-                    <reportElement x="100" y="34" width="602" height="200" uuid="bb000001-0000-0000-0000-000000000023"/>
-                    <chartTitle position="Top">
-                        <titleExpression><![CDATA[""]]></titleExpression>
-                    </chartTitle>
-                    <chartSubtitle/>
-                    <chartLegend position="Right" textColor="#2D3A2E">
-                        <font fontName="DejaVu Sans" size="9"/>
-                    </chartLegend>
-                </chart>
-                <pieDataset>
-                    <keyExpression><![CDATA[$F{veterinario}]]></keyExpression>
-                    <valueExpression><![CDATA[$F{total_atenciones}]]></valueExpression>
-                    <labelExpression><![CDATA[$F{veterinario} + " (" + $F{total_atenciones} + ")"]]></labelExpression>
-                </pieDataset>
-                <piePlot isShowLabels="true" isCircular="true">
-                    <plot>
-                        <seriesColor seriesOrder="0" color="#C2185B"/>
-                        <seriesColor seriesOrder="1" color="#E91E8C"/>
-                        <seriesColor seriesOrder="2" color="#F48FB1"/>
-                        <seriesColor seriesOrder="3" color="#880E4F"/>
-                        <seriesColor seriesOrder="4" color="#FCE4EC"/>
-                    </plot>
-                    <itemLabel color="#880E4F">
-                        <font fontName="DejaVu Sans" size="9" isBold="true"/>
-                    </itemLabel>
-                </piePlot>
-            </pieChart>
-        </band>
-    </summary>
-
+	</queryString>
+	<field name="veterinario" class="java.lang.String"/>
+	<field name="total_atenciones" class="java.lang.Long"/>
+	<variable name="GRAND_TOTAL" class="java.lang.Long" calculation="Sum">
+		<variableExpression><![CDATA[$F{total_atenciones}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="90" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="90" forecolor="#1B4332" backcolor="#1B4332" uuid="bb000001-0000-0000-0000-000000000001"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="5" height="90" forecolor="#52B788" backcolor="#52B788" uuid="bb000001-0000-0000-0000-000000000002"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement x="18" y="10" width="600" height="38" forecolor="#FFFFFF" uuid="bb000001-0000-0000-0000-000000000003"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="26" isBold="true"/>
+				</textElement>
+				<text><![CDATA[WILD ZOO MK]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="18" y="52" width="600" height="22" forecolor="#95D5B2" uuid="bb000001-0000-0000-0000-000000000004"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="12"/>
+				</textElement>
+				<text><![CDATA[Reporte de atenciones por veterinario]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="560" y="36" width="240" height="18" forecolor="#B7E4C7" uuid="bb000001-0000-0000-0000-000000000005"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Generado: " + new java.text.SimpleDateFormat("dd/MM/yyyy h:mma", java.util.Locale.ENGLISH).format(new java.util.Date())]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="8" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="36" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="36" forecolor="#2D6A4F" backcolor="#2D6A4F" uuid="bb000001-0000-0000-0000-000000000006"/>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<staticText>
+				<reportElement style="encabezado_col" x="10" y="0" width="500" height="36" uuid="bb000001-0000-0000-0000-000000000007"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Veterinario]]></text>
+			</staticText>
+			<line>
+				<reportElement x="510" y="6" width="1" height="24" forecolor="#52B788" uuid="bb000001-0000-0000-0000-000000000008"/>
+			</line>
+			<staticText>
+				<reportElement style="encabezado_col" x="520" y="0" width="272" height="36" uuid="bb000001-0000-0000-0000-000000000009"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Total de atenciones]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="34" splitType="Stretch">
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#D8F3DC" backcolor="#D8F3DC" uuid="bb000001-0000-0000-0000-000000000010">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<rectangle>
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#F0FFF4" backcolor="#F0FFF4" uuid="bb000001-0000-0000-0000-000000000011">
+					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
+				</reportElement>
+				<graphicElement>
+					<pen lineWidth="0.0"/>
+				</graphicElement>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="33" width="802" height="1" forecolor="#B7E4C7" uuid="bb000001-0000-0000-0000-000000000012"/>
+			</line>
+			<textField>
+				<reportElement style="dato_texto" x="10" y="0" width="500" height="34" uuid="bb000001-0000-0000-0000-000000000013"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{veterinario}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="510" y="4" width="1" height="26" forecolor="#B7E4C7" uuid="bb000001-0000-0000-0000-000000000014"/>
+			</line>
+			<textField>
+				<reportElement style="dato_numero" x="520" y="0" width="272" height="34" uuid="bb000001-0000-0000-0000-000000000015"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{total_atenciones}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="36" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#2D6A4F" uuid="bb000001-0000-0000-0000-000000000016"/>
+			</line>
+			<staticText>
+				<reportElement x="10" y="6" width="500" height="24" forecolor="#1B4332" uuid="bb000001-0000-0000-0000-000000000017"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="11" isBold="true"/>
+				</textElement>
+				<text><![CDATA[TOTAL DE ATENCIONES]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="520" y="6" width="272" height="24" forecolor="#1B4332" uuid="bb000001-0000-0000-0000-000000000018"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="13" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{GRAND_TOTAL}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="28" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#B7E4C7" uuid="bb000001-0000-0000-0000-000000000019"/>
+			</line>
+			<staticText>
+				<reportElement style="footer_texto" x="0" y="5" width="400" height="18" uuid="bb000001-0000-0000-0000-000000000020"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<text><![CDATA[© Wild Zoo MK — Reporte de atenciones por veterinario]]></text>
+			</staticText>
+			<textField>
+				<reportElement style="footer_texto" x="402" y="5" width="400" height="18" uuid="bb000001-0000-0000-0000-000000000021"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Página " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="240" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="8" width="802" height="22" forecolor="#1B4332" uuid="bb000001-0000-0000-0000-000000000022"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="DejaVu Sans" size="13" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Distribución de atenciones por veterinario]]></text>
+			</staticText>
+			<pieChart>
+				<chart evaluationTime="Report" theme="default">
+					<reportElement x="100" y="34" width="602" height="200" uuid="bb000001-0000-0000-0000-000000000023"/>
+					<chartTitle position="Top">
+						<titleExpression><![CDATA[""]]></titleExpression>
+					</chartTitle>
+					<chartSubtitle/>
+					<chartLegend textColor="#2D3A2E" position="Right">
+						<font fontName="DejaVu Sans" size="9"/>
+					</chartLegend>
+				</chart>
+				<pieDataset>
+					<keyExpression><![CDATA[$F{veterinario}]]></keyExpression>
+					<valueExpression><![CDATA[$F{total_atenciones}]]></valueExpression>
+					<labelExpression><![CDATA[$F{veterinario} + " (" + $F{total_atenciones} + ")"]]></labelExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true">
+					<plot>
+						<seriesColor seriesOrder="0" color="#2D6A4F"/>
+						<seriesColor seriesOrder="1" color="#52B788"/>
+						<seriesColor seriesOrder="2" color="#95D5B2"/>
+						<seriesColor seriesOrder="3" color="#1B4332"/>
+						<seriesColor seriesOrder="4" color="#74C69D"/>
+					</plot>
+					<itemLabel color="#1B4332">
+						<font fontName="DejaVu Sans" size="9" isBold="true"/>
+					</itemLabel>
+				</piePlot>
+			</pieChart>
+		</band>
+	</summary>
 </jasperReport>

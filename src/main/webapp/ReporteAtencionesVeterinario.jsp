@@ -14,20 +14,16 @@ EntityManager em = null;
 
 try {
 
-    // Obtener EntityManager
     em = JPAUtil.getEMF().createEntityManager();
 
-    // Obtener Session de Hibernate
     Session sessionHibernate = em.unwrap(Session.class);
 
-    // Obtener Connection JDBC
     final Connection[] conn = new Connection[1];
 
     sessionHibernate.doWork(connection -> {
         conn[0] = connection;
     });
 
-    // Ruta del reporte
     File reportfile = new File(
         application.getRealPath("/Reportes/ReporteAtencionesVeterinario.jasper")
     );

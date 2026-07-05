@@ -22,7 +22,6 @@ public class CategoriaCuidadorDao {
     private EntityManagerFactory emf =
             Persistence.createEntityManagerFactory("profinalPU");
 
-    // Guardar asignaciones de cuidadores a una categoría
     public void guardar(int idCategoria, List<Long> idsEmpleados) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -37,7 +36,6 @@ public class CategoriaCuidadorDao {
                         listaCuidadores.add(emp);
                     }
                 }
-                // Setea la colección gestionada por @ManyToMany (tabla: categoria_cuidador)
                 cat.setCuidadores(listaCuidadores);
             }
 
@@ -50,7 +48,6 @@ public class CategoriaCuidadorDao {
         }
     }
 
-    // Actualizar/reemplazar los cuidadores de una categoría
     public void actualizar(int idCategoria, List<Long> idsEmpleados) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -65,7 +62,6 @@ public class CategoriaCuidadorDao {
                         listaCuidadores.add(emp);
                     }
                 }
-                // JPA se encarga de hacer el DELETE y luego los INSERT en categoria_cuidador
                 cat.setCuidadores(listaCuidadores);
             }
 
@@ -78,7 +74,6 @@ public class CategoriaCuidadorDao {
         }
     }
 
-    // Vaciar o eliminar todas las asignaciones de una categoría
     public void eliminar(int idCategoria) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -98,7 +93,6 @@ public class CategoriaCuidadorDao {
         }
     }
 
-    // Listar las categorías trayendo de forma inmediata (Fetch) sus cuidadores
     public List<Habitat> listar() {
         EntityManager em = emf.createEntityManager();
         List<Habitat> lista = null;
@@ -113,7 +107,6 @@ public class CategoriaCuidadorDao {
         return lista;
     }
 
-    // Buscar una categoría específica con sus cuidadores cargados
     public Habitat buscarPorId(int idCategoria) {
         EntityManager em = emf.createEntityManager();
         Habitat cat = null;

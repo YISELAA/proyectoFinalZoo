@@ -41,12 +41,6 @@ public class AlimentacionServlet extends HttpServlet {
             })
             .create();
 
-    // ==========================
-    // GET
-    // ==========================
-   // ==========================
-    // MÉTODO doGet COMPLETO Y UNIFICADO
-    // ==========================
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -57,29 +51,23 @@ public class AlimentacionServlet extends HttpServlet {
         try {
             String accion = request.getParameter("accion");
 
-            // ================= 🌟 1. CONTROL DE SESIÓN AUTOMÁTICA =================
             if ("obtenerSesion".equals(accion)) {
                 HttpSession session = request.getSession(false);
 
                 if (session != null) {
-                    // Extraemos el objeto Usuario que guardó tu LoginServlet
                     Usuario user = (Usuario) session.getAttribute("usuarioSesion");
 
-                    // Si el usuario existe y tiene un empleado vinculado (Cuidador/Veterinario)
                     if (user != null && user.getEmpleado() != null) {
-                        // Enviamos al JS el objeto Empleado en formato JSON
                         response.getWriter().write(gson.toJson(user.getEmpleado()));
                         return;
                     }
                 }
 
-                // Si no hay sesión válida, respondemos con 401 para el catch del JS
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write("{\"error\":\"No hay sesión activa\"}");
                 return;
             }
 
-            // ================= 🌟 2. BUSCAR POR ID (Para Edición) =================
             String idParam = request.getParameter("id");
 
             if (idParam != null && !idParam.isEmpty()) {
@@ -96,7 +84,6 @@ public class AlimentacionServlet extends HttpServlet {
                 return;
             }
 
-            // ================= 🌟 3. LISTAR GENERAL (Para la Tabla) =================
             List<Alimentacion> lista = alimentacionService.obtenerAlimentaciones();
             response.getWriter().write(gson.toJson(lista));
 
@@ -107,9 +94,6 @@ public class AlimentacionServlet extends HttpServlet {
         }
     }
 
-    // ==========================
-    // POST
-    // ==========================
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -118,13 +102,17 @@ public class AlimentacionServlet extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
 
         try {
-
             Alimentacion a = gson.fromJson(request.getReader(), Alimentacion.class);
 
+            String errorValidacion = validarAlimentacion(a);
+            if (errorValidacion != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"" + errorValidacion + "\"}");
+                return;
+            }
+
             HttpSession session = request.getSession(false);
-            Usuario user = (session != null)
-                    ? (Usuario) session.getAttribute("usuarioSesion")
-                    : null;
+            Usuario user = (session != null) ? (Usuario) session.getAttribute("usuarioSesion") : null;
 
             if (user == null || user.getEmpleado() == null) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -137,7 +125,6 @@ public class AlimentacionServlet extends HttpServlet {
             a.setCuidador(emp);
 
             alimentacionService.crearAlimentacion(a);
-
             response.getWriter().write("{\"mensaje\":\"Registrado correctamente\"}");
 
         } catch (Exception e) {
@@ -147,19 +134,24 @@ public class AlimentacionServlet extends HttpServlet {
         }
     }
 
-    // ==========================
-    // PUT
-    // ==========================
     @Override
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
 
         try {
             Alimentacion a = gson.fromJson(request.getReader(), Alimentacion.class);
-            alimentacionService.editarAlimentacion(a);
 
+            String errorValidacion = validarAlimentacion(a);
+            if (errorValidacion != null) {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("{\"error\":\"" + errorValidacion + "\"}");
+                return;
+            }
+
+            alimentacionService.editarAlimentacion(a);
             response.getWriter().write("{\"mensaje\":\"Actualizado\"}");
 
         } catch (Exception e) {
@@ -169,9 +161,6 @@ public class AlimentacionServlet extends HttpServlet {
         }
     }
 
-    // ==========================
-    // DELETE
-    // ==========================
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
@@ -181,4 +170,29 @@ public class AlimentacionServlet extends HttpServlet {
 
         response.getWriter().write("{\"mensaje\":\"Eliminado\"}");
     }
+
+    
+    private String validarAlimentacion(Alimentacion a) {
+    if (a == null) {
+        return "Registro inválido";
+    }
+
+    if (a.getTipoAlimento() == null || a.getTipoAlimento().trim().length() < 3) {
+        return "El tipo de alimento debe tener mínimo 3 caracteres";
+    }
+    
+    if (a.getHorario() == null || !a.getHorario().trim().toUpperCase().matches("^[0-9\\s\\:]*(AM|PM)$")) {
+        return "El horario debe contener una hora válida acompañada de AM o PM.";
+    }
+
+    if (a.getCantidad() <= 0) {
+        return "La cantidad debe ser un número mayor a 0";
+    }
+
+    if (a.getAnimal() == null || a.getAnimal().getId() == null) {
+        return "Debe seleccionar un animal válido";
+    }
+
+    return null;
+}
 }

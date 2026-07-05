@@ -16,9 +16,6 @@ public class TestBase {
 
             em.getTransaction().begin();
 
-            // ===========================
-            // CARGOS (Originales + Limpieza)
-            // ===========================
 
             Cargo administrador = new Cargo();
             administrador.setNombreCargo("Administrador");
@@ -35,7 +32,7 @@ public class TestBase {
             cuidadorCargo.setDescripcion("Cuida y alimenta a los animales");
             em.persist(cuidadorCargo);
 
-            // 🔥 NUEVOS CARGOS DE LIMPIEZA
+  
             Cargo limpiezaHabitats = new Cargo();
             limpiezaHabitats.setNombreCargo("Auxiliar de Limpieza de Hábitats");
             limpiezaHabitats.setDescripcion("Limpieza y desinfección de recintos de animales y manejo de desechos");

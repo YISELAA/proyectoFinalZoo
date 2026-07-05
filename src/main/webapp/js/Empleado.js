@@ -121,13 +121,11 @@ document.getElementById("formEmpleado").addEventListener("submit", function (eve
                 console.log("STATUS:", response.status);
                 console.log("RESPUESTA:", texto);
 
-                // Si la respuesta no es OK, intentamos extraer la propiedad 'error' del JSON
                 if (!response.ok) {
                     try {
                         const jsonError = JSON.parse(texto);
                         throw new Error(jsonError.error || "Ocurrió un error inesperado");
                     } catch (e) {
-                        // Si por alguna razón no era un JSON válido, lanzamos el texto original o el error del try
                         throw new Error(e.name === "SyntaxError" ? texto : e.message);
                     }
                 }

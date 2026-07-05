@@ -46,13 +46,13 @@ ORDER BY
 	<title>
 		<band height="90" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="90" forecolor="#1A3A5C" backcolor="#1A3A5C" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567801"/>
+				<reportElement x="0" y="0" width="802" height="90" forecolor="#1B4332" backcolor="#1B4332" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567801"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="5" height="90" forecolor="#4A90D9" backcolor="#4A90D9" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567802"/>
+				<reportElement x="0" y="0" width="5" height="90" forecolor="#52B788" backcolor="#52B788" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567802"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -65,14 +65,14 @@ ORDER BY
 				<text><![CDATA[WILD ZOO MK]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="18" y="52" width="600" height="22" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567804"/>
+				<reportElement x="18" y="52" width="600" height="22" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567804"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12"/>
 				</textElement>
 				<text><![CDATA[Reporte de ventas por empleado]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="560" y="36" width="240" height="18" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567805"/>
+				<reportElement x="560" y="36" width="240" height="18" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567805"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="9"/>
 				</textElement>
@@ -86,7 +86,7 @@ ORDER BY
 	<columnHeader>
 		<band height="36" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="36" forecolor="#1E5799" backcolor="#1E5799" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567806"/>
+				<reportElement x="0" y="0" width="802" height="36" forecolor="#2D6A4F" backcolor="#2D6A4F" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567806"/>
 				<graphicElement>
 					<pen lineWidth="0.0"/>
 				</graphicElement>
@@ -99,7 +99,7 @@ ORDER BY
 				<text><![CDATA[Empleado]]></text>
 			</staticText>
 			<line>
-				<reportElement x="230" y="6" width="1" height="24" forecolor="#4A90D9" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567808"/>
+				<reportElement x="230" y="6" width="1" height="24" forecolor="#52B788" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567808"/>
 			</line>
 			<staticText>
 				<reportElement style="encabezado_col" x="240" y="0" width="180" height="36" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567809"/>
@@ -109,7 +109,7 @@ ORDER BY
 				<text><![CDATA[Rol]]></text>
 			</staticText>
 			<line>
-				<reportElement x="420" y="6" width="1" height="24" forecolor="#4A90D9" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567810"/>
+				<reportElement x="420" y="6" width="1" height="24" forecolor="#52B788" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567810"/>
 			</line>
 			<staticText>
 				<reportElement style="encabezado_col" x="430" y="0" width="170" height="36" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567811"/>
@@ -119,7 +119,7 @@ ORDER BY
 				<text><![CDATA[Total Ventas]]></text>
 			</staticText>
 			<line>
-				<reportElement x="600" y="6" width="1" height="24" forecolor="#4A90D9" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567812"/>
+				<reportElement x="600" y="6" width="1" height="24" forecolor="#52B788" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567812"/>
 			</line>
 			<staticText>
 				<reportElement style="encabezado_col" x="610" y="0" width="182" height="36" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567813"/>
@@ -133,7 +133,7 @@ ORDER BY
 	<detail>
 		<band height="34" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="34" forecolor="#D6E8F7" backcolor="#D6E8F7" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567814">
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#D8F3DC" backcolor="#D8F3DC" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567814">
 					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 == 0]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -141,7 +141,7 @@ ORDER BY
 				</graphicElement>
 			</rectangle>
 			<rectangle>
-				<reportElement x="0" y="0" width="802" height="34" forecolor="#EDF4FB" backcolor="#EDF4FB" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567815">
+				<reportElement x="0" y="0" width="802" height="34" forecolor="#F0FFF4" backcolor="#F0FFF4" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567815">
 					<printWhenExpression><![CDATA[$V{REPORT_COUNT} % 2 != 0]]></printWhenExpression>
 				</reportElement>
 				<graphicElement>
@@ -149,7 +149,7 @@ ORDER BY
 				</graphicElement>
 			</rectangle>
 			<line>
-				<reportElement x="0" y="33" width="802" height="1" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567816"/>
+				<reportElement x="0" y="33" width="802" height="1" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567816"/>
 			</line>
 			<textField>
 				<reportElement style="dato_texto" x="10" y="0" width="220" height="34" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567817"/>
@@ -159,7 +159,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{nombre_empleado} + " " + $F{apellido}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="230" y="4" width="1" height="26" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567818"/>
+				<reportElement x="230" y="4" width="1" height="26" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567818"/>
 			</line>
 			<textField>
 				<reportElement style="dato_texto" x="240" y="0" width="180" height="34" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567819"/>
@@ -169,7 +169,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{rol}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="420" y="4" width="1" height="26" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567820"/>
+				<reportElement x="420" y="4" width="1" height="26" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567820"/>
 			</line>
 			<textField>
 				<reportElement style="dato_numero" x="430" y="0" width="170" height="34" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567821"/>
@@ -179,7 +179,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[$F{total_ventas}]]></textFieldExpression>
 			</textField>
 			<line>
-				<reportElement x="600" y="4" width="1" height="26" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567822"/>
+				<reportElement x="600" y="4" width="1" height="26" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567822"/>
 			</line>
 			<textField pattern="$#,##0.00">
 				<reportElement style="dato_numero" x="610" y="0" width="182" height="34" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567823"/>
@@ -193,24 +193,24 @@ ORDER BY
 	<columnFooter>
 		<band height="36" splitType="Stretch">
 			<line>
-				<reportElement x="0" y="0" width="802" height="1" forecolor="#1E5799" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567824"/>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#2D6A4F" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567824"/>
 			</line>
 			<staticText>
-				<reportElement x="10" y="6" width="420" height="24" forecolor="#1A3A5C" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567825"/>
+				<reportElement x="10" y="6" width="420" height="24" forecolor="#1B4332" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567825"/>
 				<textElement verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TOTAL GENERAL]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="430" y="6" width="170" height="24" forecolor="#1A3A5C" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567826"/>
+				<reportElement x="430" y="6" width="170" height="24" forecolor="#1B4332" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567826"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{GRAND_VENTAS}]]></textFieldExpression>
 			</textField>
 			<textField pattern="$#,##0.00">
-				<reportElement x="610" y="6" width="182" height="24" forecolor="#1A3A5C" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567827"/>
+				<reportElement x="610" y="6" width="182" height="24" forecolor="#1B4332" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567827"/>
 				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="13" isBold="true"/>
 				</textElement>
@@ -221,7 +221,7 @@ ORDER BY
 	<pageFooter>
 		<band height="28" splitType="Stretch">
 			<line>
-				<reportElement x="0" y="0" width="802" height="1" forecolor="#A8C8F0" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567828"/>
+				<reportElement x="0" y="0" width="802" height="1" forecolor="#95D5B2" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567828"/>
 			</line>
 			<staticText>
 				<reportElement style="footer_texto" x="0" y="5" width="400" height="18" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567829"/>
@@ -242,7 +242,7 @@ ORDER BY
 	<summary>
 		<band height="240" splitType="Stretch">
 			<staticText>
-				<reportElement x="0" y="8" width="802" height="22" forecolor="#1A3A5C" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567831"/>
+				<reportElement x="0" y="8" width="802" height="22" forecolor="#1B4332" uuid="c1a2b3d4-e5f6-7890-abcd-ef1234567831"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="DejaVu Sans" size="13" isBold="true"/>
 				</textElement>
@@ -268,17 +268,17 @@ ORDER BY
 				</categoryDataset>
 				<bar3DPlot isShowLabels="true">
 					<plot>
-						<seriesColor seriesOrder="0" color="#1E5799"/>
-						<seriesColor seriesOrder="1" color="#4A90D9"/>
-						<seriesColor seriesOrder="2" color="#A8C8F0"/>
-						<seriesColor seriesOrder="3" color="#1A3A5C"/>
-						<seriesColor seriesOrder="4" color="#6BAED6"/>
+						<seriesColor seriesOrder="0" color="#2D6A4F"/>
+						<seriesColor seriesOrder="1" color="#52B788"/>
+						<seriesColor seriesOrder="2" color="#95D5B2"/>
+						<seriesColor seriesOrder="3" color="#1B4332"/>
+						<seriesColor seriesOrder="4" color="#74C69D"/>
 					</plot>
-					<itemLabel color="#1A3A5C">
+					<itemLabel color="#1B4332">
 						<font fontName="DejaVu Sans" size="9" isBold="true"/>
 					</itemLabel>
 					<categoryAxisFormat>
-						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#1E5799">
+						<axisFormat tickLabelColor="#2D3A2E" axisLineColor="#2D6A4F">
 							<labelFont>
 								<font fontName="DejaVu Sans" size="9" isBold="true"/>
 							</labelFont>
@@ -288,7 +288,7 @@ ORDER BY
 						</axisFormat>
 					</categoryAxisFormat>
 					<valueAxisFormat>
-						<axisFormat tickLabelColor="#2D3A2E" tickLabelMask="$#,##0.00" axisLineColor="#1E5799">
+						<axisFormat tickLabelColor="#2D3A2E" tickLabelMask="$#,##0.00" axisLineColor="#2D6A4F">
 							<labelFont>
 								<font fontName="DejaVu Sans" size="9" isBold="true"/>
 							</labelFont>

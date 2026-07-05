@@ -8,7 +8,6 @@ import com.ues.edu.entidades.Alimentacion;
 import com.ues.edu.entidades.Animal;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
 import jakarta.persistence.TypedQuery;
 import java.util.List;
 
@@ -20,22 +19,20 @@ public class AlimentacionDao {
 
      private EntityManagerFactory emf = JPAUtil.getEMF();
 
-    // ==========================
-    // GUARDAR (BLINDADO CONTRA NULOS)
-    // ==========================
+    
     public void guardar(Alimentacion alimentacion) {
         EntityManager em = emf.createEntityManager();
 
         try {
             em.getTransaction().begin();
 
-            // 🔥 1. BUSCAR EL ANIMAL REAL EN LA BD (Evita duplicados)
+            // BUSCAR EL ANIMAL REAL EN LA BD (Evita duplicados)
             if (alimentacion.getAnimal() != null && alimentacion.getAnimal().getId() != null) {
                 Animal animal = em.find(Animal.class, alimentacion.getAnimal().getId());
                 alimentacion.setAnimal(animal);
             }
 
-            // 🔥 2. BUSCAR EL CUIDADOR REAL EN LA BD (Evita NullPointerException)
+            // BUSCAR EL CUIDADOR REAL EN LA BD (Evita NullPointerException)
             if (alimentacion.getCuidador() != null && alimentacion.getCuidador().getId() != null) {
                 com.ues.edu.entidades.Empleado cuidador = em.find(
                         com.ues.edu.entidades.Empleado.class, 
@@ -43,7 +40,7 @@ public class AlimentacionDao {
                 );
                 alimentacion.setCuidador(cuidador);
             } else {
-                alimentacion.setCuidador(null); // Si va vacío, se guarda de forma segura
+                alimentacion.setCuidador(null); 
             }
 
             em.persist(alimentacion);
@@ -59,9 +56,7 @@ public class AlimentacionDao {
         }
     }
 
-    // ==========================
-    // ACTUALIZAR (BLINDADO CONTRA NULOS)
-    // ==========================
+   
     public void actualizar(Alimentacion alimentacion) {
         EntityManager em = emf.createEntityManager();
 
@@ -71,7 +66,7 @@ public class AlimentacionDao {
             Alimentacion existente = em.find(Alimentacion.class, alimentacion.getId());
 
             if (existente != null) {
-                // Sincronizar el animal de forma segura
+                
                 if (alimentacion.getAnimal() != null && alimentacion.getAnimal().getId() != null) {
                     Animal animal = em.find(Animal.class, alimentacion.getAnimal().getId());
                     existente.setAnimal(animal);
@@ -81,7 +76,7 @@ public class AlimentacionDao {
                 existente.setHorario(alimentacion.getHorario());
                 existente.setCantidad(alimentacion.getCantidad());
                 
-                // Sincronizar el cuidador protegiendo si viene vacío (Sin cuidador)
+                
                 if (alimentacion.getCuidador() != null && alimentacion.getCuidador().getId() != null) {
                     com.ues.edu.entidades.Empleado cuidador = em.find(
                             com.ues.edu.entidades.Empleado.class,
@@ -89,7 +84,7 @@ public class AlimentacionDao {
                     );
                     existente.setCuidador(cuidador);
                 } else {
-                    existente.setCuidador(null); // Evita caídas catastróficas por nulos al editar
+                    existente.setCuidador(null); 
                 }
             }
 
@@ -105,9 +100,7 @@ public class AlimentacionDao {
         }
     }
 
-    // ==========================
-    // ELIMINAR
-    // ==========================
+    
     public void eliminar(int id) {
         EntityManager em = emf.createEntityManager();
 
@@ -129,13 +122,10 @@ public class AlimentacionDao {
         }
     }
 
-    // ==========================================================
-    // LISTAR TODOS (Corregido: Unificado de menor a mayor por ID)
-    // ==========================================================
+  
     public List<Alimentacion> listar() {
         EntityManager em = emf.createEntityManager();
 
-        // 🌟 Forzamos ORDER BY a.id ASC para que vaya id 1, 2, 3... fijo hacia abajo
         TypedQuery<Alimentacion> query = em.createQuery(
                 "SELECT a FROM Alimentacion a ORDER BY a.id ASC",
                 Alimentacion.class
@@ -146,9 +136,6 @@ public class AlimentacionDao {
         return lista;
     }
 
-    // ==========================
-    // BUSCAR POR ID
-    // ==========================
     public Alimentacion buscarPorId(int id) {
         EntityManager em = emf.createEntityManager();
         Alimentacion a = em.find(Alimentacion.class, id);

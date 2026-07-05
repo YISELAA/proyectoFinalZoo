@@ -24,11 +24,8 @@ public class HistorialMedicoService {
         dao.actualizar(h);
     }
 
-    // ===================================================
-    // 🚫 DESHABILITADO POR REGLA DE NEGOCIO (AUDITORÍA)
-    // ===================================================
+   
     public void eliminarHistorial(int id) {
-        // Bloqueado para mantener la integridad de los registros clínicos del zoológico.
         throw new UnsupportedOperationException("La eliminación de registros médicos está deshabilitada por auditoría clínica.");
         
         /* dao.eliminar(id);

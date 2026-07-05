@@ -20,17 +20,13 @@ import java.util.List;
 @NoArgsConstructor
 public class Empleado {
 
-    // ==========================
-    // CLAVE PRIMARIA
-    // ==========================
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Expose
     private Integer id;
 
-    // ==========================
-    // DATOS PERSONALES
-    // ==========================
+  
     @NotBlank
     @Expose
     @Column(name = "nombre_empleado", nullable = false, length = 70)
@@ -80,9 +76,6 @@ public class Empleado {
     @Expose
     private Cargo cargo;
 
-    // ==========================
-    // RELACIONES
-    // ==========================
     @OneToOne(mappedBy = "empleado", cascade = CascadeType.ALL, orphanRemoval = true)
     @Expose
     private transient Usuario usuario;

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package com.ues.edu.controlador;
 
 import com.google.gson.Gson;
@@ -17,10 +13,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.List;
 
-/**
- *
- * @author coc44
- */
 @WebServlet(name = "AnimalServlet", urlPatterns = {"/AnimalServlet"})
 public class AnimalServlet extends HttpServlet {
 
@@ -43,20 +35,10 @@ public class AnimalServlet extends HttpServlet {
             })
             .create();
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -69,15 +51,6 @@ public class AnimalServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -106,29 +79,17 @@ public class AnimalServlet extends HttpServlet {
             response.getWriter().write(gson.toJson(animales));
 
         } catch (Exception e) {
-            // Imprime el error real en la consola de tu NetBeans/IDE
             e.printStackTrace();
-
-            // Envía una respuesta JSON controlada en lugar de una página HTML rota
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             response.getWriter().write("{\"error\":\"Error interno en el servidor: " + e.getMessage() + "\"}");
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
         Animal animal = gson.fromJson(request.getReader(), Animal.class);
-
         String error = validarAnimal(animal);
 
         if (error != null) {
@@ -139,9 +100,8 @@ public class AnimalServlet extends HttpServlet {
         }
 
         animalService.crearAnimal(animal);
-
         response.setContentType("application/json");
-        response.getWriter().write("{\"mensaje\":\"Animal guardado\"}");
+        response.getWriter().write("{\"mensaje\":\"Animal guardado exitosamente\"}");
     }
 
     @Override
@@ -149,7 +109,6 @@ public class AnimalServlet extends HttpServlet {
             throws IOException {
 
         Animal animal = gson.fromJson(request.getReader(), Animal.class);
-
         String error = validarAnimal(animal);
 
         if (error != null) {
@@ -160,68 +119,70 @@ public class AnimalServlet extends HttpServlet {
         }
 
         animalService.editarAnimal(animal);
-
         response.setContentType("application/json");
-        response.getWriter().write("{\"mensaje\":\"Animal actualizado\"}");
+        response.getWriter().write("{\"mensaje\":\"Animal actualizado exitosamente\"}");
     }
 
     @Override
     protected void doDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
 
-        int id = Integer.parseInt(request.getParameter("id"));
-        animalService.eliminarAnimal(id);
-
-        response.setContentType("application/json");
-        response.getWriter().write("{\"mensaje\":\"Animal eliminado\"}");
+        try {
+            int id = Integer.parseInt(request.getParameter("id"));
+            animalService.eliminarAnimal(id);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"mensaje\":\"Animal eliminado correctamente\"}");
+        } catch (Exception e) {
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.getWriter().write("{\"error\":\"No se pudo eliminar el animal: " + e.getMessage() + "\"}");
+        }
     }
+    
+    private String validarAnimal(Animal a) {
+        if (a == null) {
+            return "Animal inválido";
+        }
 
-    // 🔥 VALIDACIÓN FLEXIBILIZADA PARA COADYUVAR CON HÁBITATS ELIMINADOS
-   private String validarAnimal(Animal a) {
+        if (a.getNombre() == null || a.getNombre().trim().length() < 3) {
+            return "El nombre debe tener mínimo 3 caracteres";
+        }
+        if (!a.getNombre().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            return "El nombre solo debe contener letras";
+        }
 
-    if (a == null) {
-        return "Animal inválido";
+        if (a.getEspecie() == null || a.getEspecie().trim().length() < 3) {
+            return "La especie es requerida (mínimo 3 caracteres)";
+        }
+        if (!a.getEspecie().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            return "La especie solo debe contener letras";
+        }
+
+        if (a.getSexo() == null || a.getSexo().trim().isEmpty()) {
+            return "El sexo del animal es requerido";
+        }
+        if (!a.getSexo().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$")) {
+            return "El sexo solo debe contener letras";
+        }
+
+        if (a.getFechaNacimiento() == null) {
+            return "Fecha de nacimiento requerida";
+        }
+
+        java.time.LocalDate hoy = java.time.LocalDate.now();
+        java.sql.Date fechaHoy = java.sql.Date.valueOf(hoy);
+        
+        if (a.getFechaNacimiento().after(fechaHoy)) {
+            return "La fecha de nacimiento no puede ser del futuro";
+        }
+        
+        if (a.getFechaIngreso() != null && a.getFechaIngreso().after(fechaHoy)) {
+            return "La fecha de ingreso no puede ser del futuro";
+        }
+
+        if (a.getHabitat() == null || a.getHabitat().getId() == null) {
+            return "Debe asignar un hábitat válido";
+        }
+
+        return null;
     }
-
-    if (a.getNombre() == null || a.getNombre().trim().length() < 3) {
-        return "El nombre debe tener al menos 3 caracteres";
-    }
-
-    if (!a.getNombre().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
-        return "El nombre solo puede contener letras y espacios";
-    }
-
-    if (a.getEspecie() == null || a.getEspecie().trim().length() < 3) {
-        return "La especie debe tener al menos 3 caracteres";
-    }
-
-    if (!a.getEspecie().matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$")) {
-        return "La especie solo puede contener letras y espacios";
-    }
-
-    if (a.getSexo() == null || a.getSexo().trim().isEmpty()) {
-        return "Debe seleccionar el sexo";
-    }
-
-    if (a.getFechaNacimiento() == null) {
-        return "La fecha de nacimiento es requerida";
-    }
-
-    if (a.getHabitat() != null && a.getHabitat().getId() == null) {
-        return "El formato del hábitat asignado no es válido";
-    }
-
-    return null;
-}
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

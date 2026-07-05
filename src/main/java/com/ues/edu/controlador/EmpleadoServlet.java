@@ -43,7 +43,6 @@ public class EmpleadoServlet extends HttpServlet {
                             || f.getName().equals("empleado")
                             || f.getName().equals("opcionesMenu");
 
-                    // 2. EXCLUSIÓN CRÍTICA: Ignorar campos de frameworks como Hibernate (ByteBuddy, LOGs, etc.)
                     boolean esCampoTecnico = f.getName().equalsIgnoreCase("LOG")
                             || f.getName().equals("handler")
                             || f.getName().equals("hibernateLazyInitializer");
@@ -140,7 +139,7 @@ public class EmpleadoServlet extends HttpServlet {
             throws ServletException, IOException {
 
         response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8"); // <--- Agrega esto en doPost, doPut y doDelete
+        response.setCharacterEncoding("UTF-8"); 
 
         try {
 
@@ -189,7 +188,7 @@ public class EmpleadoServlet extends HttpServlet {
     protected void doPut(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8"); // <--- Agrega esto en doPost, doPut y doDelete
+        response.setCharacterEncoding("UTF-8"); 
 
         Empleado empleado = gson.fromJson(request.getReader(), Empleado.class);
 
@@ -212,7 +211,7 @@ public class EmpleadoServlet extends HttpServlet {
     protected void doDelete(HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
-        response.setCharacterEncoding("UTF-8"); // <--- Agrega esto en doPost, doPut y doDelete
+        response.setCharacterEncoding("UTF-8"); 
 
         response.setContentType("application/json");
 

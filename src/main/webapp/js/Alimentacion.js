@@ -3,29 +3,25 @@
  */
 
 /* * Alimentacion.js
- */
+ * */
 
-console.log("JS ALIMENTACION CARGADO - CON CUIDADOR LOGUEADO AUTOMÁTICO");
+console.log("JS ALIMENTACION");
 
 let paginaActual = 1;
-const size = 5; // 🌟 Límite estricto de 5 registros por página
-let datosCompletos = []; // Almacén global para segmentar los datos de la BD
-
-// 🌟 VARIABLE GLOBAL: Guarda el ID del cuidador que inició sesión
+const size = 5;
+let datosCompletos = []; 
 let idCuidadorSesion = null; 
 
-// ===============================
+
+
 // INICIO
-// ===============================
 document.addEventListener("DOMContentLoaded", function () {
     autocompletarCuidador(); 
     cargarAnimales();
     buscar();
 });
 
-// ===================================================
-// 🌟 OBTENER SESIÓN ACTIVA DEL CUIDADOR 
-// ===================================================
+
 function autocompletarCuidador() {
     fetch("AlimentacionServlet?accion=obtenerSesion")   
         .then(response => {
@@ -41,9 +37,6 @@ function autocompletarCuidador() {
         });
 }
 
-// ===============================
-// CARGAR ANIMALES EN COMBOBOX
-// ===============================
 function cargarAnimales() {
     fetch('AnimalServlet')
         .then(response => {
@@ -52,23 +45,23 @@ function cargarAnimales() {
         })
         .then(animales => {
             const selectAnimal = document.getElementById('idAnimal');
-            selectAnimal.length = 1; 
+            if (selectAnimal) {
+                selectAnimal.length = 1; 
 
-            animales.forEach(animal => {
-                const option = document.createElement('option');
-                option.value = animal.id;
-                option.textContent = animal.especie;
-                selectAnimal.appendChild(option);
-            });
+                animales.forEach(animal => {
+                    const option = document.createElement('option');
+                    option.value = animal.id;
+                    option.textContent = animal.especie;
+                    selectAnimal.appendChild(option);
+                });
+            }
         })
         .catch(error => {
             console.error('Error al cargar animales:', error);
         });
 }
 
-// ===============================
-// BUSCAR ALIMENTACIONES (CORREGIDO)
-// ===============================
+
 function buscar(pagina = 1) {
     paginaActual = pagina;
 
@@ -79,10 +72,9 @@ function buscar(pagina = 1) {
         })
         .then(data => {
             console.log("Datos de alimentación recibidos:", data);
-            datosCompletos = data; // Almacenamos el array completo de la BD
+            datosCompletos = data; 
             
             if (Array.isArray(datosCompletos)) {
-                // Forzar la segmentación inicial
                 redibujarTablaLocal();
             }
         })
@@ -92,11 +84,10 @@ function buscar(pagina = 1) {
         });
 }
 
-// ===============================
-// MOSTRAR ALIMENTACIONES EN TABLA
-// ===============================
+
 function mostrarAlimentaciones(lista) {
     const tbody = document.getElementById('tbodyAlimentacion');
+    if (!tbody) return;
     tbody.innerHTML = ''; 
 
     if (!Array.isArray(lista)) {
@@ -106,14 +97,14 @@ function mostrarAlimentaciones(lista) {
 
     lista.forEach(alimentacion => {
         const tr = document.createElement('tr');
-        
-        // Validación en cascada para evitar nulos si la especie no viene cargada en el JSON
+       
+        let objetoAnimal = alimentacion.animal || alimentacion.anima;
         let especieAnimal = 'Sin asignar';
-        if (alimentacion.animal) {
-            especieAnimal = alimentacion.animal.especie ? alimentacion.animal.especie : `Animal ID: ${alimentacion.animal.id}`;
+
+        if (objetoAnimal) {
+            especieAnimal = objetoAnimal.especie ? objetoAnimal.especie : `Animal ID: ${objetoAnimal.id}`;
         }
 
-        // LECTURA DE LA PROPIEDAD 'CUIDADOR'
         let nombreCuidador = "—";
         if (alimentacion.cuidador) {
             nombreCuidador = `${alimentacion.cuidador.nombre ?? ""} ${alimentacion.cuidador.apellido ?? ""}`.trim();
@@ -140,9 +131,7 @@ function mostrarAlimentaciones(lista) {
     });
 }
 
-// ==========================================================
-// RENDERIZAR CONTROLES DE PAGINACIÓN (UNIFICADO)
-// ==========================================================
+//controles de paginacion
 function renderPaginacion(totalRegistros) {
     const pagContenedor = document.getElementById("paginacion");
     if (!pagContenedor) return;
@@ -160,9 +149,7 @@ function renderPaginacion(totalRegistros) {
     `;
 }
 
-// ==========================================================
-// LÓGICAS DE NAVEGACIÓN LOCAL (EL MOTOR DEL RECORTE)
-// ==========================================================
+
 function anterior() {
     if (paginaActual > 1) {
         paginaActual--;
@@ -179,7 +166,6 @@ function siguiente() {
 }
 
 function redibujarTablaLocal() {
-    // 🧠 Matemática para recortar la lista en bloques de 5
     const inicio = (paginaActual - 1) * size;
     const fin = inicio + size;
     const registrosSegmentados = datosCompletos.slice(inicio, fin);
@@ -188,9 +174,7 @@ function redibujarTablaLocal() {
     renderPaginacion(datosCompletos.length);
 }
 
-// ===============================
-// EDITAR REGISTRO
-// ===============================
+
 function editar(id) {
     fetch(`AlimentacionServlet?id=${id}`)
         .then(response => {
@@ -198,11 +182,33 @@ function editar(id) {
             return response.json();
         })
         .then(a => {
+            let objetoAnimal = a.animal || a.anima;
+
             document.getElementById("idAlimentacion").value = a.id;
-            document.getElementById("tipoAlimento").value = a.tipoAlimento;
-            document.getElementById("horario").value = a.horario;
-            document.getElementById("cantidad").value = a.cantidad;
-            document.getElementById("idAnimal").value = a.animal ? a.animal.id : "";
+            document.getElementById("tipoAlimento").value = a.tipoAlimento ?? "";
+            document.getElementById("cantidad").value = a.cantidad ?? "";
+            document.getElementById("idAnimal").value = objetoAnimal ? objetoAnimal.id : "";
+
+            // --- RECONVERSIÓN: De "4:00 PM" proveniente de la BD a "16:00" para el input nativo ---
+            let horarioInput = "";
+            if (a.horario) {
+                let str = a.horario.trim().toUpperCase();
+                let esPM = str.includes("PM");
+                let esAM = str.includes("AM");
+                let limpio = str.replace("AM", "").replace("PM", "").trim();
+                let partesHora = limpio.split(":");
+                
+                let h = parseInt(partesHora[0], 10);
+                let m = partesHora.length > 1 ? partesHora[1] : "00";
+                if (m.length === 1) m = "0" + m;
+
+                if (esPM && h < 12) h += 12;
+                if (esAM && h === 12) h = 0;
+
+                let hStr = h < 10 ? "0" + h : h;
+                horarioInput = `${hStr}:${m}`; 
+            }
+            document.getElementById("horario").value = horarioInput;
 
             let btnGuardar = document.getElementById("btnGuardarAlimentacion") || document.getElementById("btnGuardar");
             if (btnGuardar) {
@@ -217,21 +223,75 @@ function editar(id) {
         });
 }
 
-// ===============================
+
 // GUARDAR O ACTUALIZAR
-// ===============================
 document.getElementById("formAlimentacion").addEventListener("submit", function (event) {
     event.preventDefault();
 
     let id = document.getElementById("idAlimentacion").value;
+    let tipoAlimento = document.getElementById("tipoAlimento").value.trim();
+    let horarioRaw = document.getElementById("horario").value; 
+    let cantidad = document.getElementById("cantidad").value;
     let idAnimal = document.getElementById("idAnimal").value;
 
+    const regexLetras = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/;
+
+    // Validación de Tipo de Alimento
+    if (tipoAlimento.length < 3) {
+        Swal.fire({ icon: "warning", title: "Campo inválido", text: "El tipo de alimento debe tener mínimo 3 caracteres.", confirmButtonColor: "#b05d4d" });
+        return;
+    }
+    if (!regexLetras.test(tipoAlimento)) {
+        Swal.fire({ icon: "warning", title: "Formato incorrecto", text: "El tipo de alimento solo puede contener letras.", confirmButtonColor: "#b05d4d" });
+        return;
+    }
+
+    if (!horarioRaw) {
+        Swal.fire({ icon: "warning", title: "Horario Requerido", text: "Por favor, elija una hora usando el selector.", confirmButtonColor: "#b05d4d" });
+        return;
+    }
+
+    // VALIDACIÓN DE RANGO DIURNO ESTRICTO (8:00 AM a 4:00 PM) por el horario del zoologico
+    let partes = horarioRaw.split(":");
+    let hora = parseInt(partes[0], 10);
+    let minutos = parseInt(partes[1], 10);
+
+  
+    let minutosTotales = (hora * 60) + minutos;
+
+    if (minutosTotales < 480 || minutosTotales > 960) {
+        Swal.fire({ 
+            icon: "warning", 
+            title: "Horario Fuera de Rango", 
+            html: "Los animales solo pueden ser alimentados en el turno diurno:<br><b>Desde las 8:00 AM hasta las 4:00 PM</b>.", 
+            confirmButtonColor: "#b05d4d" 
+        });
+        return; 
+    }
+
+    let sufijo = hora >= 12 ? "PM" : "AM";
+    let horaConvertida = hora % 12;
+    if (horaConvertida === 0) horaConvertida = 12; 
+    let minutosString = minutos < 10 ? "0" + minutos : minutos;
+    
+    let horarioFinalAMPM = `${horaConvertida}:${minutosString} ${sufijo}`;
+
+    if (!cantidad || parseFloat(cantidad) <= 0) {
+        Swal.fire({ icon: "warning", title: "Campo inválido", text: "La cantidad debe ser un número mayor a 0.", confirmButtonColor: "#b05d4d" });
+        return;
+    }
+
+    if (!idAnimal) {
+        Swal.fire({ icon: "warning", title: "Campo requerido", text: "Debe seleccionar un animal válido.", confirmButtonColor: "#b05d4d" });
+        return;
+    }
+
+    // Construcción del Objeto JSON
     let alimentacion = {
-        tipoAlimento: document.getElementById("tipoAlimento").value,
-        horario: document.getElementById("horario").value,
-        cantidad: parseFloat(document.getElementById("cantidad").value),
-        animal: idAnimal ? { id: parseInt(idAnimal) } : null,
-        // 🌟 ENVIAR PROPIEDAD CUIDADOR COINCIDIENDO CON JAVA
+        tipoAlimento: tipoAlimento,
+        horario: horarioFinalAMPM, 
+        cantidad: parseFloat(cantidad),
+        animal: { id: parseInt(idAnimal) },
         cuidador: idCuidadorSesion ? { id: parseInt(idCuidadorSesion) } : null
     };
 
@@ -254,9 +314,6 @@ document.getElementById("formAlimentacion").addEventListener("submit", function 
         return data;
     })
     .then(data => {
-        let msgError = document.getElementById("mensajeErrorAlimentacion") || document.getElementById("mensajeError");
-        if (msgError) msgError.innerHTML = "";
-
         limpiarFormulario();
         buscar(paginaActual); 
 
@@ -268,13 +325,16 @@ document.getElementById("formAlimentacion").addEventListener("submit", function 
         });
     })
     .catch(error => {
-        mostrarAlertaError(error.message);
+        Swal.fire({
+            icon: "warning",
+            title: "No se puede guardar",
+            text: error.message,
+            confirmButtonColor: "#b05d4d"
+        });
     });
 });
 
-// ===============================
-// ELIMINAR REGISTRO
-// ===============================
+
 function eliminarAlimentacion(id) {
     Swal.fire({
         title: "¿Deseas eliminar este registro?",

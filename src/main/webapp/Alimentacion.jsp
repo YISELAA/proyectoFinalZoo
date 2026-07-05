@@ -45,9 +45,8 @@
 
                     <div class="campo">
                         <label for="horario">Horario</label>
-                        <input type="text"
+                        <input type="time"
                                id="horario"
-                               placeholder="Ej: 08:00 AM"
                                required>
                     </div>
 
@@ -93,7 +92,7 @@
                         <th>Tipo Alimento</th>
                         <th>Horario</th>
                         <th>Cantidad (kg)</th>
-                        <th>Animal</th>
+                        <th>Especie</th>
                         <th>Cuidador</th>
                         <th>Acciones</th>
                     </tr>

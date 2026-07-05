@@ -81,7 +81,6 @@ public class EmpleadosConsultaServlet extends HttpServlet {
                 for (Object[] a : datos) {
 
                     JSONObject obj = new JSONObject();
-                    // Mapeo exacto con los nombres que espera tu archivo js/ConsultaEmpleados.js
                     obj.put("id_empleado", a[0] != null ? a[0].toString() : "");
                     obj.put("nombre_empleado", a[1] != null ? a[1].toString() : "");
                     obj.put("apellido", a[2] != null ? a[2].toString() : "");

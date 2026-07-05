@@ -18,37 +18,27 @@ public class AlimentacionService {
     private AlimentacionDao dao =
             new AlimentacionDao();
 
-    // ==========================
-    // CREAR
-    // ==========================
+   
     public void crearAlimentacion(Alimentacion a) {
         dao.guardar(a);
     }
 
-    // ==========================
-    // ACTUALIZAR
-    // ==========================
+   
     public void editarAlimentacion(Alimentacion a) {
         dao.actualizar(a);
     }
 
-    // ==========================
-    // ELIMINAR
-    // ==========================
+    
     public void eliminarAlimentacion(int id) {
         dao.eliminar(id);
     }
 
-    // ==========================
-    // LISTAR
-    // ==========================
+    
     public List<Alimentacion> obtenerAlimentaciones() {
         return dao.listar();
     }
 
-    // ==========================
-    // BUSCAR POR ID
-    // ==========================
+    
     public Alimentacion buscarAlimentacion(int id) {
         return dao.buscarPorId(id);
     }

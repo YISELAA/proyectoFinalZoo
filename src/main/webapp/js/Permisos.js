@@ -57,7 +57,7 @@ document.getElementById("formPermisos").addEventListener("submit", function (e) 
             icon: "success",
             title: "Accesos Actualizados",
             text: data.mensaje,
-            confirmButtonColor: "#3f5b4b" // Tu verde corporativo
+            confirmButtonColor: "#3f5b4b" 
         });
     })
     .catch(error => {
@@ -65,7 +65,7 @@ document.getElementById("formPermisos").addEventListener("submit", function (e) 
             icon: "warning",
             title: "No se pudo guardar",
             text: error.message,
-            confirmButtonColor: "#b05d4d" // Tu rojo terracota
+            confirmButtonColor: "#b05d4d" 
         });
     });
 });

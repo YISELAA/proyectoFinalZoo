@@ -1,3 +1,5 @@
+
+//INICIO
 document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("formLogin")
         .addEventListener("submit", iniciarSesion);

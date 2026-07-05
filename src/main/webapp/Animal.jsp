@@ -1,5 +1,3 @@
-
-=======
 <%-- 
     Document   : Animal
     Created on : 16 may. 2026, 23:24:02
@@ -53,6 +51,15 @@
                                    required>
                         </div>
 
+                         <div class="campo">
+                            <label for="sexo">Sexo</label>
+                            <select id="sexo" rquired>
+                                <option value="">Seleccione el sexo...</option>
+                                <option value="Macho">Macho</option>
+                                <option value="Hembra">Hembra</option>
+                            </select>
+                        </div>
+                        
                         <div class="campo">
                             <label for="fechaNacimiento">Fecha Nacimiento</label>
                             <input type="date"
@@ -67,20 +74,12 @@
                         </div>
 
                         <div class="campo">
-                            <label for="sexo">Sexo</label>
-                            <select id="sexo" required>
-                                <option value="">Seleccione sexo</option>
-                                <option value="Macho">Macho</option>
-                                <option value="Hembra">Hembra</option>
-                            </select>
-                        </div>
-
-                        <div class="campo">
                             <label for="habitat">Habitat</label>
                             <select id="habitat" required>
                                 <option value="">Seleccione habitat</option>
                             </select>
                         </div>
+
 
                         <div class="botones">
 
@@ -115,7 +114,7 @@
                             <th>Fecha Nacimiento</th>
                             <th>Edad</th>
                             <th>Fecha Ingreso</th>
-                            <th>Habitat</th>
+                            <th>Habitat</th> 
                             <th>Acciones</th>
                         </tr>
                     </thead>
@@ -140,4 +139,5 @@
         <script src="${pageContext.request.contextPath}/js/Animal.js"></script>
 
     </body>
+
 </html>

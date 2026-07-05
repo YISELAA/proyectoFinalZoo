@@ -13,18 +13,11 @@ public class ConsultaAnimalCuidadorDao {
         EntityManager em = null;
         try {
             em = emf.createEntityManager();
-            String sql
-                    = "SELECT "
-                    + "a.id, "
-                    + "a.nombre_animal, "
-                    + "a.especie, "
-                    + "e.nombre_empleado, "
-                    + "e.apellido, "
-                    + "e.numero_dui "
+            String sql = "SELECT a.id, a.nombre_animal, a.especie, a.sexo, e.nombre_empleado, e.apellido, e.numero_dui "
                     + "FROM habitat_cuidador hc "
                     + "INNER JOIN habitat h ON hc.idhabitat = h.id "
                     + "INNER JOIN animal a ON a.idhabitat = h.id "
-                    + "INNER JOIN empleado e ON hc.idempleado = e.id ";
+                    + "INNER JOIN empleado e ON hc.idempleado = e.id";
 
             Query query = em.createNativeQuery(sql);
             return query.getResultList();
